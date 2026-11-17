@@ -94,15 +94,20 @@ Both pages are the same HTML, so any layout difference comes from Piper and its 
 
 ## Team portraits
 
-The six team cards read `site/img/team/1.png` to `6.png`: left to right, top row first, from the
-character sheet. To cut them from a 3-by-2 sheet:
+The six team cards use `site/img/team/1.png` to `6.png`, cut from the character sheet in
+[art/character-sheet.png](art/character-sheet.png): left to right, top row first. The sheet
+lives outside `site/`, so it isn't published. To re-cut them:
 
 ```sh
-npm run team -- path/to/character-sheet.png
+npm run team                          # uses art/character-sheet.png
+npm run team -- path/to/new-sheet.png
 ```
 
-This uses `sips`, which ships with macOS, to crop six centred squares and resize them to 480px
-(set `TEAM_PORTRAIT_SIZE` to change that). Until the files exist, the cards show a soft tile.
+This uses `sips`, which ships with macOS. The characters sit off-centre and close together, so
+the script cuts each one to its own measured horizontal range (`TEAM_X_RANGES`), trims the top
+where a shadow from the row above crosses the row line (`TEAM_TOP_TRIMS`), pads back to a square
+in the sheet's cream (`TEAM_PAD_COLOR`), and resizes to 480px (`TEAM_PORTRAIT_SIZE`). A new
+sheet with a different layout needs new ranges.
 
 ## Llama art
 
