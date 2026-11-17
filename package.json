@@ -1,0 +1,19 @@
+{
+  "name": "happy-little-pasture",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A fake company website for testing Qualified Piper installs, locally or on GitHub Pages.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "llamas": "node scripts/build-llamas.mjs",
+    "team": "bash scripts/crop-team.sh"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
