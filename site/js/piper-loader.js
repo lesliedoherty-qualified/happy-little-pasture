@@ -4,7 +4,7 @@
 // hand-pasted install.
 //
 // Query parameters (all optional):
-//   env=local|dev           which environment in config.js
+//   env=local|qa            which environment in config.js
 //   host=<url>              override the environment's base URL
 //   token=<token>           override the environment's token
 //   install=snippet|head|head-token|recommended

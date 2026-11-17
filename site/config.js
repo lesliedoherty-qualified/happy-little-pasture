@@ -1,12 +1,17 @@
 // Which Qualified environment this page loads Piper from.
 //
-// Pick one per page load with ?env=local or ?env=dev. Without ?env=, the page
+// Pick one per page load with ?env=local or ?env=qa. Without ?env=, the page
 // uses `defaultEnv.localhost` when served from localhost and
 // `defaultEnv.hosted` everywhere else (GitHub Pages).
 //
-// Tokens are the public widget token from Settings > Setup (the
-// `qualified.js?token=...` value in the install snippet). They already ship in
-// every customer's page source, so committing them here is fine.
+// Tokens are the public widget token: the `qualified.js?token=...` value in
+// the install snippet at Settings > Setup. They already ship in every
+// customer's page source, so committing them here is fine.
+//
+// Don't confuse it with the "Demo Tool API Token" on Backstage's Demo
+// Utilities tab. That one is a bearer token for the Chrome extension demo
+// tool, qualified.js answers it with an empty `;`, and it must not be
+// committed to this public repo.
 window.PASTURE_CONFIG = {
   environments: {
     local: {
@@ -14,17 +19,16 @@ window.PASTURE_CONFIG = {
       baseUrl: "http://localhost:34214",
       token: "BCGYZamYC46SGX4H",
     },
-    dev: {
-      label: "app.qualified-dev.com, team 642",
-      baseUrl: "https://app.qualified-dev.com",
-      // Paste team 642's token from https://app.qualified-dev.com/settings/setup
-      token: "",
+    qa: {
+      label: "Private dev (QA), team 642 on app1.qualified-dev.com",
+      baseUrl: "https://app1.qualified-dev.com",
+      token: "oZmyapJibDbNgGvo",
     },
   },
 
   defaultEnv: {
     localhost: "local",
-    hosted: "dev",
+    hosted: "qa",
   },
 
   // How Piper is installed. Override per load with ?install=<name>.

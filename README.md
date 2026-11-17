@@ -5,7 +5,7 @@ A fake company website ("Llamalytics") for testing Qualified Piper installs, the
 from the same files:
 
 - **Locally** with a small Express server, pointed at your local fireball.
-- **On GitHub Pages**, pointed at `app.qualified-dev.com` (team 642).
+- **On GitHub Pages**, pointed at private dev / QA, `app1.qualified-dev.com` (team 642).
 
 The copy is corporate jargon with Bob Ross mixed in. The art is llamas with perms.
 
@@ -21,8 +21,8 @@ npm start           # http://localhost:4600
 off, so a reload always picks up an edit. Set `PORT` to use another port.
 
 By default, a page served from `localhost` loads Piper from local fireball (`env=local` in
-[site/config.js](site/config.js): `http://localhost:34214`, team 1). Add `?env=dev` to load
-team 642 from `app.qualified-dev.com` instead.
+[site/config.js](site/config.js): `http://localhost:34214`, team 1). Add `?env=qa` to load
+team 642 from `app1.qualified-dev.com` instead.
 
 ## Publish it on GitHub Pages
 
@@ -39,19 +39,22 @@ team 642 from `app.qualified-dev.com` instead.
    [workflow](.github/workflows/pages.yml) publishes `site/` on every push to `main`. The site is
    at `https://<you>.github.io/happy-little-pasture/`.
 
-## Connect team 642 (app.qualified-dev.com)
+## Connect team 642 (QA, app1.qualified-dev.com)
 
 1. **Token.** Copy the token from the install snippet at
-   `https://app.qualified-dev.com/settings/setup` (the `qualified.js?token=...` value) into
-   `environments.dev.token` in [site/config.js](site/config.js). Commit and push. The token is
+   `https://app1.qualified-dev.com/settings/setup` (the `qualified.js?token=...` value) into
+   `environments.qa.token` in [site/config.js](site/config.js). Commit and push. The token is
    public: it ships in every customer's page source. To try it before committing, add
-   `?token=<token>` to the URL.
+   `?token=<token>` to the URL. Team 642's widget token is already set: `oZmyapJibDbNgGvo`.
+   The 24-character Demo Tool API Token on Backstage's Demo Utilities tab is a different,
+   private token for the Chrome extension. `qualified.js` answers it with an empty `;`, and it
+   doesn't belong in this public repo.
 2. **Allowlisted domains.** Team 642 already has an allowlist (test-environment setup added the
    test-site domain), so Piper won't load anywhere else until you add your domains. In Backstage,
    edit team 642's **allowlisted domains** and add:
    - `<you>.github.io` for GitHub Pages
-   - `localhost:4600` if you also want `?env=dev` from the local server
-3. Open the GitHub Pages URL. Off localhost, the page defaults to `env=dev`.
+   - `localhost:4600` if you also want `?env=qa` from the local server
+3. Open the GitHub Pages URL. Off localhost, the page defaults to `env=qa`.
 
 Local team 1: if its allowlist is empty, every domain is allowed. If it has entries, add
 `localhost:4600`.
@@ -60,7 +63,7 @@ Local team 1: if its allowlist is empty, every domain is allowed. If it has entr
 
 | Parameter | Values | What it does |
 | --- | --- | --- |
-| `env` | `local`, `dev` | Which environment in `config.js`. |
+| `env` | `local`, `qa` | Which environment in `config.js`. |
 | `install` | `snippet` (default), `head`, `head-token`, `recommended` | How Piper is installed (below). |
 | `docking_<option>` | for example `docking_showSkeleton=0` | Passed through to `qualified-head.js`. Adds a head script with `docking_autoInit=1` if there isn't one. |
 | `sync` | `1` | Loads `qualified.js` without `async` (the sync snippet). |
@@ -86,7 +89,7 @@ between theme changes.
 ## Comparing pinned and not pinned
 
 1. Open `https://<you>.github.io/happy-little-pasture/` (team 642, master's theme-level pinned).
-2. In `app.qualified-dev.com` as team 642, turn the theme's **Pinned** on, save, then **Reset
+2. In `app1.qualified-dev.com` as team 642, turn the theme's **Pinned** on, save, then **Reset
    visitor and reload**. Repeat with Pinned off.
 3. Do the same on `http://localhost:4600/` against local team 1, where the POC settings apply.
 

@@ -18,5 +18,5 @@ app.use(express.static(root, { etag: false, extensions: ["html"] }));
 app.listen(port, () => {
   console.log(`Happy little pasture: http://localhost:${port}`);
   console.log(`  local Piper: http://localhost:${port}/?env=local`);
-  console.log(`  dev Piper:   http://localhost:${port}/?env=dev`);
+  console.log(`  QA Piper:    http://localhost:${port}/?env=qa`);
 });
