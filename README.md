@@ -13,6 +13,7 @@ The copy is corporate jargon with Bob Ross mixed in. The art is llamas with perm
 
 ```sh
 mise install        # Node 24, from mise.toml
+# or, with nvm: nvm install && nvm use   (Node 24, from .nvmrc)
 npm install
 npm start           # http://localhost:4600
 ```
@@ -94,6 +95,57 @@ between theme changes.
 3. Do the same on `http://localhost:4600/` against local team 1, where the POC settings apply.
 
 Both pages are the same HTML, so any layout difference comes from Piper and its settings.
+
+## Booker lab
+
+[site/booker.html](site/booker.html) (`http://localhost:4600/booker.html`) shows the PiperX
+full-screen meeting booker (`LightboxExperience` → `MeetingTimeSelector`) side by side at
+several widths. It needs no rep, routing, calendar, or Piper install, so you can check its layout,
+focus, and CSS in seconds instead of going through a live booking. Each frame is its own
+viewport, so the app's `(max-width: 767px)` mobile queries apply. Click **open** on a frame
+to inspect it in DevTools.
+
+Nothing in it is hand-styled:
+
+- `site/booker/frame.html` holds markup captured by rendering the real fireball components with
+  fake slots (Thu/Fri, 15-minute times, America/Denver), so it carries the app's own hashed
+  Panda class names.
+- `site/booker/panda.css` is the app's own Panda stylesheet for that markup.
+
+There are two controls:
+
+- **Layout:** *As captured* is the booker exactly as the captured fireball checkout renders it.
+  It's captured twice, once with the app's `isMobile` on and once with it off, and each frame
+  shows the capture that matches its width. *Preview: compact layout on mobile* swaps the compact
+  layout into the frames below 768px, so you can try the layout half of the QAI-6749 fix on a
+  checkout that doesn't have it.
+- **Time pill CSS-only patch:** adds `white-space: nowrap; height: auto; min-height: 36px` to
+  `SlotButton`, from a separate `<style>` in the frame. That's the CSS half of the fix, for a
+  checkout that doesn't have it.
+
+The frame loads Inter from Google Fonts, the font the messenger uses. That makes it the one page
+on this site with a third-party request besides Qualified.
+
+Time selection works (the frame swaps the app's selected and unselected class lists). Nothing
+else is interactive, because there's no Preact behind the markup.
+
+### Refresh it from fireball
+
+The capture is committed, and `frame.html` records the fireball commit it came from. After
+fireball changes (or to try an edit you've made there), re-capture:
+
+```sh
+npm run booker:refresh                          # ~/_Server/qualified/fireball
+FIREBALL=~/_Server/qualified/<worktree> npm run booker:refresh
+npm run booker:build                            # rebuild from the committed capture only
+```
+
+`booker:refresh` copies [scripts/booker/zz_booker_static_dump.test.tsx](scripts/booker/zz_booker_static_dump.test.tsx)
+into fireball's `multimodal_v2/components/meetings/`, runs it with `mise run test:js`, removes it
+again (even on failure), and runs [scripts/build-booker.mjs](scripts/build-booker.mjs). The test
+stubs `src/validation`, an `.erb` module that would otherwise boot Rails. To capture the fix
+itself, make the change in a fireball worktree and refresh from it.
+Then *As captured* shows your edited code at every width.
 
 ## Team portraits
 
