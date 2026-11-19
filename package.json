@@ -10,7 +10,8 @@
     "llamas": "node scripts/build-llamas.mjs",
     "team": "bash scripts/crop-team.sh",
     "booker:build": "node scripts/build-booker.mjs",
-    "booker:refresh": "bash scripts/refresh-booker.sh"
+    "booker:refresh": "bash scripts/refresh-booker.sh",
+    "self-hosted": "bash scripts/self-hosted/sync.sh"
   },
   "engines": {
     "node": ">=20"

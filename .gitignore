@@ -1,2 +1,4 @@
 node_modules/
 .DS_Store
+site/qualified/
+site/self-hosted.html

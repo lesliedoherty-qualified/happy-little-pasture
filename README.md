@@ -87,6 +87,31 @@ combinations, copies the exact install HTML, and has **Reset visitor and reload*
 whether a visitor left it open, closed or docked, so reset (or use a fresh incognito window)
 between theme changes.
 
+## Self-hosted install
+
+[site/self-hosted.html](http://localhost:4600/self-hosted.html) is the home page with Piper
+installed **self-hosted**: the head script, CSS and widget JS load from this site's
+`site/qualified/` folder, using the install tags from the package README word for word. It's for
+QAI-6672's saved pinned messenger settings, so it uses a local package exported from the
+`fireball-qai-6672` worktree. The package and the page are both generated and git-ignored.
+
+```sh
+npm run self-hosted -- --export   # export a fresh package from fireball, copy it in, build the page
+npm run self-hosted               # re-copy the last export and rebuild the page
+FIREBALL=~/_Server/qualified/<worktree> npm run self-hosted -- --export
+```
+
+- The package README carries team 1's saved settings **as of the export**, so run `--export`
+  after every save in Settings. A page built from an old export keeps the old early layout.
+- The export bundles fireball's widget-stable build. After widget code changes, rebuild it in
+  `fireball-qai-6672/services` with `mise run build:js:stable`, then export.
+- The footer panel shows which settings, export time and widget build the page was built from.
+- The widget still talks to local fireball (34214) for its configuration and WebSockets. Only
+  the asset files are self-hosted.
+
+The manual checklist is in
+`~/_Server/qualified/.cursor/projects/pinned-onboarding-rendering/QAI-6672-self-hosted-validations.md`.
+
 ## Comparing pinned and not pinned
 
 1. Open `https://<you>.github.io/happy-little-pasture/` (team 642, master's theme-level pinned).
