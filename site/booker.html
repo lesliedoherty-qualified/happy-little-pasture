@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-page="booker">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -85,6 +85,17 @@
           <img src="img/logo.svg" width="32" height="32" alt="" />
           <span>Llamalytics</span>
         </a>
+        <nav class="site-nav" aria-label="Test pages">
+          <a href="./" data-nav="hosted">Hosted</a>
+          <a href="self-hosted.html" data-nav="self-hosted" data-local-only>Self-hosted</a>
+          <a href="self-hosted-no-init.html" data-nav="self-hosted-no-init" data-local-only>Head only</a>
+          <a href="self-hosted-token-head.html" data-nav="self-hosted-token-head" data-local-only>Token head</a>
+          <a href="booker.html" data-nav="booker" aria-current="page">Booker lab</a>
+        </nav>
+        <div class="env-switch" role="group" aria-label="Piper environment" data-env-switch>
+          <a href="./?env=local" data-env="local">Local</a>
+          <a href="./?env=qa" data-env="qa">QA</a>
+        </div>
       </div>
     </header>
 
@@ -191,5 +202,6 @@
         render();
       })();
     </script>
+    <script src="js/nav.js" defer></script>
   </body>
 </html>

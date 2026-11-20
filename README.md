@@ -60,6 +60,26 @@ team 642 from `app1.qualified-dev.com` instead.
 Local team 1: if its allowlist is empty, every domain is allowed. If it has entries, add
 `localhost:4600`.
 
+## Test-page menu
+
+The header menu has one link per test page, and the current one is highlighted:
+
+| Menu | Page | Look |
+| --- | --- | --- |
+| Hosted | `index.html`: hosted install from `config.js` (`?install=` variants in the footer harness) | Llamalytics cream |
+| Self-hosted | `self-hosted.html`: self-hosted head + the README's copied init | Sparkleforce pink |
+| Head only | `self-hosted-no-init.html`: self-hosted head, no inline init | Rainbowforce rainbow |
+| Token head | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
+| Booker lab | `booker.html` | Llamalytics cream |
+
+**Local / QA** switches the Hosted page's `?env=` and keeps its other query parameters. The
+self-hosted pages are always local, because the export is built for local fireball, so the switch
+shows Local and is disabled there. Off localhost (GitHub Pages) the self-hosted links are disabled,
+since those pages are generated locally. Names, H1s and eyebrows for the generated pages are in
+[scripts/self-hosted/pages.mjs](scripts/self-hosted/pages.mjs); their colours are the
+`html[data-page]` blocks in [site/css/site.css](site/css/site.css). The menu is static HTML and
+[site/js/nav.js](site/js/nav.js) only sets attributes, so it never moves the layout.
+
 ## Query parameters
 
 | Parameter | Values | What it does |
@@ -106,6 +126,15 @@ FIREBALL=~/_Server/qualified/<worktree> npm run self-hosted -- --export
 - The export bundles fireball's widget-stable build. After widget code changes, rebuild it in
   `fireball-qai-6672/services` with `mise run build:js:stable`, then export.
 - The footer panel shows which settings, export time and widget build the page was built from.
+- It also builds two variants from the same export:
+  - `self-hosted-no-init.html`: the local head script without the inline `docking.init` /
+    `sentinel.init` block. Settings arrive only with the runtime configuration, so docking
+    happens after first paint.
+  - `self-hosted-token-head.html`: the self-hosted widget with the head from
+    `docking.js?token=` on fireball (set `QUALIFIED_HOST` for another host). The server embeds the
+    current saved settings, so there's no copied init to keep in sync.
+- Running `mise run build:js:stable` in fireball removes the dev server's build manifests.
+  Restart that worktree's `dev:rsbuild` afterwards, or hosted `docking.js` returns 500.
 - The widget still talks to local fireball (34214) for its configuration and WebSockets. Only
   the asset files are self-hosted.
 

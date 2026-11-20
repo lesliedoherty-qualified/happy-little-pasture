@@ -7,6 +7,7 @@
 //   node scripts/self-hosted/build-page.mjs     (usually through npm run self-hosted)
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { PAGES } from "./pages.mjs";
 
 const repo = fileURLToPath(new URL("../..", import.meta.url));
 const site = `${repo}site`;
@@ -46,6 +47,28 @@ const indent = (text, spaces) =>
     .map((line) => (line ? " ".repeat(spaces) + line : line))
     .join("\n");
 
+
+// Gives a generated page its own name, H1, palette (via data-page) and current menu item.
+function brand(html, id) {
+  const meta = PAGES[id];
+  const checks = [
+    [/<html lang="en" data-page="hosted">/, `<html lang="en" data-page="${id}">`],
+    [/<title>[^<]*<\/title>/, `<title>${meta.title}</title>`],
+    [/<p class="eyebrow">[^<]*<\/p>(\s*)<h1>[^<]*<\/h1>/, `<p class="eyebrow">${meta.eyebrow}</p>$1<h1>${meta.h1}</h1>`],
+    [/ data-nav="hosted" aria-current="page"/, ' data-nav="hosted"'],
+    [new RegExp(` data-nav="${id}" data-local-only`), ` data-nav="${id}" data-local-only aria-current="page"`],
+    [/<p class="harness__title">[^<]*<\/p>/, `<p class="harness__title">${meta.panel}</p>`],
+  ];
+  for (const [pattern, replacement] of checks) {
+    if (!pattern.test(html)) {
+      console.error(`index.html changed (no match for ${pattern}); update build-page.mjs.`);
+      process.exit(1);
+    }
+    html = html.replace(pattern, replacement);
+  }
+  return html;
+}
+
 let page = readFileSync(`${site}/index.html`, "utf8");
 
 const loader = /    <!-- Piper goes first[^\n]*\n    <script src="config\.js"><\/script>\n    <script src="js\/piper-loader\.js"><\/script>\n/;
@@ -61,8 +84,6 @@ page = page.replace(
     indent(localInstall, 4) +
     "\n    <!-- End of self-hosted Qualified install. -->\n",
 );
-
-page = page.replace(/<title>[^<]*<\/title>/, "<title>Llamalytics (self-hosted Qualified)</title>");
 
 const harness = '<section id="harness" class="harness" aria-label="Test harness"></section>';
 if (!page.includes(harness)) {
@@ -88,5 +109,31 @@ page = page.replace(
 );
 page = page.replace('    <script src="js/harness.js" defer></script>\n', "");
 
-writeFileSync(`${site}/self-hosted.html`, page);
+writeFileSync(`${site}/self-hosted.html`, brand(page, "self-hosted"));
 console.log(`Wrote site/self-hosted.html (${flagOn ? "flag on" : "flag off"} README, settings ${settings})`);
+
+// Variant: the customer adds the head script but not the inline init/sentinel block after it,
+// expecting Settings to drive everything through the runtime configuration.
+const inlineInit = /\n[ ]*<script type="text\/javascript">\n(?:(?!<\/script>)[\s\S])*?qualified\.sentinel\.init\(\);\n[ ]*<\/script>\n/;
+if (inlineInit.test(page)) {
+  const noInit = page
+    .replace(inlineInit, "\n    <!-- No inline docking/sentinel init: Settings reach the page only through runtime configuration. -->\n");
+  writeFileSync(`${site}/self-hosted-no-init.html`, brand(noInit, "self-hosted-no-init"));
+  console.log("Wrote site/self-hosted-no-init.html (head script without the inline init block)");
+}
+
+// Variant: self-hosted main widget and CSS, but the head comes from Qualified's token-aware
+// docking.js, which embeds the team's current saved settings. No copied init to keep in sync.
+const localHead = /[ ]*<script src="qualified\/qualified-head-[^"]+\.js" type="text\/javascript"><\/script>\n/;
+if (info.token && localHead.test(page)) {
+  const host = process.env.QUALIFIED_HOST || "http://localhost:34214";
+  const tokenHead = page
+    .replace(inlineInit, "\n")
+    .replace(
+      localHead,
+      `    <script src="${host}/docking.js?token=${encodeURIComponent(info.token)}"></script>\n` +
+        "    <!-- Head from Qualified (saved settings embedded); widget assets below are self-hosted. -->\n",
+    );
+  writeFileSync(`${site}/self-hosted-token-head.html`, brand(tokenHead, "self-hosted-token-head"));
+  console.log("Wrote site/self-hosted-token-head.html (Qualified docking.js?token= head, self-hosted widget)");
+}
