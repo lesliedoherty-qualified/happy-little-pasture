@@ -136,16 +136,18 @@ h3 {
 }
 
 .site-header__inner {
-  max-width: var(--wrap);
+  /* A little wider than the page content, so the test-page menu and both switches fit. */
+  max-width: calc(var(--wrap) + 160px);
   height: 100%;
   margin: 0 auto;
   padding: 0 24px;
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 20px;
 }
 
 .brand {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -164,7 +166,7 @@ h3 {
 /* Test-page menu: one link per page. Only colours change for the current page, never sizes,
    so marking it can't move anything. */
 .site-nav a {
-  padding: 6px 12px;
+  padding: 6px 10px;
   border: 2px solid transparent;
   border-radius: 999px;
   color: var(--ink-soft);
@@ -192,7 +194,9 @@ h3 {
 
 /* Which environment the hosted page loads Piper from (?env=). */
 .env-switch {
+  flex-shrink: 0;
   display: inline-flex;
+  align-items: center;
   border: 2px solid var(--ink);
   border-radius: 999px;
   overflow: hidden;
@@ -206,6 +210,12 @@ h3 {
   color: var(--ink);
   text-decoration: none;
   white-space: nowrap;
+}
+
+.env-switch__label {
+  padding-left: 12px;
+  color: var(--ink-soft);
+  font-weight: 700;
 }
 
 .env-switch [aria-current="true"] {
@@ -259,6 +269,29 @@ html[data-page="self-hosted-no-init"] .hero {
     linear-gradient(100deg, rgba(255, 107, 107, 0.22), rgba(255, 212, 59, 0.22), rgba(81, 207, 102, 0.22),
       rgba(51, 154, 240, 0.22), rgba(204, 93, 232, 0.22)),
     var(--cream);
+}
+
+html[data-page="cdn-host"],
+html[data-page="cdn-host-prod"] {
+  /* Cloudforce: the package served from a CDN origin (mock CDN, not production). */
+  --cream: #eef7fd;
+  --paper: #fafdff;
+  --sand: #9ccbe8;
+  --orange: #0b7285;
+  --purple: #1c5d99;
+  --lavender: #d0ebff;
+  --blush: #e3fafc;
+  --header-bg: rgba(238, 247, 253, 0.94);
+  --hero-a: rgba(165, 216, 255, 0.9);
+  --hero-b: rgba(255, 255, 255, 0.95);
+}
+
+html[data-page="cdn-host-prod"] {
+  /* Same family, deeper sky, so test and prod-like CDN pages are easy to tell apart. */
+  --cream: #e3eefc;
+  --sand: #7aa7d9;
+  --header-bg: rgba(227, 238, 252, 0.94);
+  --hero-a: rgba(116, 143, 252, 0.6);
 }
 
 html[data-page="self-hosted-token-head"] {

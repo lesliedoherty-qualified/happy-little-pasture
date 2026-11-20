@@ -4,8 +4,7 @@
 // - Hosted page: marks the environment Piper loaded from (?env=, or the localhost/hosted default
 //   in config.js), and keeps the page's other query parameters (install=, docking_*=) when you
 //   switch environment.
-// - Self-hosted pages: always local, because the exported package is bootstrapped for local
-//   fireball. The switch shows Local and is disabled.
+// - Generated pages (self-hosted, CDN host): their links are static, one file per environment.
 // - Booker lab: no Piper, so the switch is disabled.
 // - Off localhost (GitHub Pages): the self-hosted pages don't exist, so their links are disabled.
 (function () {
@@ -28,6 +27,10 @@
     });
   }
 
+  // Generated pages (self-hosted, CDN host) write their own menu, environment and CDN links
+  // statically, one file per environment, so there's nothing to do here.
+  if (document.documentElement.hasAttribute("data-env")) return;
+
   if (page === "hosted") {
     var status = window.PASTURE_STATUS || {};
     var params = new URLSearchParams(window.location.search);
@@ -39,17 +42,16 @@
       if (env === status.env) link.setAttribute("aria-current", "true");
       link.setAttribute("title", "Load Piper from " + env + (env === status.env ? " (current)" : ""));
     });
+    // Keep the other test pages in the same environment: page.html (local) or page.qa.html (QA).
+    if (status.env === "qa") {
+      document.querySelectorAll("[data-local-only][href]").forEach(function (link) {
+        link.setAttribute("href", link.getAttribute("href").replace(/\.html$/, ".qa.html"));
+      });
+    }
     return;
   }
 
-  var reason =
-    page.indexOf("self-hosted") === 0
-      ? "Self-hosted pages always load the local fireball export. Switch environment on the Hosted page."
-      : "No Piper on this page. Switch environment on the Hosted page.";
   envLinks.forEach(function (link) {
-    if (page.indexOf("self-hosted") === 0 && link.getAttribute("data-env") === "local") {
-      link.setAttribute("aria-current", "true");
-    }
-    disable(link, reason);
+    disable(link, "No Piper on this page. Switch environment on the Hosted page.");
   });
 })();

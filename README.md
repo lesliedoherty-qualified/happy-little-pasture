@@ -62,7 +62,10 @@ Local team 1: if its allowlist is empty, every domain is allowed. If it has entr
 
 ## Test-page menu
 
-The header menu has one link per test page, and the current one is highlighted:
+The header menu has one link per test page, and the current one is highlighted. Together they
+cover the three install paths explicitly: **Hosted** (Qualified serves everything),
+**Self-hosted** (the customer serves the package) and **CDN host** (the package comes from a CDN
+origin; a mock CDN here, not production).
 
 | Menu | Page | Look |
 | --- | --- | --- |
@@ -70,15 +73,34 @@ The header menu has one link per test page, and the current one is highlighted:
 | Self-hosted | `self-hosted.html`: self-hosted head + the README's copied init | Sparkleforce pink |
 | Head only | `self-hosted-no-init.html`: self-hosted head, no inline init | Rainbowforce rainbow |
 | Token head | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
+| CDN host | `cdn-host.html` (test CDN) / `cdn-host-prod.html` (prod-like CDN), copied init | Cloudforce sky |
 | Booker lab | `booker.html` | Llamalytics cream |
 
-**Local / QA** switches the Hosted page's `?env=` and keeps its other query parameters. The
-self-hosted pages are always local, because the export is built for local fireball, so the switch
-shows Local and is disabled there. Off localhost (GitHub Pages) the self-hosted links are disabled,
-since those pages are generated locally. Names, H1s and eyebrows for the generated pages are in
-[scripts/self-hosted/pages.mjs](scripts/self-hosted/pages.mjs); their colours are the
-`html[data-page]` blocks in [site/css/site.css](site/css/site.css). The menu is static HTML and
-[site/js/nav.js](site/js/nav.js) only sets attributes, so it never moves the layout.
+- **Local / QA** switches environment. On Hosted it sets `?env=` and keeps your other query
+  parameters. Every generated page has a QA twin, `<page>.qa.html`, using team 642's token and a
+  QA copy of the bundle in `site/qualified-qa/`. That copy has the widget's baked-in API, WebSocket
+  and CDN hosts swapped for QA's, as a package downloaded from QA would have. QA's values are
+  fetched from QA's `qualified.js` on each build, with
+  [scripts/self-hosted/qa-environment.json](scripts/self-hosted/qa-environment.json) as the
+  fallback.
+- **Test CDN / Prod CDN** (CDN host pages only) switches where the package comes from:
+  - **Test CDN**: a mock CDN on its own origin, `http://localhost:4601/<local|qa>/`, which
+    `npm start` also runs (set `CDN_PORT` to move it, `CDN_PORT=0` to turn it off). It serves
+    `cdn-test/`, cross-origin with CORS headers, like a real CDN.
+  - **Prod CDN**: this site's own `/cdn/<local|qa>/` endpoint, which GitHub Pages also publishes.
+    `site/cdn/qa/` isn't ignored by git, so you can commit it to publish the bundle you're
+    testing (about 5MB). `site/cdn/local/` is ignored, because it only works against local fireball.
+  - Both CDN copies hold only the head JS, widget JS, CSS and `woff2` fonts, without `daily/`,
+    so voice and video calls don't work from them.
+- Generated pages are git-ignored. Off localhost (GitHub Pages) their menu links are disabled.
+- Names, H1s and eyebrows for the generated pages are in
+  [scripts/self-hosted/pages.mjs](scripts/self-hosted/pages.mjs). Colours are the
+  `html[data-page]` blocks in [site/css/site.css](site/css/site.css). The menu is static HTML;
+  [site/js/nav.js](site/js/nav.js) only sets attributes on the Hosted page, so it never moves the
+  layout.
+- On QA, team 642 currently shows no messenger on this site with a plain install (Hosted, Head
+  only, Token head). Pages with the copied init still show it docked, because that init starts
+  docked by default. QA runs master, so its `docking.js?token=` doesn't embed saved settings yet.
 
 ## Query parameters
 

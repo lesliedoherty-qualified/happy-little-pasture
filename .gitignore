@@ -4,3 +4,9 @@ site/qualified/
 site/self-hosted.html
 site/self-hosted-no-init.html
 site/self-hosted-token-head.html
+site/*.qa.html
+site/cdn-host.html
+site/cdn-host-prod.html
+site/qualified-qa/
+site/cdn/local/
+cdn-test/
