@@ -1,0 +1,379 @@
+{
+  "sparkleforce": {
+    "data_page": [
+      "self-hosted"
+    ],
+    "palette": {
+      "bg": "#fff1f8",
+      "paper": "#fffafd",
+      "accent": "#a0157a",
+      "soft": "#ffd6ec",
+      "gold": "#ffe9a8"
+    },
+    "assets": {
+      "feature-cloud.svg": {
+        "path": "sparkleforce/sparkleforce-feature-cloud.svg",
+        "width": 240,
+        "height": 240
+      },
+      "feature-roadmap.svg": {
+        "path": "sparkleforce/sparkleforce-feature-roadmap.svg",
+        "width": 240,
+        "height": 240
+      },
+      "feature-synergy.svg": {
+        "path": "sparkleforce/sparkleforce-feature-synergy.svg",
+        "width": 240,
+        "height": 240
+      },
+      "hero.svg": {
+        "path": "sparkleforce/sparkleforce-hero.svg",
+        "width": 520,
+        "height": 360
+      },
+      "logo.svg": {
+        "path": "sparkleforce/sparkleforce-logo.svg",
+        "width": 96,
+        "height": 96
+      },
+      "1.png": {
+        "path": "sparkleforce/team/sparkleforce-team-01.png",
+        "width": 480,
+        "height": 480,
+        "original": "1.png"
+      },
+      "2.png": {
+        "path": "sparkleforce/team/sparkleforce-team-02.png",
+        "width": 480,
+        "height": 480,
+        "original": "2.png"
+      },
+      "3.png": {
+        "path": "sparkleforce/team/sparkleforce-team-03.png",
+        "width": 480,
+        "height": 480,
+        "original": "3.png"
+      },
+      "4.png": {
+        "path": "sparkleforce/team/sparkleforce-team-04.png",
+        "width": 480,
+        "height": 480,
+        "original": "4.png"
+      },
+      "5.png": {
+        "path": "sparkleforce/team/sparkleforce-team-05.png",
+        "width": 480,
+        "height": 480,
+        "original": "5.png"
+      },
+      "6.png": {
+        "path": "sparkleforce/team/sparkleforce-team-06.png",
+        "width": 480,
+        "height": 480,
+        "original": "6.png"
+      }
+    }
+  },
+  "rainbowforce": {
+    "data_page": [
+      "self-hosted-no-init"
+    ],
+    "palette": {
+      "bg": "#f1fbf7",
+      "paper": "#fbfffd",
+      "accent": "#1864ab",
+      "soft": "#c5f6fa",
+      "gold": "#ffec99"
+    },
+    "assets": {
+      "feature-cloud.svg": {
+        "path": "rainbowforce/rainbowforce-feature-cloud.svg",
+        "width": 240,
+        "height": 240
+      },
+      "feature-roadmap.svg": {
+        "path": "rainbowforce/rainbowforce-feature-roadmap.svg",
+        "width": 240,
+        "height": 240
+      },
+      "feature-synergy.svg": {
+        "path": "rainbowforce/rainbowforce-feature-synergy.svg",
+        "width": 240,
+        "height": 240
+      },
+      "hero.svg": {
+        "path": "rainbowforce/rainbowforce-hero.svg",
+        "width": 520,
+        "height": 360
+      },
+      "logo.svg": {
+        "path": "rainbowforce/rainbowforce-logo.svg",
+        "width": 96,
+        "height": 96
+      },
+      "1.png": {
+        "path": "rainbowforce/team/rainbowforce-team-01.png",
+        "width": 480,
+        "height": 480,
+        "original": "1.png"
+      },
+      "2.png": {
+        "path": "rainbowforce/team/rainbowforce-team-02.png",
+        "width": 480,
+        "height": 480,
+        "original": "2.png"
+      },
+      "3.png": {
+        "path": "rainbowforce/team/rainbowforce-team-03.png",
+        "width": 480,
+        "height": 480,
+        "original": "3.png"
+      },
+      "4.png": {
+        "path": "rainbowforce/team/rainbowforce-team-04.png",
+        "width": 480,
+        "height": 480,
+        "original": "4.png"
+      },
+      "5.png": {
+        "path": "rainbowforce/team/rainbowforce-team-05.png",
+        "width": 480,
+        "height": 480,
+        "original": "5.png"
+      },
+      "6.png": {
+        "path": "rainbowforce/team/rainbowforce-team-06.png",
+        "width": 480,
+        "height": 480,
+        "original": "6.png"
+      }
+    }
+  },
+  "glitterforce": {
+    "data_page": [
+      "self-hosted-token-head"
+    ],
+    "palette": {
+      "bg": "#f3f1ff",
+      "paper": "#fcfbff",
+      "accent": "#4b2fb0",
+      "soft": "#e0dbff",
+      "gold": "#fff3bf"
+    },
+    "assets": {
+      "feature-cloud.svg": {
+        "path": "glitterforce/glitterforce-feature-cloud.svg",
+        "width": 240,
+        "height": 240
+      },
+      "feature-roadmap.svg": {
+        "path": "glitterforce/glitterforce-feature-roadmap.svg",
+        "width": 240,
+        "height": 240
+      },
+      "feature-synergy.svg": {
+        "path": "glitterforce/glitterforce-feature-synergy.svg",
+        "width": 240,
+        "height": 240
+      },
+      "hero.svg": {
+        "path": "glitterforce/glitterforce-hero.svg",
+        "width": 520,
+        "height": 360
+      },
+      "logo.svg": {
+        "path": "glitterforce/glitterforce-logo.svg",
+        "width": 96,
+        "height": 96
+      },
+      "1.png": {
+        "path": "glitterforce/team/glitterforce-team-01.png",
+        "width": 480,
+        "height": 480,
+        "original": "1.png"
+      },
+      "2.png": {
+        "path": "glitterforce/team/glitterforce-team-02.png",
+        "width": 480,
+        "height": 480,
+        "original": "2.png"
+      },
+      "3.png": {
+        "path": "glitterforce/team/glitterforce-team-03.png",
+        "width": 480,
+        "height": 480,
+        "original": "3.png"
+      },
+      "4.png": {
+        "path": "glitterforce/team/glitterforce-team-04.png",
+        "width": 480,
+        "height": 480,
+        "original": "4.png"
+      },
+      "5.png": {
+        "path": "glitterforce/team/glitterforce-team-05.png",
+        "width": 480,
+        "height": 480,
+        "original": "5.png"
+      },
+      "6.png": {
+        "path": "glitterforce/team/glitterforce-team-06.png",
+        "width": 480,
+        "height": 480,
+        "original": "6.png"
+      }
+    }
+  },
+  "cloudforce": {
+    "data_page": [
+      "cdn-host",
+      "cdn-host-prod"
+    ],
+    "palette": {
+      "bg": "#eef7fd",
+      "paper": "#fafdff",
+      "accent": "#1c5d99",
+      "soft": "#d0ebff",
+      "gold": "#e3fafc"
+    },
+    "assets": {
+      "feature-cloud.svg": {
+        "path": "cloudforce/cloudforce-feature-cloud.svg",
+        "width": 240,
+        "height": 240
+      },
+      "feature-roadmap.svg": {
+        "path": "cloudforce/cloudforce-feature-roadmap.svg",
+        "width": 240,
+        "height": 240
+      },
+      "feature-synergy.svg": {
+        "path": "cloudforce/cloudforce-feature-synergy.svg",
+        "width": 240,
+        "height": 240
+      },
+      "hero.svg": {
+        "path": "cloudforce/cloudforce-hero.svg",
+        "width": 520,
+        "height": 360
+      },
+      "logo.svg": {
+        "path": "cloudforce/cloudforce-logo.svg",
+        "width": 96,
+        "height": 96
+      },
+      "1.png": {
+        "path": "cloudforce/team/cloudforce-team-01.png",
+        "width": 480,
+        "height": 480,
+        "original": "1.png"
+      },
+      "2.png": {
+        "path": "cloudforce/team/cloudforce-team-02.png",
+        "width": 480,
+        "height": 480,
+        "original": "2.png"
+      },
+      "3.png": {
+        "path": "cloudforce/team/cloudforce-team-03.png",
+        "width": 480,
+        "height": 480,
+        "original": "3.png"
+      },
+      "4.png": {
+        "path": "cloudforce/team/cloudforce-team-04.png",
+        "width": 480,
+        "height": 480,
+        "original": "4.png"
+      },
+      "5.png": {
+        "path": "cloudforce/team/cloudforce-team-05.png",
+        "width": 480,
+        "height": 480,
+        "original": "5.png"
+      },
+      "6.png": {
+        "path": "cloudforce/team/cloudforce-team-06.png",
+        "width": 480,
+        "height": 480,
+        "original": "6.png"
+      }
+    }
+  },
+  "alpacalpyseforce": {
+    "data_page": [
+      "gtm",
+      "gtm-docking-in-gtm"
+    ],
+    "palette": {
+      "bg": "#fff4ea",
+      "paper": "#fffbf7",
+      "accent": "#8f3b12",
+      "soft": "#ffe0c7",
+      "gold": "#fff1b8"
+    },
+    "assets": {
+      "feature-cloud.svg": {
+        "path": "alpacalpyseforce/alpacalpyseforce-feature-cloud.svg",
+        "width": 240,
+        "height": 240
+      },
+      "feature-roadmap.svg": {
+        "path": "alpacalpyseforce/alpacalpyseforce-feature-roadmap.svg",
+        "width": 240,
+        "height": 240
+      },
+      "feature-synergy.svg": {
+        "path": "alpacalpyseforce/alpacalpyseforce-feature-synergy.svg",
+        "width": 240,
+        "height": 240
+      },
+      "hero.svg": {
+        "path": "alpacalpyseforce/alpacalpyseforce-hero.svg",
+        "width": 520,
+        "height": 360
+      },
+      "logo.svg": {
+        "path": "alpacalpyseforce/alpacalpyseforce-logo.svg",
+        "width": 96,
+        "height": 96
+      },
+      "1.png": {
+        "path": "alpacalpyseforce/team/alpacalpyseforce-team-01.png",
+        "width": 480,
+        "height": 480,
+        "original": "1.png"
+      },
+      "2.png": {
+        "path": "alpacalpyseforce/team/alpacalpyseforce-team-02.png",
+        "width": 480,
+        "height": 480,
+        "original": "2.png"
+      },
+      "3.png": {
+        "path": "alpacalpyseforce/team/alpacalpyseforce-team-03.png",
+        "width": 480,
+        "height": 480,
+        "original": "3.png"
+      },
+      "4.png": {
+        "path": "alpacalpyseforce/team/alpacalpyseforce-team-04.png",
+        "width": 480,
+        "height": 480,
+        "original": "4.png"
+      },
+      "5.png": {
+        "path": "alpacalpyseforce/team/alpacalpyseforce-team-05.png",
+        "width": 480,
+        "height": 480,
+        "original": "5.png"
+      },
+      "6.png": {
+        "path": "alpacalpyseforce/team/alpacalpyseforce-team-06.png",
+        "width": 480,
+        "height": 480,
+        "original": "6.png"
+      }
+    }
+  }
+}
