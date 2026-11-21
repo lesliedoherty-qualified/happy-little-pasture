@@ -1,0 +1,8 @@
+/* Before QAI-6749: restore the original SlotButton rules. */
+@import url("panda.css");
+[data-component-name="MeetingTimeSelector.SlotButton"] {
+  height: 36px;
+  min-height: 0;
+  white-space: normal;
+  padding-inline: revert;
+}
