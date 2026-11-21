@@ -1,12 +1,20 @@
 node_modules/
 .DS_Store
 site/qualified/
+site/cdn/local/
+cdn-test/
+
+# Generated test pages. Only the QA pages that work on GitHub Pages are committed (pages.mjs
+# publish: true); the local pages, test CDN and mock GTM pages need localhost.
 site/self-hosted.html
 site/self-hosted-no-init.html
 site/self-hosted-token-head.html
-site/*.qa.html
 site/cdn-host.html
 site/cdn-host-prod.html
-site/qualified-qa/
-site/cdn/local/
-cdn-test/
+site/gtm.html
+site/gtm-docking-in-gtm.html
+site/cdn-host.qa.html
+site/gtm.qa.html
+site/gtm-docking-in-gtm.qa.html
+# The QA package is committed like a customer's self-hosted deploy, minus the debug copies.
+site/qualified-qa/**/*.unminified.*

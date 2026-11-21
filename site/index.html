@@ -7,6 +7,9 @@
     <meta name="description" content="A fake company website for testing Piper. Corporate jargon, Bob Ross wisdom, and llamas." />
     <link rel="icon" href="img/logo.svg" type="image/svg+xml" />
 
+    <!-- Test harness: ?q_state=false clears Qualified's visitor state before anything loads. -->
+    <script src="js/reset-state.js"></script>
+
     <!-- Piper goes first, before other scripts, like the recommended install. -->
     <script src="config.js"></script>
     <script src="js/piper-loader.js"></script>
@@ -22,20 +25,32 @@
         </a>
         <nav class="site-nav" aria-label="Test pages">
           <a href="./" data-nav="hosted" aria-current="page">Hosted</a>
-          <a href="self-hosted.html" data-nav="self-hosted" data-local-only>Self-hosted</a>
-          <a href="self-hosted-no-init.html" data-nav="self-hosted-no-init" data-local-only>Head only</a>
-          <a href="self-hosted-token-head.html" data-nav="self-hosted-token-head" data-local-only>Token head</a>
-          <a href="cdn-host.html" data-nav="cdn-host" data-local-only>CDN host</a>
-          <a href="booker.html" data-nav="booker">Booker lab</a>
+          <a href="self-hosted.html" data-nav="self-hosted" data-local-only data-published="self-hosted.qa.html">Self-hosted</a>
+          <a href="self-hosted-no-init.html" data-nav="self-hosted-no-init" data-local-only data-published="self-hosted-no-init.qa.html">Docking no token</a>
+          <a href="self-hosted-token-head.html" data-nav="self-hosted-token-head" data-local-only data-published="self-hosted-token-head.qa.html">Docking with token</a>
+          <a href="cdn-host.html" data-nav="cdn-host" data-local-only data-published="cdn-host-prod.qa.html">CDN host</a>
+          <a href="gtm.html" data-nav="gtm" data-local-only>GTM</a>
+          <a href="components.html" data-nav="components">Components</a>
         </nav>
-        <div class="env-switch" role="group" aria-label="Piper environment" data-env-switch>
-          <a href="./?env=local" data-env="local">Local</a>
-          <a href="./?env=qa" data-env="qa">QA</a>
-        </div>
       </div>
     </header>
 
     <main>
+      <nav class="sub-nav" aria-label="Page options">
+        <div class="wrap sub-nav__inner">
+          <!-- page options -->
+          <div class="sub-nav__group" role="group" aria-label="Piper environment" data-env-switch>
+            <span class="sub-nav__heading">Environment:</span>
+            <a href="./?env=local" data-env="local">Local</a>
+            <a href="./?env=qa" data-env="qa">QA</a>
+          </div>
+          <div class="sub-nav__group" role="group" aria-label="Visitor state">
+            <span class="sub-nav__heading">Visitor state:</span>
+            <a href="?" data-state-toggle="keep" title="Keep the visitor's Qualified state between loads">Keep</a>
+            <a href="?q_state=false" data-state-toggle="reset" title="?q_state=false: start every load as a new visitor (clears the __q_state cookie and saved UI state)">Reset on load</a>
+          </div>
+        </div>
+      </nav>
       <section id="hero-section" class="hero">
         <div class="wrap hero__inner">
           <div class="hero__copy">
@@ -278,7 +293,7 @@
             <span>Llamalytics</span>
           </a>
           <p>&copy; Llamalytics, Inc. A completely fake company for testing Piper. No llamas were harmed.</p>
-          <p><a href="booker.html">Booker lab</a>: the PiperX meeting booker on its own, no routing needed.</p>
+          <p><a href="components.html">Components</a>: the PiperX meeting booker on its own, styled by the self-hosted package or production CSS.</p>
         </div>
         <section id="harness" class="harness" aria-label="Test harness"></section>
       </div>

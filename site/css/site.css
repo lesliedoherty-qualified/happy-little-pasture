@@ -21,6 +21,8 @@
   --shadow: 0 10px 30px rgba(63, 45, 34, 0.1);
   --wrap: 1120px;
   --header-h: 72px;
+  /* The header and page sub-menu: capped on wide screens, always left-aligned. */
+  --nav-max: 1280px;
   --header-bg: rgba(251, 246, 239, 0.94);
   --hero-a: rgba(221, 210, 242, 0.9);
   --hero-b: rgba(244, 212, 207, 0.8);
@@ -136,14 +138,15 @@ h3 {
 }
 
 .site-header__inner {
-  /* A little wider than the page content, so the test-page menu and both switches fit. */
-  max-width: calc(var(--wrap) + 160px);
+  /* Left-aligned at the same offset on every page, not centered, so the menu doesn't move when
+     the page width changes (docking narrows it) or between test pages. Capped on wide screens. */
+  max-width: var(--nav-max);
   height: 100%;
-  margin: 0 auto;
+  margin: 0;
   padding: 0 24px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 14px;
 }
 
 .brand {
@@ -160,13 +163,21 @@ h3 {
 .site-nav {
   display: flex;
   gap: 6px;
-  margin-right: auto;
+  /* The logo and menu fit the docked page width (1040px). If a narrower page ever squeezes them,
+     the menu scrolls sideways rather than wrapping or moving. */
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.site-nav::-webkit-scrollbar {
+  display: none;
 }
 
 /* Test-page menu: one link per page. Only colours change for the current page, never sizes,
    so marking it can't move anything. */
 .site-nav a {
-  padding: 6px 10px;
+  padding: 6px 8px;
   border: 2px solid transparent;
   border-radius: 999px;
   color: var(--ink-soft);
@@ -187,6 +198,7 @@ h3 {
 }
 
 .site-nav a[aria-disabled="true"],
+.sub-nav a[aria-disabled="true"],
 .env-switch [aria-disabled="true"]:not([aria-current]) {
   opacity: 0.45;
   pointer-events: none;
@@ -212,12 +224,6 @@ h3 {
   white-space: nowrap;
 }
 
-.env-switch__label {
-  padding-left: 12px;
-  color: var(--ink-soft);
-  font-weight: 700;
-}
-
 .env-switch [aria-current="true"] {
   background: var(--ink);
   color: var(--paper);
@@ -230,6 +236,59 @@ h3 {
   .site-header__inner {
     justify-content: space-between;
   }
+}
+
+/* Page sub-menu ---------------------------------------------------------------- */
+/* The first thing in <main> on generated pages: this page's own options (CDN or docking-script
+   variants, and copied-init toggles). Plain headings and text links, not pills. The current
+   choice changes colour and underline only, so marking it never moves anything. */
+
+.sub-nav {
+  border-bottom: 2px dashed var(--sand);
+  background: var(--paper);
+  font-size: 0.9rem;
+}
+
+.sub-nav .sub-nav__inner {
+  /* Lines up with the header: same left offset and cap, not centered. */
+  max-width: var(--nav-max);
+  margin: 0;
+  padding-inline: 24px;
+}
+
+.sub-nav__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 28px;
+  padding-block: 10px;
+}
+
+.sub-nav__group {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.sub-nav__heading {
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+.sub-nav a {
+  border-bottom: 2px solid transparent;
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.sub-nav a:hover {
+  color: var(--purple);
+}
+
+.sub-nav a[aria-current] {
+  border-bottom-color: var(--purple);
+  color: var(--purple);
 }
 
 /* Page themes -------------------------------------------------------------- */
@@ -292,6 +351,28 @@ html[data-page="cdn-host-prod"] {
   --sand: #7aa7d9;
   --header-bg: rgba(227, 238, 252, 0.94);
   --hero-a: rgba(116, 143, 252, 0.6);
+}
+
+html[data-page="gtm"],
+html[data-page="gtm-docking-in-gtm"] {
+  /* AlpacalpyseForce: the hosted snippet running from a (mock) Google Tag Manager tag. */
+  --cream: #fff4ea;
+  --paper: #fffbf7;
+  --sand: #f5b88a;
+  --orange: #b4441c;
+  --purple: #8f3b12;
+  --lavender: #ffe0c7;
+  --blush: #fff1b8;
+  --header-bg: rgba(255, 244, 234, 0.94);
+  --hero-a: rgba(255, 170, 110, 0.75);
+  --hero-b: rgba(255, 221, 128, 0.7);
+}
+
+html[data-page="gtm-docking-in-gtm"] {
+  /* The not-recommended placement: same family, with a warning-red accent. */
+  --orange: #c92a2a;
+  --sand: #f08c8c;
+  --hero-a: rgba(255, 135, 135, 0.6);
 }
 
 html[data-page="self-hosted-token-head"] {

@@ -1,0 +1,17 @@
+{
+  "token": "BCGYZamYC46SGX4H",
+  "savedSettings": {
+    "pinning": "immediate",
+    "showSkeleton": true,
+    "dockUnderHeader": true,
+    "skipCrossOriginStylesheets": false
+  },
+  "exportedAt": "2026-11-19T23:44:43Z",
+  "build": {
+    "builtAt": "2026-11-19T23:44:09.914Z",
+    "commitSha": null
+  },
+  "js": "qualified-d305e083.js",
+  "css": "qualified-b85e236d.css",
+  "head": "qualified-head-7caab759.js"
+}

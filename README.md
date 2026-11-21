@@ -60,30 +60,70 @@ team 642 from `app1.qualified-dev.com` instead.
 Local team 1: if its allowlist is empty, every domain is allowed. If it has entries, add
 `localhost:4600`.
 
+## Publishing the self-hosted QA pages
+
+GitHub Pages publishes only `site/`, so the generator and its inputs live alongside it in this repo.
+Like a customer's self-hosted install, the QA package is committed into the site and served from
+it:
+
+- `site/qualified-qa/`: the QA package (head and widget JS, CSS, fonts and `daily/`), with QA's
+  hosts baked in. The `.unminified` debug copies aren't committed.
+- The QA pages that work from github.io (`publish: true` in
+  [scripts/self-hosted/pages.mjs](scripts/self-hosted/pages.mjs)): `self-hosted.qa.html`,
+  `self-hosted-no-init.qa.html`, `self-hosted-token-head.qa.html` and `cdn-host-prod.qa.html`.
+- `site/cdn/qa/` for the Prod CDN page.
+
+To update what Pages serves: `npm run self-hosted -- --export`, then commit `site/qualified-qa/`,
+the four `.qa.html` pages and `site/cdn/qa/`, and push. Re-exports change the head, widget and CSS
+filenames, so commit the deletions too.
+
+Local pages, the test CDN page and the GTM pages need localhost, so they stay git-ignored. On
+github.io the menu sends each item to its published QA page (CDN host opens the Prod CDN page) and
+disables GTM, the Local environment and the Test CDN option. The sub-menu's init toggles work there
+too, because they only change the page's URL.
+
 ## Test-page menu
 
-The header menu has one link per test page, and the current one is highlighted. Together they
-cover the three install paths explicitly: **Hosted** (Qualified serves everything),
-**Self-hosted** (the customer serves the package) and **CDN host** (the package comes from a CDN
-origin; a mock CDN here, not production).
+The header menu has one link per test page, and the current one is highlighted. It's left-aligned
+at the same offset on every page, so it doesn't move between pages or when docking narrows the
+page; page options (environment, visitor state, variants) live in the sub-menu below it. Together they
+cover every install path explicitly: **Hosted** (Qualified serves everything), **Self-hosted**
+(the customer serves the package), **CDN host** (the package comes from a CDN origin; a mock CDN
+here, not production) and **GTM** (the hosted snippet runs from a Google Tag Manager tag; a mock
+GTM here).
 
 | Menu | Page | Look |
 | --- | --- | --- |
 | Hosted | `index.html`: hosted install from `config.js` (`?install=` variants in the footer harness) | Llamalytics cream |
 | Self-hosted | `self-hosted.html`: self-hosted head + the README's copied init | Sparkleforce pink |
-| Head only | `self-hosted-no-init.html`: self-hosted head, no inline init | Rainbowforce rainbow |
-| Token head | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
+| Docking no token | `self-hosted-no-init.html`: self-hosted head, no inline init | Rainbowforce rainbow |
+| Docking with token | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
 | CDN host | `cdn-host.html` (test CDN) / `cdn-host-prod.html` (prod-like CDN), copied init | Cloudforce sky |
-| Booker lab | `booker.html` | Llamalytics cream |
+| GTM | `gtm.html` (docking script in `<head>`) / `gtm-docking-in-gtm.html` (docking script inside the GTM tag) | AlpacalpyseForce sunset |
+| Components | `components.html`: meeting booker before and after QAI-6749 | Llamalytics cream |
 
-- **Local / QA** switches environment. On Hosted it sets `?env=` and keeps your other query
-  parameters. Every generated page has a QA twin, `<page>.qa.html`, using team 642's token and a
+- **Environment: Local | QA** (in the page sub-menu) switches environment. On Hosted it sets
+  `?env=` and keeps your other query parameters. Every generated page has a QA twin, `<page>.qa.html`, using team 642's token and a
   QA copy of the bundle in `site/qualified-qa/`. That copy has the widget's baked-in API, WebSocket
   and CDN hosts swapped for QA's, as a package downloaded from QA would have. QA's values are
   fetched from QA's `qualified.js` on each build, with
   [scripts/self-hosted/qa-environment.json](scripts/self-hosted/qa-environment.json) as the
   fallback.
-- **Test CDN / Prod CDN** (CDN host pages only) switches where the package comes from:
+- **Visitor state: Keep | Reset on load** (every test page's sub-menu): **Reset on load** adds
+  `?q_state=false`, and [site/js/reset-state.js](site/js/reset-state.js), loaded first in `<head>`,
+  clears Qualified's `__q_state_*` cookies and saved messenger UI state (`__qualified_ui_state_*` in
+  sessionStorage) before any Qualified script runs. Every load, including a reload, is then a new
+  visitor, without a fresh incognito window. `window.__PASTURE_STATE_RESET__` lists what it cleared.
+- **Page sub-menu**: each generated page has a bar at the top of `<main>` with its own options.
+  Variant pages link to their twin there (CDN: Test | Prod, Docking script loaded by: HTML head |
+  GTM). Pages with a copied init (Self-hosted, both CDN pages) also get **Pin beneath header:
+  true | false** and **Loading skeleton: true | false**. Those set `?underNav=` and `?skeleton=`,
+  which [site/js/init-overrides.js](site/js/init-overrides.js) merges into the copied
+  `docking.init({...})` before first paint. It's a test-harness script loaded right after the
+  head script, so the README's install block stays verbatim. **Use the copied init** clears them.
+  Docking no token has no init to change, and Docking with token's init comes from Qualified's `docking.js`
+  response, so neither has toggles.
+- **CDN: Test / Prod** (CDN host sub-menu) switches where the package comes from:
   - **Test CDN**: a mock CDN on its own origin, `http://localhost:4601/<local|qa>/`, which
     `npm start` also runs (set `CDN_PORT` to move it, `CDN_PORT=0` to turn it off). It serves
     `cdn-test/`, cross-origin with CORS headers, like a real CDN.
@@ -92,14 +132,35 @@ origin; a mock CDN here, not production).
     testing (about 5MB). `site/cdn/local/` is ignored, because it only works against local fireball.
   - Both CDN copies hold only the head JS, widget JS, CSS and `woff2` fonts, without `daily/`,
     so voice and video calls don't work from them.
+- **Docking script loaded by: HTML head / GTM** (GTM sub-menu) switches where the docking
+  script goes:
+  - **HTML head**: the Settings card's GTM install, `docking.js?token=` directly in `<head>` before
+    the GTM container, with the standard Qualified snippet in a GTM tag.
+  - **GTM**: the docking script inside the GTM tag too, the placement the Settings card warns
+    against. It can only reserve space when the tag fires, after first paint.
+- **Mock GTM**: [scripts/self-hosted/mock-gtm.js](scripts/self-hosted/mock-gtm.js) copies what
+  GTM does to a page. Google's container snippet loads `gtm.js?id=GTM-PASTURE-<ENV>[-ALL]` from the
+  mock CDN origin, and its Custom HTML tags fire on All Pages (`gtm.js`) and are appended to
+  `<body>` with their scripts re-created, so they run late and aren't parser-inserted. The
+  containers are generated into `cdn-test/gtm/`. `window.__PASTURE_GTM__.fired` lists what fired
+  and when.
+- **Timing**: `?delay=<ms>` on any `localhost:4601` URL holds that response. `GTM_DELAY_MS=<ms>
+  npm start` slows the mock GTM container by default.
+- **Themed art**: each generated page has its own logo, hero, feature illustrations and team
+  portraits from [site/img/themes/](site/img/themes/), mapped to pages by
+  [site/img/themes/asset-map.json](site/img/themes/asset-map.json) (Cloudforce and
+  AlpacalpyseForce each cover both of their pages). `npm run self-hosted` swaps the image URLs at
+  build time, keeping each image's existing width, height and alt text, so nothing changes after
+  load. The build fails if a page image has no replacement or its aspect ratio differs. Hosted and
+  the Components page keep the original Llamalytics art. `art/themes-preview.png` shows all five sets.
 - Generated pages are git-ignored. Off localhost (GitHub Pages) their menu links are disabled.
 - Names, H1s and eyebrows for the generated pages are in
   [scripts/self-hosted/pages.mjs](scripts/self-hosted/pages.mjs). Colours are the
   `html[data-page]` blocks in [site/css/site.css](site/css/site.css). The menu is static HTML;
   [site/js/nav.js](site/js/nav.js) only sets attributes on the Hosted page, so it never moves the
   layout.
-- On QA, team 642 currently shows no messenger on this site with a plain install (Hosted, Head
-  only, Token head). Pages with the copied init still show it docked, because that init starts
+- On QA, team 642 currently shows no messenger on this site with a plain install (Hosted,
+  Docking no token, Docking with token). Pages with the copied init still show it docked, because that init starts
   docked by default. QA runs master, so its `docking.js?token=` doesn't embed saved settings yet.
 
 ## Query parameters
@@ -172,32 +233,32 @@ The manual checklist is in
 
 Both pages are the same HTML, so any layout difference comes from Piper and its settings.
 
-## Booker lab
+## Components page
 
-[site/booker.html](site/booker.html) (`http://localhost:4600/booker.html`) shows the PiperX
+[site/components.html](site/components.html) (`http://localhost:4600/components.html`; the old
+`booker.html` redirects there) shows the PiperX
 full-screen meeting booker (`LightboxExperience` → `MeetingTimeSelector`) side by side at
 several widths. It needs no rep, routing, calendar, or Piper install, so you can check its layout,
 focus, and CSS in seconds instead of going through a live booking. Each frame is its own
 viewport, so the app's `(max-width: 767px)` mobile queries apply. Click **open** on a frame
 to inspect it in DevTools.
 
-Nothing in it is hand-styled:
+The top toggle switches between **Before (QAI-6749)** and **After** (the default):
 
-- `site/booker/frame.html` holds markup captured by rendering the real fireball components with
-  fake slots (Thu/Fri, 15-minute times, America/Denver), so it carries the app's own hashed
-  Panda class names.
-- `site/booker/panda.css` is the app's own Panda stylesheet for that markup.
+- **Before:** the frozen original mobile layout, with four time columns and arrows on either
+  side of the day strip. `site/booker/before.css` restores wrapping, fixed 36px pills and the
+  original padding, reproducing the label overflow even when the underlying CSS has the fix.
+- **After:** the compact mobile layout with three columns and arrows beside the month title.
+  `site/booker/after.css` applies the shipped `SlotButton` rules: `white-space: nowrap`,
+  `min-height: 36px`, and 4px inline padding. Desktop keeps its four-column layout.
 
-There are two controls:
+Both CSS files import the captured Fireball Panda stylesheet (`site/booker/panda.css`). The
+explicit pill rules keep the comparison reliable when a local checkout is behind production.
+The layout comes from real component captures, rather than simulated grid styles. The frozen
+`scripts/booker/dump/before-mobile.html` is preserved across refreshes; `fixed.html` captures the
+compact selector. Use `?version=before` or `?version=after` to link directly to either version.
 
-- **Layout:** *As captured* is the booker exactly as the captured fireball checkout renders it.
-  It's captured twice, once with the app's `isMobile` on and once with it off, and each frame
-  shows the capture that matches its width. *Preview: compact layout on mobile* swaps the compact
-  layout into the frames below 768px, so you can try the layout half of the QAI-6749 fix on a
-  checkout that doesn't have it.
-- **Time pill CSS-only patch:** adds `white-space: nowrap; height: auto; min-height: 36px` to
-  `SlotButton`, from a separate `<style>` in the frame. That's the CSS half of the fix, for a
-  checkout that doesn't have it.
+Width and brand colour controls remain available.
 
 The frame loads Inter from Google Fonts, the font the messenger uses. That makes it the one page
 on this site with a third-party request besides Qualified.
@@ -219,9 +280,7 @@ npm run booker:build                            # rebuild from the committed cap
 `booker:refresh` copies [scripts/booker/zz_booker_static_dump.test.tsx](scripts/booker/zz_booker_static_dump.test.tsx)
 into fireball's `multimodal_v2/components/meetings/`, runs it with `mise run test:js`, removes it
 again (even on failure), and runs [scripts/build-booker.mjs](scripts/build-booker.mjs). The test
-stubs `src/validation`, an `.erb` module that would otherwise boot Rails. To capture the fix
-itself, make the change in a fireball worktree and refresh from it.
-Then *As captured* shows your edited code at every width.
+stubs `src/validation`, an `.erb` module that would otherwise boot Rails. The Before layout stays frozen; After uses the captured compact selector.
 
 ## Team portraits
 
