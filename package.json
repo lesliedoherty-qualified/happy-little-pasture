@@ -11,6 +11,8 @@
     "team": "bash scripts/crop-team.sh",
     "booker:build": "node scripts/build-booker.mjs",
     "booker:refresh": "bash scripts/refresh-booker.sh",
+    "multimodal:build": "node scripts/build-multimodal.mjs",
+    "multimodal:refresh": "bash scripts/refresh-multimodal.sh",
     "self-hosted": "bash scripts/self-hosted/sync.sh"
   },
   "engines": {

@@ -162,21 +162,30 @@ h3 {
 
 .site-nav {
   display: flex;
+  align-items: center;
   gap: 6px;
-  /* The logo and menu fit the docked page width (1040px). If a narrower page ever squeezes them,
-     the menu scrolls sideways rather than wrapping or moving. */
+  min-width: 0;
+}
+
+/* The logo and menu fit the docked page width (1040px). If a narrower page ever squeezes them,
+   the page links scroll sideways rather than wrapping or moving. The Components button sits
+   after this scroller, so it never scrolls out of view. */
+.site-nav__links {
+  display: flex;
+  gap: 6px;
   min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
 }
 
-.site-nav::-webkit-scrollbar {
+.site-nav__links::-webkit-scrollbar {
   display: none;
 }
 
 /* Test-page menu: one link per page. Only colours change for the current page, never sizes,
    so marking it can't move anything. */
-.site-nav a {
+.site-nav a,
+.site-nav__toggle {
   padding: 6px 8px;
   border: 2px solid transparent;
   border-radius: 999px;
@@ -187,14 +196,73 @@ h3 {
   text-decoration: none;
 }
 
-.site-nav a:hover {
+.site-nav a:hover,
+.site-nav__toggle:hover {
   color: var(--purple);
 }
 
-.site-nav a[aria-current="page"] {
+.site-nav a[aria-current="page"],
+.site-nav__toggle[aria-current] {
   border-color: var(--ink);
   background: var(--purple);
   color: #fff;
+}
+
+/* Components sub-menu: a disclosure button that opens on click (site/js/nav.js). The list is
+   static HTML in every page, a manual popover, so it opens in the top layer: above a docked
+   Piper (whose host is z-index 2147483640) and outside any scroller that could clip it.
+   nav.js places it under the button when it opens, so opening it moves nothing. */
+.site-nav__menu {
+  flex-shrink: 0;
+}
+
+.site-nav__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  background: none;
+  font-family: inherit;
+  line-height: inherit;
+  cursor: pointer;
+}
+
+.site-nav__toggle::after {
+  content: "";
+  width: 0.4em;
+  height: 0.4em;
+  margin-top: -0.2em;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.site-nav__toggle[aria-expanded="true"]::after {
+  margin-top: 0.2em;
+  transform: rotate(-135deg);
+}
+
+/* Popovers are position: fixed in the top layer; override the UA's centring (inset: 0;
+   margin: auto). nav.js sets top and left. */
+.site-nav__dropdown {
+  inset: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  color: var(--ink);
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.site-nav__dropdown a {
+  display: block;
+  border-radius: 10px;
+}
+
+.site-nav__dropdown a:not([aria-current]):hover {
+  background: var(--cream);
 }
 
 .site-nav a[aria-disabled="true"],

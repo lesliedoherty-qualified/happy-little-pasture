@@ -24,13 +24,21 @@
           <span>Llamalytics</span>
         </a>
         <nav class="site-nav" aria-label="Test pages">
-          <a href="./" data-nav="hosted" aria-current="page">Hosted</a>
-          <a href="self-hosted.html" data-nav="self-hosted" data-local-only data-published="self-hosted.qa.html">Self-hosted</a>
-          <a href="self-hosted-no-init.html" data-nav="self-hosted-no-init" data-local-only data-published="self-hosted-no-init.qa.html">Docking no token</a>
-          <a href="self-hosted-token-head.html" data-nav="self-hosted-token-head" data-local-only data-published="self-hosted-token-head.qa.html">Docking with token</a>
-          <a href="cdn-host.html" data-nav="cdn-host" data-local-only data-published="cdn-host-prod.qa.html">CDN host</a>
-          <a href="gtm.html" data-nav="gtm" data-local-only>GTM</a>
-          <a href="components.html" data-nav="components">Components</a>
+          <div class="site-nav__links">
+            <a href="./" data-nav="hosted" aria-current="page">Hosted</a>
+            <a href="self-hosted.html" data-nav="self-hosted" data-local-only data-published="self-hosted.qa.html">Self-hosted</a>
+            <a href="self-hosted-no-init.html" data-nav="self-hosted-no-init" data-local-only data-published="self-hosted-no-init.qa.html">Docking no token</a>
+            <a href="self-hosted-token-head.html" data-nav="self-hosted-token-head" data-local-only data-published="self-hosted-token-head.qa.html">Docking with token</a>
+            <a href="cdn-host.html" data-nav="cdn-host" data-local-only data-published="cdn-host-prod.qa.html">CDN host</a>
+            <a href="gtm.html" data-nav="gtm" data-local-only>GTM</a>
+          </div>
+          <div class="site-nav__menu" data-nav-menu>
+            <button type="button" class="site-nav__toggle" data-nav="components" aria-expanded="false" aria-controls="components-menu">Components</button>
+            <ul class="site-nav__dropdown" id="components-menu" popover="manual">
+              <li><a href="components.html" data-nav="booker">Meeting booker</a></li>
+              <li><a href="multimodal.html" data-nav="multimodal">Multimodal</a></li>
+            </ul>
+          </div>
         </nav>
       </div>
     </header>

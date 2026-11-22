@@ -100,7 +100,7 @@ GTM here).
 | Docking with token | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
 | CDN host | `cdn-host.html` (test CDN) / `cdn-host-prod.html` (prod-like CDN), copied init | Cloudforce sky |
 | GTM | `gtm.html` (docking script in `<head>`) / `gtm-docking-in-gtm.html` (docking script inside the GTM tag) | AlpacalpyseForce sunset |
-| Components | `components.html`: meeting booker before and after QAI-6749 | Llamalytics cream |
+| Components | A sub-menu that opens on click: **Meeting booker** (`components.html`, the booker before and after QAI-6749) and **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks) | Llamalytics cream |
 
 - **Environment: Local | QA** (in the page sub-menu) switches environment. On Hosted it sets
   `?env=` and keeps your other query parameters. Every generated page has a QA twin, `<page>.qa.html`, using team 642's token and a
@@ -153,6 +153,10 @@ GTM here).
   build time, keeping each image's existing width, height and alt text, so nothing changes after
   load. The build fails if a page image has no replacement or its aspect ratio differs. Hosted and
   the Components page keep the original Llamalytics art. `art/themes-preview.png` shows all five sets.
+- **Components** is a disclosure button, not a link. Click, Enter or Space opens its list; Escape, a
+  click outside or tabbing away closes it. The list is static HTML in every page (a manual
+  `popover`), so it opens in the top layer, above a docked Piper, and moves nothing. The button
+  is highlighted on either of its pages. Below 860px the whole menu is hidden, as before.
 - Generated pages are git-ignored. Off localhost (GitHub Pages) their menu links are disabled.
 - Names, H1s and eyebrows for the generated pages are in
   [scripts/self-hosted/pages.mjs](scripts/self-hosted/pages.mjs). Colours are the
@@ -281,6 +285,49 @@ npm run booker:build                            # rebuild from the committed cap
 into fireball's `multimodal_v2/components/meetings/`, runs it with `mise run test:js`, removes it
 again (even on failure), and runs [scripts/build-booker.mjs](scripts/build-booker.mjs). The test
 stubs `src/validation`, an `.erb` module that would otherwise boot Rails. The Before layout stays frozen; After uses the captured compact selector.
+
+## Multimodal page
+
+[site/multimodal.html](site/multimodal.html) (`http://localhost:4600/multimodal.html`) shows the
+PiperX messenger (`Main`) in text mode as markup only, with no Piper running. It's for checking
+QAI-6788's header CSS hooks (`--q-toolbar-background`, `--q-toolbar-text-color`,
+`--q-toolbar-secondary-text-color`, `--q-toolbar-button-hover-background`; see "Host-page CSS
+hooks" in fireball's `multimodal_v2/DEVELOPMENT.md`) without a running app.
+
+- **States:** Sidebar, Docked, Collapsed right, Collapsed right with the preview card showing,
+  and Mobile (Sidebar with `isMobile` on). Sidebar and Collapsed right also come with no job title
+  and with no name or job title: neither is required in Settings, and a cleared one stays blank,
+  so the header can be the name line only, or only the avatar. The mobile layout comes from the
+  app's `isMobile` signal at capture time, not the frame width.
+- **Hooks:** a text field per variable (blank means unset, any CSS colour works) with a colour
+  picker, plus **Classic header** and **Unset all** presets. The frame sets them on the host
+  with `style.setProperty`. The page URL keeps the state and hooks, so a comparison can be linked.
+- **Frame:** [site/multimodal/frame.html](site/multimodal/frame.html) puts the markup in a real open
+  shadow root (declarative shadow DOM) on `#qualified-multimodal-host`, with production's inline
+  host style, so `:host` rules, inherited custom properties and `::part()` behave as in
+  production. One difference: there's no focus gate, so the host has no `tabindex="-1"` and Tab
+  reaches the controls directly. The frame takes `?state=` and the hook names without `--q-`
+  (for example `?toolbar-background=%231f5fa0`).
+- Like the booker frame, it loads Inter from Google Fonts. Nothing is interactive beyond focus
+  and hover.
+- The 1280px frame is wider than the page, so scroll the frames row to see the floating card.
+
+### Refresh it from fireball
+
+```sh
+FIREBALL=~/_Server/qualified/fireball-qai-6788 npm run multimodal:refresh   # the hooks branch
+npm run multimodal:refresh                      # ~/_Server/qualified/fireball
+npm run multimodal:build                        # rebuild from the committed capture only
+```
+
+`multimodal:refresh` copies
+[scripts/multimodal/zz_multimodal_static_dump.test.tsx](scripts/multimodal/zz_multimodal_static_dump.test.tsx)
+into fireball's `multimodal_v2/components/app/`, runs it with `mise run test:js`, removes it
+again (even on failure), and runs [scripts/build-multimodal.mjs](scripts/build-multimodal.mjs).
+The stylesheet doesn't come from the test: Jest's Panda transformer rewrites it for jsdom
+(`:host` to `html`, `@layer` to `@media all`, `:where()` unwrapped), which breaks it in a
+shadow root. The script runs `panda cssgen` in the same checkout instead, writing into the dump.
+`frame.html` records the fireball commit, with `+uncommitted` when `multimodal_v2` had edits.
 
 ## Team portraits
 

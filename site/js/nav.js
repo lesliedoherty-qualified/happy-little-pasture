@@ -1,5 +1,6 @@
 // Test-page menu behaviour. The menu itself is static HTML in each page, so nothing is inserted
-// after load; this only sets attributes, which change colours, never sizes.
+// after load; this only sets attributes, which change colours, never sizes, and opens the
+// Components popover in the top layer, where it covers the page without moving it.
 //
 // - Hosted page: marks the environment Piper loaded from (?env=, or the localhost/hosted default
 //   in config.js), and keeps the page's other query parameters (install=, docking_*=) when you
@@ -7,8 +8,52 @@
 // - Generated pages: links are static, one file per environment; copied-init toggles are marked here.
 // - Booker lab: no Piper, so the switch is disabled.
 // - Off localhost (GitHub Pages): the self-hosted pages don't exist, so their links are disabled.
+// - Components sub-menu (every page): shows and hides the static list, a manual popover, and
+//   sets the button's aria-expanded. The list opens in the top layer, so opening it moves
+//   nothing and a docked Piper can't cover it.
 (function () {
   "use strict";
+
+  // Components sub-menu: a disclosure. Click toggles it; Escape, a click outside, focus leaving
+  // it or a resize closes it. The button is marked current when one of its pages is.
+  document.querySelectorAll("[data-nav-menu]").forEach(function (menu) {
+    var button = menu.querySelector("button[aria-controls]");
+    var list = document.getElementById(button.getAttribute("aria-controls"));
+    if (list.querySelector('[aria-current="page"]')) button.setAttribute("aria-current", "true");
+
+    function isOpen() {
+      return button.getAttribute("aria-expanded") === "true";
+    }
+    function setOpen(open) {
+      if (open === isOpen()) return;
+      button.setAttribute("aria-expanded", String(open));
+      if (!open) return list.hidePopover();
+      // Top-layer popovers are fixed to the viewport: put it under the button. The header is
+      // sticky, so the button doesn't move while it's open.
+      var box = button.getBoundingClientRect();
+      list.style.top = Math.round(box.bottom + 8) + "px";
+      list.style.left = Math.round(box.left) + "px";
+      list.style.minWidth = Math.round(box.width) + "px";
+      list.showPopover();
+    }
+    button.addEventListener("click", function () {
+      setOpen(!isOpen());
+    });
+    menu.addEventListener("keydown", function (event) {
+      if (event.key !== "Escape" || !isOpen()) return;
+      setOpen(false);
+      button.focus();
+    });
+    menu.addEventListener("focusout", function (event) {
+      if (event.relatedTarget && !menu.contains(event.relatedTarget)) setOpen(false);
+    });
+    document.addEventListener("click", function (event) {
+      if (isOpen() && !menu.contains(event.target)) setOpen(false);
+    });
+    window.addEventListener("resize", function () {
+      setOpen(false);
+    });
+  });
 
   var page = document.documentElement.getAttribute("data-page") || "";
   var servedLocally = /^(localhost|127\.0\.0\.1|\[::1\]|)$/.test(window.location.hostname);

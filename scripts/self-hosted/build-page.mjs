@@ -344,6 +344,10 @@ for (const [pattern, what] of [
   [/<html lang="en" data-page="hosted">/, "<html> tag"],
   [/<p class="eyebrow">[^<]*<\/p>\s*<h1>[^<]*<\/h1>/, "hero eyebrow and H1"],
   [/ data-nav="hosted" aria-current="page"/, "Hosted menu link"],
+  // Page links sit in a scroller; the Components sub-menu (Meeting booker, Multimodal) sits after it,
+  // copied as-is. nav.js opens it.
+  [/<div class="site-nav__links">\n(?:            <a [^\n]*\n)+          <\/div>\n/, "menu links"],
+  [/<div class="site-nav__menu" data-nav-menu>[\s\S]*?href="components\.html"[\s\S]*?href="multimodal\.html"[\s\S]*?<\/ul>/, "Components sub-menu"],
 ]) {
   if (!pattern.test(base)) fail(`index.html's ${what} changed; update build-page.mjs.`);
 }
