@@ -14,8 +14,72 @@
 (function () {
   "use strict";
 
-  // Components sub-menu: a disclosure. Click toggles it; Escape, a click outside, focus leaving
-  // it or a resize closes it. The button is marked current when one of its pages is.
+  // Offers sub-menu (every page), added next to Components. Each item reloads this page with
+  // ?offer=<location>-<cta>, keeping the other parameters. The local seed (seed-offers.rb in
+  // .cursor/projects/pinned-onboarding-rendering/local-team1-qa-flags-2026-11-23/) creates one
+  // Offer per value on local team 1; each shows only when its value is in the URL.
+  var OFFERS = [
+    ["Header", [["header-button", "Button"], ["header-link", "Link"], ["header-form", "Form"]]],
+    ["Footer", [["footer-button", "Button"], ["footer-link", "Link"], ["footer-form", "Form"]]],
+    ["Popup", [["popup-button", "Button"], ["popup-form", "Form"]]],
+    ["Sidebar", [["sidebar-button", "Button"], ["sidebar-form", "Form"]]],
+  ];
+  (function addOffersMenu() {
+    var components = document.querySelector("[data-nav-menu]");
+    if (!components || document.getElementById("offers-menu")) return;
+    var params = new URLSearchParams(window.location.search);
+    var current = params.get("offer");
+    var hrefFor = function (value) {
+      var next = new URLSearchParams(params);
+      if (value) next.set("offer", value);
+      else next.delete("offer");
+      var query = next.toString();
+      return window.location.pathname + (query ? "?" + query : "") + window.location.hash;
+    };
+    var item = function (value, label) {
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.href = hrefFor(value);
+      a.textContent = label;
+      if ((value || null) === current) a.setAttribute("aria-current", "page");
+      li.appendChild(a);
+      return li;
+    };
+
+    var menu = document.createElement("div");
+    menu.className = "site-nav__menu";
+    menu.setAttribute("data-nav-menu", "");
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "site-nav__toggle";
+    button.setAttribute("data-nav", "offers");
+    button.setAttribute("aria-expanded", "false");
+    button.setAttribute("aria-controls", "offers-menu");
+    button.textContent = "Offers";
+    var list = document.createElement("ul");
+    list.className = "site-nav__dropdown";
+    list.id = "offers-menu";
+    list.setAttribute("popover", "manual");
+    list.appendChild(item(null, "None"));
+    OFFERS.forEach(function (group) {
+      var heading = document.createElement("li");
+      heading.className = "site-nav__dropdown-heading";
+      heading.setAttribute("aria-hidden", "true");
+      heading.textContent = group[0];
+      list.appendChild(heading);
+      group[1].forEach(function (offer) {
+        var li = item(offer[0], offer[1]);
+        li.firstChild.setAttribute("aria-label", group[0] + " " + offer[1].toLowerCase() + " offer");
+        list.appendChild(li);
+      });
+    });
+    menu.appendChild(button);
+    menu.appendChild(list);
+    components.insertAdjacentElement("afterend", menu);
+  })();
+
+  // Components and Offers sub-menus: disclosures. Click toggles one; Escape, a click outside,
+  // focus leaving it or a resize closes it. The button is marked current when one of its items is.
   document.querySelectorAll("[data-nav-menu]").forEach(function (menu) {
     var button = menu.querySelector("button[aria-controls]");
     var list = document.getElementById(button.getAttribute("aria-controls"));
