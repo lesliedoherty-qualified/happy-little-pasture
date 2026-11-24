@@ -1,5 +1,11 @@
 # Publishes site/ to GitHub Pages on every push to main.
 # One-time setup: repo Settings > Pages > Build and deployment > Source: GitHub Actions.
+#
+# Two jobs, as in GitHub's Pages starter workflow: build uploads the artifact, deploy publishes
+# it. The job boundary means the artifact is finalized before deploy-pages looks it up. In one
+# job, deploy-pages@v4 sometimes found 0 artifacts right after a successful upload, and a
+# re-run of that run then found 3 (every attempt's), so re-runs can't recover it. Start a fresh
+# run instead: push, or Actions > Deploy to GitHub Pages > Run workflow.
 name: Deploy to GitHub Pages
 
 on:
@@ -12,21 +18,28 @@ permissions:
   pages: write
   id-token: write
 
+# One deployment at a time. Don't cancel one in progress: a deploy cut off part-way fails. A
+# newer push waits, and any runs queued behind it are skipped.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
