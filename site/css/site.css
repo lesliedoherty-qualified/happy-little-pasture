@@ -18,7 +18,11 @@
   --lavender: #ddd2f2;
   --charcoal: #4a4646;
   --radius: 22px;
-  --shadow: 0 10px 30px rgba(63, 45, 34, 0.1);
+  /* Flat: panels and cards are outlined with a hairline, not lifted with a drop shadow. --shadow
+     is a 1px ring, so anything that uses it (the lab pages' control panels too) gets the
+     hairline without a border that would change its size. */
+  --hairline: rgba(63, 45, 34, 0.14);
+  --shadow: 0 0 0 1px var(--hairline);
   --wrap: 1120px;
   --header-h: 72px;
   /* The header and page sub-menu: capped on wide screens, always left-aligned. */
@@ -87,42 +91,55 @@ h3 {
 
 /* Buttons ------------------------------------------------------------------ */
 
+/* Flat pills: a solid fill, roomy padding, no outline and no drop shadow. Hover deepens the fill;
+   nothing moves. The border is transparent, not absent, so a ghost button's outline doesn't
+   make it bigger than a filled one. */
 .button {
   display: inline-block;
-  padding: 0.85em 1.5em;
-  border: 2px solid var(--ink);
+  padding: 0.95em 1.9em;
+  border: 1px solid transparent;
   border-radius: 999px;
   background: var(--purple);
   color: #fff;
-  font-weight: 700;
+  font-weight: 600;
+  line-height: 1.2;
   text-decoration: none;
-  box-shadow: 0 4px 0 var(--ink);
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 5px 0 var(--ink);
+  background: color-mix(in srgb, var(--purple) 82%, black);
 }
 
-.button:active {
-  transform: translateY(3px);
-  box-shadow: 0 1px 0 var(--ink);
+.button:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 3px;
 }
 
 .button--small {
-  padding: 0.5em 1.1em;
+  padding: 0.6em 1.3em;
   font-size: 0.95rem;
 }
 
+/* Secondary: see-through with a soft outline. */
 .button--ghost {
-  background: var(--paper);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--ink) 30%, transparent);
   color: var(--ink);
+}
+
+.button--ghost:hover {
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+  border-color: color-mix(in srgb, var(--ink) 45%, transparent);
 }
 
 .button--light {
   background: var(--paper);
   color: var(--purple);
+}
+
+.button--light:hover {
+  background: var(--cream);
 }
 
 /* Header ------------------------------------------------------------------- */
@@ -133,7 +150,7 @@ h3 {
   z-index: 10;
   height: var(--header-h);
   background: var(--header-bg);
-  border-bottom: 2px solid var(--sand);
+  border-bottom: 1px solid var(--hairline);
   backdrop-filter: blur(6px);
 }
 
@@ -163,7 +180,7 @@ h3 {
 .site-nav {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 24px;
   min-width: 0;
 }
 
@@ -174,7 +191,7 @@ h3 {
    list is a top-layer popover, so the scroller can't clip it. */
 .site-nav__links {
   display: flex;
-  gap: 6px;
+  gap: 24px;
   min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
@@ -184,18 +201,20 @@ h3 {
   display: none;
 }
 
-/* Test-page menu: one link per page. Only colours change for the current page, never sizes,
-   so marking it can't move anything. */
+/* Test-page menu: plain text links, one per page, spaced by the gap rather than padded pills.
+   The current page is purple and underlined. Colour and underline only, never size, so marking
+   it can't move anything. */
 .site-nav a,
 .site-nav__toggle {
-  padding: 6px 8px;
-  border: 2px solid transparent;
-  border-radius: 999px;
-  color: var(--ink-soft);
+  padding: 8px 0;
+  border: 0;
+  color: var(--ink);
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 600;
   white-space: nowrap;
   text-decoration: none;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 8px;
 }
 
 .site-nav a:hover,
@@ -203,11 +222,16 @@ h3 {
   color: var(--purple);
 }
 
-.site-nav a[aria-current="page"],
+.site-nav__links > a[aria-current="page"],
 .site-nav__toggle[aria-current] {
-  border-color: var(--ink);
-  background: var(--purple);
-  color: #fff;
+  color: var(--purple);
+  text-decoration-line: underline;
+}
+
+.site-nav :focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
 /* Components sub-menu: a disclosure button that opens on click (site/js/nav.js). The list is
@@ -253,20 +277,25 @@ h3 {
   list-style: none;
   color: var(--ink);
   background: var(--paper);
-  border: 2px solid var(--ink);
-  border-radius: 14px;
-  box-shadow: var(--shadow);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
 }
 
 .site-nav__dropdown a {
   display: block;
   /* Lines up with the group headings (.site-nav__dropdown-heading). */
   padding-inline: 12px;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
-.site-nav__dropdown a:not([aria-current]):hover {
+.site-nav__dropdown a:hover {
   background: var(--cream);
+}
+
+/* The current item: purple on a soft lavender row, no underline. */
+.site-nav__dropdown a[aria-current="page"] {
+  background: color-mix(in srgb, var(--lavender) 60%, transparent);
+  color: var(--purple);
 }
 
 .site-nav__dropdown-heading {
@@ -294,7 +323,7 @@ h3 {
 }
 
 .site-nav__toggle[aria-disabled="true"]:hover {
-  color: var(--ink-soft);
+  color: var(--ink);
 }
 
 /* Which environment the hosted page loads Piper from (?env=). */
@@ -579,10 +608,9 @@ html[data-page="self-hosted-token-head"] {
 
 .card {
   padding: 24px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius);
   background: var(--paper);
-  box-shadow: var(--shadow);
 }
 
 .card img {
@@ -608,7 +636,7 @@ html[data-page="self-hosted-token-head"] {
   padding: 28px;
   border-radius: var(--radius);
   background: var(--cream);
-  border: 2px solid var(--sand);
+  border: 1px solid var(--hairline);
 }
 
 .steps__num {
@@ -617,7 +645,6 @@ html[data-page="self-hosted-token-head"] {
   width: 44px;
   height: 44px;
   margin-bottom: 14px;
-  border: 2px solid var(--ink);
   border-radius: 50%;
   background: var(--teal);
   color: #fff;
@@ -686,10 +713,9 @@ html[data-page="self-hosted-token-head"] {
 
 .team__member {
   padding: 20px 20px 24px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius);
   background: var(--paper);
-  box-shadow: var(--shadow);
   text-align: center;
 }
 
@@ -744,14 +770,14 @@ html[data-page="self-hosted-token-head"] {
 .plan {
   position: relative;
   padding: 32px 28px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius);
   background: var(--paper);
 }
 
 .plan--featured {
   background: var(--lavender);
-  box-shadow: 0 8px 0 var(--ink);
+  border-color: color-mix(in srgb, var(--purple) 45%, transparent);
 }
 
 .plan__badge {
@@ -760,7 +786,6 @@ html[data-page="self-hosted-token-head"] {
   left: 28px;
   margin: 0;
   padding: 2px 12px;
-  border: 2px solid var(--ink);
   border-radius: 999px;
   background: var(--orange);
   color: #fff;
