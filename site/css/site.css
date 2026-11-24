@@ -286,6 +286,17 @@ h3 {
   pointer-events: none;
 }
 
+/* A disabled sub-menu button (Offers on component pages) keeps pointer events, so its title
+   still explains why; nav.js gives it no click handler. */
+.site-nav__toggle[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.site-nav__toggle[aria-disabled="true"]:hover {
+  color: var(--ink-soft);
+}
+
 /* Which environment the hosted page loads Piper from (?env=). */
 .env-switch {
   flex-shrink: 0;

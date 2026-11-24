@@ -59,6 +59,14 @@
     button.setAttribute("aria-expanded", "false");
     button.setAttribute("aria-controls", "offers-menu");
     button.textContent = "Offers";
+    // Component pages (one of Components' items is this page) load no Piper, so an ?offer= would
+    // do nothing there, and the page's own controls rewrite the URL without it. aria-disabled,
+    // not disabled, like the other disabled menu items: it stays in the accessibility tree and
+    // keeps its title. The disclosure below skips it.
+    if (components.querySelector('a[aria-current="page"]')) {
+      button.setAttribute("aria-disabled", "true");
+      button.setAttribute("title", "Offers need Piper: open Hosted or a self-hosted page.");
+    }
     var list = document.createElement("ul");
     list.className = "site-nav__dropdown";
     list.id = "offers-menu";
@@ -90,6 +98,7 @@
   // items is (Offers' "None" doesn't count).
   document.querySelectorAll("[data-nav-menu]").forEach(function (menu) {
     var button = menu.querySelector("button[aria-controls]");
+    if (button.getAttribute("aria-disabled") === "true") return;
     var list = document.getElementById(button.getAttribute("aria-controls"));
     if (list.querySelector('[aria-current="page"]:not([data-menu-none])')) button.setAttribute("aria-current", "true");
 
