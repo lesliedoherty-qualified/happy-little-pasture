@@ -64,6 +64,8 @@
         const STATES = ["offer","offer-card-only","offer-no-image","offer-long","share","share-long-title","share-no-preview"];
         const THEMES = {"default":{"--q-primary-color":"#437D88","--q-lighter-primary-color":"#b4cbcf","--q-text-color":"#ffffff","--q-button-background-color":"transparent","--q-button-hover-background-color":"#437D8810","--q-button-background-layer":"#ffffff","--q-button-hover-background-layer":"#ffffff","--q-button-text-color":"#437D88","--q-button-hover-text-color":"#437D88","--q-button-border-color":"#437D88","--q-button-hover-border-color":"#437D88","--q-button-border-radius":"4px","--q-control-border-radius":"4px"},"solid":{"--q-primary-color":"#437D88","--q-lighter-primary-color":"#b4cbcf","--q-text-color":"#ffffff","--q-button-background-color":"#437D88","--q-button-hover-background-color":"#396a74","--q-button-background-layer":"#437D88","--q-button-hover-background-layer":"#396a74","--q-button-text-color":"#ffffff","--q-button-hover-text-color":"#ffffff","--q-button-border-color":"#437D88","--q-button-hover-border-color":"#396a74","--q-button-border-radius":"4px","--q-control-border-radius":"4px"},"none":{}};
         const CANVAS_STAND_IN = null;
+        const AUTOSIZE = null;
+        const PLACEHOLDER_FALLBACK = null;
         // Stand-in for a canvas Piper paints at runtime (a frame of the video): draws the picture
         // to cover the canvas, as object-fit: cover would, and marks the canvas so DevTools shows
         // it isn't Piper's frame.
@@ -113,6 +115,28 @@
           gate.append(document.getElementById("state-" + layout + "--" + state).content.cloneNode(true));
           root.append(gate);
           if (CANVAS_STAND_IN) paintStandIns(root, CANVAS_STAND_IN);
+          // As TextArea does on each input: auto, then the content's height (its CSS caps it).
+          if (AUTOSIZE)
+            for (const box of root.querySelectorAll(AUTOSIZE)) {
+              box.style.height = "auto";
+              box.style.height = box.scrollHeight + "px";
+            }
+          // useTextOverflow's measurement, against real layout: the ideal placeholder if it fits
+          // the textarea's content width in its own font, else the fallback the dump recorded.
+          // After the fonts load, so it measures in Inter, as the hook does once layout settles.
+          if (PLACEHOLDER_FALLBACK)
+            document.fonts.ready.then(() => {
+              for (const box of root.querySelectorAll(PLACEHOLDER_FALLBACK)) {
+                const style = getComputedStyle(box);
+                const width = box.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+                const context = document.createElement("canvas").getContext("2d");
+                context.font = style.font;
+                if (!(width > 0 && context.measureText(box.placeholder).width <= width)) {
+                  box.dataset.pastureIdealPlaceholder = box.placeholder;
+                  box.placeholder = box.dataset.pasturePlaceholderFallback;
+                }
+              }
+            });
         };
         sheet.addEventListener("load", insert, { once: true });
         sheet.addEventListener("error", insert, { once: true });

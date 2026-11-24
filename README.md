@@ -103,7 +103,7 @@ the README install and the two docking variants.
 | Self-hosted > Docking with token | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
 | CDN host | `cdn-host.html` (test CDN) / `cdn-host-prod.html` (prod-like CDN), copied init | Cloudforce sky |
 | GTM | `gtm.html` (docking script in `<head>`) / `gtm-docking-in-gtm.html` (docking script inside the GTM tag) | AlpacalpyseForce sunset |
-| Components | A sub-menu that opens on click: **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Messages** (`messages.html`, the chat timeline in eight conversations), **Cards** (`cards.html`, shared offer and shared content cards), **Presented content** (`presented.html`, deck, video and slide cards) and **Calendar** (`calendar.html`, the booker's timeline entries) | Llamalytics cream |
+| Components | A sub-menu that opens on click: **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Messages** (`messages.html`, the chat timeline in eight conversations), **Cards** (`cards.html`, shared offer and shared content cards), **Presented content** (`presented.html`, deck, video and slide cards), **Calendar** (`calendar.html`, the booker's timeline entries) and **Composer** (`composer.html`, where the visitor types) | Llamalytics cream |
 
 - **Environment: Local | QA** (in the page sub-menu) switches environment. On Hosted it sets
   `?env=` and keeps your other query parameters. Every generated page has a QA twin, `<page>.qa.html`, using team 642's token and a
@@ -442,8 +442,8 @@ npm run cards:refresh                      # ~/_Server/qualified/fireball-master
 npm run cards:build                        # rebuild from the committed capture only
 ```
 
-[scripts/build-messages.mjs](scripts/build-messages.mjs) builds all four timeline pages: Messages
-with no argument, or `cards`, `presented` or `calendar`.
+[scripts/build-messages.mjs](scripts/build-messages.mjs) builds the messenger pages: Messages
+with no argument, or `cards`, `presented`, `calendar` or `composer`.
 
 ## Presented content page
 
@@ -483,6 +483,29 @@ booked and superseded offers render nothing, so they aren't captured.
 ```sh
 npm run calendar:refresh                      # ~/_Server/qualified/fireball-master
 npm run calendar:build                        # rebuild from the committed capture only
+```
+
+## Composer page
+
+[site/composer.html](site/composer.html) (`http://localhost:4600/composer.html`) shows where the
+visitor types: `ChatComposer`, `ChatInputForm` and `ComposerErrorBanner`, in the whole messenger,
+in Sidebar, Mobile and Collapsed right, with four themes (the other pages' three plus Shade).
+
+- **States:** empty with the agent's-name placeholder and with the admin's; typed, one line and
+  several; over the 2,000-character limit; a failed send; the email ask and a rejected email reply;
+  strategy CTA buttons; voice mode's Speak with button.
+- **Typing:** the dump types into the real textarea (`input` and `change`), then copies the value
+  into the markup. `TextArea` sizes itself to `scrollHeight` on input, which jsdom reports as 0,
+  so the dump drops that height and the frame sizes marked textareas the same way (`autosize` in
+  `states.json`).
+- **Placeholder:** `useTextOverflow` picks the ideal placeholder only if it fits the textarea, which
+  jsdom can't measure, so the dump stands in for it, captures the ideal text and records the
+  fallback; the frame repeats the hook's `measureText` check once the fonts have loaded and swaps
+  in the fallback where it doesn't fit (`placeholderFallback` in `states.json`).
+
+```sh
+npm run composer:refresh                      # ~/_Server/qualified/fireball-master
+npm run composer:build                        # rebuild from the committed capture only
 ```
 
 ## Team portraits

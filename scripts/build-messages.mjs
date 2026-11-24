@@ -1,5 +1,5 @@
 // Builds site/<page>/frame.html + panda.css + states.js from scripts/<page>/dump/, for the
-// timeline pages: Messages (the default), Cards, Presented content and Calendar.
+// messenger pages: Messages (the default), Cards, Presented content, Calendar and Composer.
 //
 // The dump is the real PiperX messenger (Main) as fireball renders it, one conversation per state
 // (see scripts/<page>/zz_<page>_static_dump.test.tsx), so the markup carries the app's own hashed
@@ -13,6 +13,7 @@
 //   npm run cards:build        # the same for Cards (node scripts/build-messages.mjs cards)
 //   npm run presented:build    # the same for Presented content
 //   npm run calendar:build     # the same for Calendar
+//   npm run composer:build     # the same for Composer
 //   npm run messages:refresh   # re-capture from fireball first, then build (cards:refresh too)
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -22,6 +23,7 @@ const PAGES = {
   cards: { title: "PiperX cards (static)", global: "PASTURE_CARDS", what: "Cards" },
   presented: { title: "PiperX presented content (static)", global: "PASTURE_PRESENTED", what: "Presented content" },
   calendar: { title: "PiperX calendar entries (static)", global: "PASTURE_CALENDAR", what: "Calendar" },
+  composer: { title: "PiperX composer (static)", global: "PASTURE_COMPOSER", what: "Composer" },
 };
 const page = process.argv[2] || "messages";
 if (!PAGES[page]) throw new Error(`Unknown page "${page}"; expected one of ${Object.keys(PAGES).join(", ")}.`);
@@ -35,7 +37,9 @@ const read = (name) => readFileSync(`${dump}/${name}`, "utf8");
 // assets: placeholder URL -> local file, for images the dump puts in its messages.
 // canvasStandIn: { selector, src } for canvases Piper paints at runtime (the video card's
 // thumbnail), which a capture leaves blank. The frame paints src on them, marked as a stand-in.
-const { layouts, states, themes, assets = {}, canvasStandIn = null } = JSON.parse(read("states.json"));
+// autosize: a selector for textareas to size to their content, as TextArea does on input.
+// placeholderFallback: textareas whose placeholder useTextOverflow shortens when it doesn't fit.
+const { layouts, states, themes, assets = {}, canvasStandIn = null, autosize = null, placeholderFallback = null } = JSON.parse(read("states.json"));
 const sha = existsSync(`${dump}/fireball-sha.txt`) ? read("fireball-sha.txt").trim() : "unknown";
 
 // The mock avatars and the dump's images are example.com; use local files so the frame makes no
@@ -107,6 +111,8 @@ ${templates}
         const STATES = ${JSON.stringify(states.map(({ id }) => id))};
         const THEMES = ${JSON.stringify(Object.fromEntries(themes.map(({ id, vars }) => [id, vars])))};
         const CANVAS_STAND_IN = ${JSON.stringify(canvasStandIn)};
+        const AUTOSIZE = ${JSON.stringify(autosize)};
+        const PLACEHOLDER_FALLBACK = ${JSON.stringify(placeholderFallback)};
         // Stand-in for a canvas Piper paints at runtime (a frame of the video): draws the picture
         // to cover the canvas, as object-fit: cover would, and marks the canvas so DevTools shows
         // it isn't Piper's frame.
@@ -156,6 +162,28 @@ ${templates}
           gate.append(document.getElementById("state-" + layout + "--" + state).content.cloneNode(true));
           root.append(gate);
           if (CANVAS_STAND_IN) paintStandIns(root, CANVAS_STAND_IN);
+          // As TextArea does on each input: auto, then the content's height (its CSS caps it).
+          if (AUTOSIZE)
+            for (const box of root.querySelectorAll(AUTOSIZE)) {
+              box.style.height = "auto";
+              box.style.height = box.scrollHeight + "px";
+            }
+          // useTextOverflow's measurement, against real layout: the ideal placeholder if it fits
+          // the textarea's content width in its own font, else the fallback the dump recorded.
+          // After the fonts load, so it measures in Inter, as the hook does once layout settles.
+          if (PLACEHOLDER_FALLBACK)
+            document.fonts.ready.then(() => {
+              for (const box of root.querySelectorAll(PLACEHOLDER_FALLBACK)) {
+                const style = getComputedStyle(box);
+                const width = box.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+                const context = document.createElement("canvas").getContext("2d");
+                context.font = style.font;
+                if (!(width > 0 && context.measureText(box.placeholder).width <= width)) {
+                  box.dataset.pastureIdealPlaceholder = box.placeholder;
+                  box.placeholder = box.dataset.pasturePlaceholderFallback;
+                }
+              }
+            });
         };
         sheet.addEventListener("load", insert, { once: true });
         sheet.addEventListener("error", insert, { once: true });
