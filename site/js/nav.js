@@ -15,7 +15,7 @@
 (function () {
   "use strict";
 
-  // Offers sub-menu (every page), added next to Components. Each item reloads this page with
+  // Offers sub-menu (every page), added before Components. Each item reloads this page with
   // ?offer=<location>-<cta>, keeping the other parameters. The local seed (seed-offers.rb in
   // .cursor/projects/pinned-onboarding-rendering/local-team1-qa-flags-2026-11-23/) creates one
   // Offer per value on local team 1; each shows only when its value is in the URL.
@@ -26,7 +26,7 @@
     ["Sidebar", [["sidebar-button", "Button"], ["sidebar-form", "Form"]]],
   ];
   (function addOffersMenu() {
-    // After Components specifically: the Self-hosted menu, earlier in the nav, is a menu too.
+    // Before Components specifically: the Self-hosted menu, earlier in the nav, is a menu too.
     var toggle = document.querySelector('[data-nav-menu] [data-nav="components"]');
     var components = toggle && toggle.closest("[data-nav-menu]");
     if (!components || document.getElementById("offers-menu")) return;
@@ -90,7 +90,9 @@
     });
     menu.appendChild(button);
     menu.appendChild(list);
-    components.insertAdjacentElement("afterend", menu);
+    // Offers comes first: like the page links, it changes how the widget renders; Components
+    // are static captures.
+    components.insertAdjacentElement("beforebegin", menu);
   })();
 
   // Self-hosted, Components and Offers sub-menus: disclosures. Click toggles one; Escape, a click
