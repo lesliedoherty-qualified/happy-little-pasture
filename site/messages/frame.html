@@ -67,6 +67,29 @@
         const LAYOUTS = ["sidebar","mobile"];
         const STATES = ["short","rich-text","table","long","rep-joined","reps-offline","thinking","thinking-label"];
         const THEMES = {"default":{"--q-primary-color":"#437D88","--q-lighter-primary-color":"#b4cbcf","--q-text-color":"#ffffff","--q-button-background-color":"transparent","--q-button-hover-background-color":"#437D8810","--q-button-background-layer":"#ffffff","--q-button-hover-background-layer":"#ffffff","--q-button-text-color":"#437D88","--q-button-hover-text-color":"#437D88","--q-button-border-color":"#437D88","--q-button-hover-border-color":"#437D88","--q-button-border-radius":"4px","--q-control-border-radius":"4px"},"solid":{"--q-primary-color":"#437D88","--q-lighter-primary-color":"#b4cbcf","--q-text-color":"#ffffff","--q-button-background-color":"#437D88","--q-button-hover-background-color":"#396a74","--q-button-background-layer":"#437D88","--q-button-hover-background-layer":"#396a74","--q-button-text-color":"#ffffff","--q-button-hover-text-color":"#ffffff","--q-button-border-color":"#437D88","--q-button-hover-border-color":"#396a74","--q-button-border-radius":"4px","--q-control-border-radius":"4px"},"none":{}};
+        const CANVAS_STAND_IN = null;
+        // Stand-in for a canvas Piper paints at runtime (a frame of the video): draws the picture
+        // to cover the canvas, as object-fit: cover would, and marks the canvas so DevTools shows
+        // it isn't Piper's frame.
+        function paintStandIns(root, { selector, src }) {
+          const picture = new Image();
+          picture.onload = () => {
+            for (const canvas of root.querySelectorAll(selector)) {
+              const box = canvas.getBoundingClientRect();
+              canvas.width = Math.round(box.width * devicePixelRatio) || 640;
+              canvas.height = Math.round(box.height * devicePixelRatio) || 360;
+              const scale = Math.max(canvas.width / picture.width, canvas.height / picture.height);
+              const w = picture.width * scale;
+              const h = picture.height * scale;
+              const context = canvas.getContext("2d");
+              context.fillStyle = "#f3eee6";
+              context.fillRect(0, 0, canvas.width, canvas.height);
+              context.drawImage(picture, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+              canvas.dataset.pastureStandIn = src;
+            }
+          };
+          picture.src = src;
+        }
         const params = new URLSearchParams(location.search);
         const pick = (list, value) => (list.includes(value) ? value : list[0]);
         const layout = pick(LAYOUTS, params.get("layout"));
@@ -93,6 +116,7 @@
         const insert = () => {
           gate.append(document.getElementById("state-" + layout + "--" + state).content.cloneNode(true));
           root.append(gate);
+          if (CANVAS_STAND_IN) paintStandIns(root, CANVAS_STAND_IN);
         };
         sheet.addEventListener("load", insert, { once: true });
         sheet.addEventListener("error", insert, { once: true });

@@ -1,0 +1,106 @@
+{
+  "layouts": [
+    {
+      "id": "sidebar",
+      "label": "Sidebar",
+      "mobile": false
+    },
+    {
+      "id": "mobile",
+      "label": "Mobile",
+      "mobile": true
+    }
+  ],
+  "states": [
+    {
+      "id": "deck",
+      "label": "Deck: never opened"
+    },
+    {
+      "id": "deck-single",
+      "label": "Deck: one slide"
+    },
+    {
+      "id": "deck-continue",
+      "label": "Deck: presented, call still possible"
+    },
+    {
+      "id": "deck-partway",
+      "label": "Deck: read partway"
+    },
+    {
+      "id": "deck-watched",
+      "label": "Deck: watched"
+    },
+    {
+      "id": "deck-email",
+      "label": "Deck: Email button"
+    },
+    {
+      "id": "deck-email-sent",
+      "label": "Deck: emailed"
+    },
+    {
+      "id": "video",
+      "label": "Video section (voice, before a call)"
+    },
+    {
+      "id": "slide",
+      "label": "Slide thumbnail"
+    }
+  ],
+  "themes": [
+    {
+      "id": "default",
+      "label": "New-team default (outline)",
+      "vars": {
+        "--q-primary-color": "#437D88",
+        "--q-lighter-primary-color": "#b4cbcf",
+        "--q-text-color": "#ffffff",
+        "--q-button-background-color": "transparent",
+        "--q-button-hover-background-color": "#437D8810",
+        "--q-button-background-layer": "#ffffff",
+        "--q-button-hover-background-layer": "#ffffff",
+        "--q-button-text-color": "#437D88",
+        "--q-button-hover-text-color": "#437D88",
+        "--q-button-border-color": "#437D88",
+        "--q-button-hover-border-color": "#437D88",
+        "--q-button-border-radius": "4px",
+        "--q-control-border-radius": "4px"
+      }
+    },
+    {
+      "id": "solid",
+      "label": "Solid buttons",
+      "vars": {
+        "--q-primary-color": "#437D88",
+        "--q-lighter-primary-color": "#b4cbcf",
+        "--q-text-color": "#ffffff",
+        "--q-button-background-color": "#437D88",
+        "--q-button-hover-background-color": "#396a74",
+        "--q-button-background-layer": "#437D88",
+        "--q-button-hover-background-layer": "#396a74",
+        "--q-button-text-color": "#ffffff",
+        "--q-button-hover-text-color": "#ffffff",
+        "--q-button-border-color": "#437D88",
+        "--q-button-hover-border-color": "#396a74",
+        "--q-button-border-radius": "4px",
+        "--q-control-border-radius": "4px"
+      }
+    },
+    {
+      "id": "none",
+      "label": "No theme (fallbacks)",
+      "vars": {}
+    }
+  ],
+  "assets": {
+    "https://example.com/slide-1.png": "../img/hero.svg",
+    "https://example.com/slide-2.png": "../img/feature-synergy.svg",
+    "https://example.com/slide-3.png": "../img/feature-roadmap.svg"
+  },
+  "canvasStandIn": {
+    "selector": "[data-component-name='PresentVideoRenderer.Card'] canvas",
+    "src": "../img/hero.svg"
+  }
+}

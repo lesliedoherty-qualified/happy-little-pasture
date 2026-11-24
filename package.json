@@ -19,6 +19,8 @@
     "messages:refresh": "bash scripts/refresh-messages.sh",
     "cards:build": "node scripts/build-messages.mjs cards",
     "cards:refresh": "bash scripts/refresh-cards.sh",
+    "presented:build": "node scripts/build-messages.mjs presented",
+    "presented:refresh": "bash scripts/refresh-presented.sh",
     "self-hosted": "bash scripts/self-hosted/sync.sh"
   },
   "engines": {

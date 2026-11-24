@@ -1,5 +1,5 @@
 // Builds site/<page>/frame.html + panda.css + states.js from scripts/<page>/dump/, for the
-// timeline pages: Messages (the default) and Cards.
+// timeline pages: Messages (the default), Cards and Presented content.
 //
 // The dump is the real PiperX messenger (Main) as fireball renders it, one conversation per state
 // (see scripts/<page>/zz_<page>_static_dump.test.tsx), so the markup carries the app's own hashed
@@ -11,6 +11,7 @@
 //
 //   npm run messages:build     # rebuild Messages from the committed dump
 //   npm run cards:build        # the same for Cards (node scripts/build-messages.mjs cards)
+//   npm run presented:build    # the same for Presented content
 //   npm run messages:refresh   # re-capture from fireball first, then build (cards:refresh too)
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -18,6 +19,7 @@ import { fileURLToPath } from "node:url";
 const PAGES = {
   messages: { title: "PiperX messages (static)", global: "PASTURE_MESSAGES", what: "Messages" },
   cards: { title: "PiperX cards (static)", global: "PASTURE_CARDS", what: "Cards" },
+  presented: { title: "PiperX presented content (static)", global: "PASTURE_PRESENTED", what: "Presented content" },
 };
 const page = process.argv[2] || "messages";
 if (!PAGES[page]) throw new Error(`Unknown page "${page}"; expected one of ${Object.keys(PAGES).join(", ")}.`);
@@ -29,7 +31,9 @@ const out = `${repo}site/${page}`;
 
 const read = (name) => readFileSync(`${dump}/${name}`, "utf8");
 // assets: placeholder URL -> local file, for images the dump puts in its messages.
-const { layouts, states, themes, assets = {} } = JSON.parse(read("states.json"));
+// canvasStandIn: { selector, src } for canvases Piper paints at runtime (the video card's
+// thumbnail), which a capture leaves blank. The frame paints src on them, marked as a stand-in.
+const { layouts, states, themes, assets = {}, canvasStandIn = null } = JSON.parse(read("states.json"));
 const sha = existsSync(`${dump}/fireball-sha.txt`) ? read("fireball-sha.txt").trim() : "unknown";
 
 // The mock avatars and the dump's images are example.com; use local files so the frame makes no
@@ -100,6 +104,29 @@ ${templates}
         const LAYOUTS = ${JSON.stringify(layouts.map(({ id }) => id))};
         const STATES = ${JSON.stringify(states.map(({ id }) => id))};
         const THEMES = ${JSON.stringify(Object.fromEntries(themes.map(({ id, vars }) => [id, vars])))};
+        const CANVAS_STAND_IN = ${JSON.stringify(canvasStandIn)};
+        // Stand-in for a canvas Piper paints at runtime (a frame of the video): draws the picture
+        // to cover the canvas, as object-fit: cover would, and marks the canvas so DevTools shows
+        // it isn't Piper's frame.
+        function paintStandIns(root, { selector, src }) {
+          const picture = new Image();
+          picture.onload = () => {
+            for (const canvas of root.querySelectorAll(selector)) {
+              const box = canvas.getBoundingClientRect();
+              canvas.width = Math.round(box.width * devicePixelRatio) || 640;
+              canvas.height = Math.round(box.height * devicePixelRatio) || 360;
+              const scale = Math.max(canvas.width / picture.width, canvas.height / picture.height);
+              const w = picture.width * scale;
+              const h = picture.height * scale;
+              const context = canvas.getContext("2d");
+              context.fillStyle = "#f3eee6";
+              context.fillRect(0, 0, canvas.width, canvas.height);
+              context.drawImage(picture, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+              canvas.dataset.pastureStandIn = src;
+            }
+          };
+          picture.src = src;
+        }
         const params = new URLSearchParams(location.search);
         const pick = (list, value) => (list.includes(value) ? value : list[0]);
         const layout = pick(LAYOUTS, params.get("layout"));
@@ -126,6 +153,7 @@ ${templates}
         const insert = () => {
           gate.append(document.getElementById("state-" + layout + "--" + state).content.cloneNode(true));
           root.append(gate);
+          if (CANVAS_STAND_IN) paintStandIns(root, CANVAS_STAND_IN);
         };
         sheet.addEventListener("load", insert, { once: true });
         sheet.addEventListener("error", insert, { once: true });

@@ -103,7 +103,7 @@ the README install and the two docking variants.
 | Self-hosted > Docking with token | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
 | CDN host | `cdn-host.html` (test CDN) / `cdn-host-prod.html` (prod-like CDN), copied init | Cloudforce sky |
 | GTM | `gtm.html` (docking script in `<head>`) / `gtm-docking-in-gtm.html` (docking script inside the GTM tag) | AlpacalpyseForce sunset |
-| Components | A sub-menu that opens on click: **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Messages** (`messages.html`, the chat timeline in eight conversations) and **Cards** (`cards.html`, shared offer and shared content cards) | Llamalytics cream |
+| Components | A sub-menu that opens on click: **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Messages** (`messages.html`, the chat timeline in eight conversations), **Cards** (`cards.html`, shared offer and shared content cards) and **Presented content** (`presented.html`, deck, video and slide cards) | Llamalytics cream |
 
 - **Environment: Local | QA** (in the page sub-menu) switches environment. On Hosted it sets
   `?env=` and keeps your other query parameters. Every generated page has a QA twin, `<page>.qa.html`, using team 642's token and a
@@ -442,8 +442,33 @@ npm run cards:refresh                      # ~/_Server/qualified/fireball-master
 npm run cards:build                        # rebuild from the committed capture only
 ```
 
-[scripts/build-messages.mjs](scripts/build-messages.mjs) builds both timeline pages: with no
-argument it builds Messages, with `cards` it builds Cards.
+[scripts/build-messages.mjs](scripts/build-messages.mjs) builds all three timeline pages: Messages
+with no argument, Cards with `cards`, and Presented content with `presented`.
+
+## Presented content page
+
+[site/presented.html](site/presented.html) (`http://localhost:4600/presented.html`) shows what Piper
+puts in the timeline when it presents something: the deck card (`PresentDeckRenderer`), the video
+section card (`PresentVideoRenderer`) and the slide thumbnail (`PresentContentRenderer`). It's
+built like the Messages and Cards pages, with the same layouts and themes.
+
+- **Deck states:** never opened (stacked sheets, slide count, Start presentation); one slide;
+  presented with a call still possible (Continue presentation); read partway (Resume, progress
+  bar); watched (Watch again, Watched); the Email button; emailed (Sent to, Resend). The reading
+  states use a real `DecksStore`: the dump opens the deck, steps through it and closes it, as the
+  deck tests do, then clears the overlay's message id, which `clearArtifact` leaves set in the
+  mock and which would otherwise keep the whole messenger in the viewer's layout.
+- **Video section:** only shown where a call is possible, so it's captured in voice mode before a
+  call. Its thumbnail is a canvas Piper paints from a video frame at runtime, blank in a capture;
+  the frame paints the hero art on it as a stand-in and marks the canvas
+  `data-pasture-stand-in` (`canvasStandIn` in `states.json`).
+- The slide images are the site's own art, which isn't 16:9, and the deck card's width follows
+  the slide, so widths vary between states.
+
+```sh
+npm run presented:refresh                      # ~/_Server/qualified/fireball-master
+npm run presented:build                        # rebuild from the committed capture only
+```
 
 ## Team portraits
 
