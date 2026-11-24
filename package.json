@@ -17,6 +17,8 @@
     "form-fields:refresh": "bash scripts/refresh-form-fields.sh",
     "messages:build": "node scripts/build-messages.mjs",
     "messages:refresh": "bash scripts/refresh-messages.sh",
+    "cards:build": "node scripts/build-messages.mjs cards",
+    "cards:refresh": "bash scripts/refresh-cards.sh",
     "self-hosted": "bash scripts/self-hosted/sync.sh"
   },
   "engines": {

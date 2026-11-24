@@ -103,7 +103,7 @@ the README install and the two docking variants.
 | Self-hosted > Docking with token | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
 | CDN host | `cdn-host.html` (test CDN) / `cdn-host-prod.html` (prod-like CDN), copied init | Cloudforce sky |
 | GTM | `gtm.html` (docking script in `<head>`) / `gtm-docking-in-gtm.html` (docking script inside the GTM tag) | AlpacalpyseForce sunset |
-| Components | A sub-menu that opens on click: **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Form fields** (`form-fields.html`, every field request state by display mode and theme) and **Messages** (`messages.html`, the chat timeline in eight conversations) | Llamalytics cream |
+| Components | A sub-menu that opens on click: **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Messages** (`messages.html`, the chat timeline in eight conversations) and **Cards** (`cards.html`, shared offer and shared content cards) | Llamalytics cream |
 
 - **Environment: Local | QA** (in the page sub-menu) switches environment. On Hosted it sets
   `?env=` and keeps your other query parameters. Every generated page has a QA twin, `<page>.qa.html`, using team 642's token and a
@@ -417,6 +417,33 @@ Like `form-fields:refresh`, it defaults to the `fireball-master` worktree and on
 [scripts/messages/zz_messages_static_dump.test.tsx](scripts/messages/zz_messages_static_dump.test.tsx)
 into fireball's `multimodal_v2/components/app/`, runs it, removes it again (even on failure), and
 runs [scripts/build-messages.mjs](scripts/build-messages.mjs).
+
+## Cards page
+
+[site/cards.html](site/cards.html) (`http://localhost:4600/cards.html`) shows the cards Piper puts
+in the chat timeline when it shares an offer (`SharedOfferRenderer`: image, headline and short
+URL) or a page (`ShareContentRenderer`: preview image and title). Both are `LinkPreviewCard`
+underneath. It's built like the Messages page: each state is a conversation in the whole
+messenger, with the same Sidebar and Mobile layouts and themes. The headline uses the theme's
+primary colour.
+
+- **States:** an offer with text and an image, the card alone, no image, a long headline and URL;
+  shared content with a preview, with a long title, and with no preview.
+- **Known bug, shown as is:** shared content titles are meant to be one line
+  (`lineClamp: 1`), and the collapsed preview's offer text three. The messenger's Panda config
+  ejects the presets (`eject: true`), so `lineClamp` isn't expanded to `-webkit-line-clamp`, and
+  production's CSS has a bare `line-clamp`, which browsers ignore. The long title shows in full.
+- Messages are marked read: an unread offer's card stays hidden until its text has animated in.
+- The offer and preview images are the site's own art; the dump lists the placeholder URLs it
+  used (`assets` in `states.json`) and the build swaps them in.
+
+```sh
+npm run cards:refresh                      # ~/_Server/qualified/fireball-master
+npm run cards:build                        # rebuild from the committed capture only
+```
+
+[scripts/build-messages.mjs](scripts/build-messages.mjs) builds both timeline pages: with no
+argument it builds Messages, with `cards` it builds Cards.
 
 ## Team portraits
 
