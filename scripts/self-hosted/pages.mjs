@@ -15,10 +15,10 @@
 //                server.js from cdn-test/ (CSS, JS and woff2 fonts only).
 //   "prod-cdn"   this site's cdn/<env>/ folder (CSS, JS and woff2 fonts only), the endpoint
 //                GitHub Pages publishes.
-// init: keep the README's inline docking/sentinel init. head: "package" or "token" (docking.js?token=).
+// init: keep the README's inline docking/sentinel init. head: "package" or "token" (qualified-head.js?token=).
 // kind: "gtm" pages don't use the package: the page has the Settings card's GTM install
-//   (docking.js?token= in <head>, before the container) and a mock GTM container whose Custom HTML
-//   tag holds the standard Qualified snippet. gtmHead "gtm" also moves docking.js into that tag,
+//   (qualified-head.js?token= in <head>, before the container) and a mock GTM container whose Custom HTML
+//   tag holds the standard Qualified snippet. gtmHead "gtm" also moves qualified-head.js into that tag,
 //   the placement the Settings card warns against.
 // twin: pages with the same nav and a twin are linked from the page's sub-menu, under
 //   `heading` (CDN: Test | Prod, Docking script loaded by: HTML head | GTM).
@@ -53,10 +53,10 @@ export const PAGES = {
     assets: "package",
     init: false,
     head: "token",
-    title: "Glitterforce | docking with token (docking.js?token= head)",
-    eyebrow: "Docking with token: Qualified docking.js?token= head + self-hosted widget",
+    title: "Glitterforce | docking with token (qualified-head.js?token= head)",
+    eyebrow: "Docking with token: Qualified qualified-head.js?token= head + self-hosted widget",
     h1: "Glitterforce: live settings, glittering from the server.",
-    panel: "Docking with token: docking.js?token= head, self-hosted widget",
+    panel: "Docking with token: qualified-head.js?token= head, self-hosted widget",
   },
   "cdn-host": {
     nav: "cdn-host",
@@ -85,9 +85,9 @@ export const PAGES = {
     nav: "gtm",
     kind: "gtm",
     gtmHead: "page",
-    twin: { heading: "Docking script loaded by:", text: "HTML head", title: "docking.js?token= directly in <head>, before the GTM container (the documented GTM install)" },
+    twin: { heading: "Docking script loaded by:", text: "HTML head", title: "qualified-head.js?token= directly in <head>, before the GTM container (the documented GTM install)" },
     title: "AlpacalpyseForce | GTM, docking script in the page",
-    eyebrow: "GTM: docking.js?token= in <head>, Qualified snippet in a GTM tag",
+    eyebrow: "GTM: qualified-head.js?token= in <head>, Qualified snippet in a GTM tag",
     h1: "AlpacalpyseForce: every happy little tag, managed.",
     panel: "GTM install (mock GTM), docking script in the page",
   },
@@ -95,9 +95,9 @@ export const PAGES = {
     nav: "gtm",
     kind: "gtm",
     gtmHead: "gtm",
-    twin: { heading: "Docking script loaded by:", text: "GTM", title: "docking.js?token= inside the GTM tag too (what the Settings card warns against)" },
+    twin: { heading: "Docking script loaded by:", text: "GTM", title: "qualified-head.js?token= inside the GTM tag too (what the Settings card warns against)" },
     title: "AlpacalpyseForce | GTM, docking script inside GTM",
-    eyebrow: "GTM: docking.js?token= and the Qualified snippet both in a GTM tag",
+    eyebrow: "GTM: qualified-head.js?token= and the Qualified snippet both in a GTM tag",
     h1: "AlpacalpyseForce: everything in the tag manager, docked a little late.",
     panel: "GTM install (mock GTM), docking script inside GTM (not recommended)",
   },

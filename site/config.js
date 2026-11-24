@@ -32,10 +32,12 @@ window.PASTURE_CONFIG = {
   },
 
   // How Piper is installed. Override per load with ?install=<name>.
-  //   snippet      The standard install snippet only. The theme decides pinning.
-  //   head         Adds a blocking qualified-head.js with no options.
-  //   head-token   qualified-head.js?token=... (the QAI-6672 POC reads saved settings this way).
-  //   recommended  The pinned-mode install we recommend to customers: auto-init,
-  //                docked by default, skeleton, docked under the header.
-  install: "snippet",
+  //   head-token   (default) qualified-head.js?token=... first in <head>, then the standard
+  //                snippet (queue + qualified.js). The head carries the team's saved pinned
+  //                messenger settings and layouts, so layout changes in the app need no redeploy.
+  //   snippet      The standard install snippet only, no head script. The theme decides pinning.
+  //   head         Adds a blocking qualified-head.js with no token or options.
+  //   recommended  The older copied-options install: auto-init, docked by default, skeleton,
+  //                docked under the header, passed as docking_* query options.
+  install: "head-token",
 };

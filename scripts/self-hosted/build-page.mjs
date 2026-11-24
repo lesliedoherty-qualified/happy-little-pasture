@@ -236,7 +236,7 @@ function installFor(page, env) {
     if (!packageHead.test(html)) fail("Couldn't find the README's head script tag.");
     html = html.replace(
       packageHead,
-      `<script src="${baseUrl}/docking.js?token=${encodeURIComponent(token)}"></script>\n` +
+      `<script src="${baseUrl}/qualified-head.js?token=${encodeURIComponent(token)}"></script>\n` +
         "<!-- Head from Qualified (saved settings embedded); widget assets below are self-hosted. -->\n",
     );
   }
@@ -250,7 +250,7 @@ const standardSnippet = (baseUrl, token) =>
   "<!-- Qualified -->\n<script>\n(function(w,q){w['QualifiedObject']=q;w[q]=w[q]||function(){\n" +
   "(w[q].q=w[q].q||[]).push(arguments)};})(window,'qualified')\n\n</script>\n" +
   `<script async src="${baseUrl}/qualified.js?token=${encodeURIComponent(token)}"></script>\n<!-- End Qualified -->`;
-const dockingHead = (baseUrl, token) => `<script src="${baseUrl}/docking.js?token=${encodeURIComponent(token)}"></script>`;
+const dockingHead = (baseUrl, token) => `<script src="${baseUrl}/qualified-head.js?token=${encodeURIComponent(token)}"></script>`;
 
 // Google's container snippet, pointed at the mock GTM on the test CDN origin.
 const gtmSnippet = (id) =>
@@ -458,8 +458,8 @@ function buildPage(id, env) {
           row("Environment", `${escape(environment.label)}`),
           row("Token", `<code>${escape(environment.token)}</code>`),
           row("GTM container", `<code>${escape(TEST_CDN_ORIGIN)}/gtm.js?id=${gtmContainerId(env, page.gtmHead)}</code>`),
-          row("In &lt;head&gt;", page.gtmHead === "page" ? `<code>${escape(environment.baseUrl)}/docking.js?token=</code>, then the GTM snippet` : "the GTM snippet only"),
-          row("In the GTM tag", page.gtmHead === "page" ? "the standard Qualified snippet" : "docking.js?token= and the standard Qualified snippet"),
+          row("In &lt;head&gt;", page.gtmHead === "page" ? `<code>${escape(environment.baseUrl)}/qualified-head.js?token=</code>, then the GTM snippet` : "the GTM snippet only"),
+          row("In the GTM tag", page.gtmHead === "page" ? "the standard Qualified snippet" : "qualified-head.js?token= and the standard Qualified snippet"),
           row("Trigger", "All Pages (gtm.js), as soon as the container loads"),
           row("Timing", "Start the site with <code>GTM_DELAY_MS=800 npm start</code> to mimic a slow GTM container"),
         ]
@@ -473,7 +473,7 @@ function buildPage(id, env) {
       row("Environment", `${escape(environment.label)}`),
       row("Token", `<code>${escape(environment.token)}</code>`),
       row("Assets from", `<code>${escape(assets)}</code>`),
-      row("Head", page.head === "token" ? `<code>${escape(environment.baseUrl)}/docking.js?token=</code>` : `<code>${escape(info.head)}</code>`),
+      row("Head", page.head === "token" ? `<code>${escape(environment.baseUrl)}/qualified-head.js?token=</code>` : `<code>${escape(info.head)}</code>`),
       row("Widget talks to", `<code>${escape(bakedEnv[env].host)}</code>, <code>${escape(bakedEnv[env].wsHost)}</code>`),
       row("Inline init", page.init ? `copied snapshot: <code>${escape(settings)}</code>` : "none"),
       row("README", flagOn ? "Saved messenger setup (flag on)" : "Legacy, no saved setup (flag off)"),
