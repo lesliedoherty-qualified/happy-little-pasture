@@ -15,6 +15,8 @@
     "multimodal:refresh": "bash scripts/refresh-multimodal.sh",
     "form-fields:build": "node scripts/build-form-fields.mjs",
     "form-fields:refresh": "bash scripts/refresh-form-fields.sh",
+    "messages:build": "node scripts/build-messages.mjs",
+    "messages:refresh": "bash scripts/refresh-messages.sh",
     "self-hosted": "bash scripts/self-hosted/sync.sh"
   },
   "engines": {

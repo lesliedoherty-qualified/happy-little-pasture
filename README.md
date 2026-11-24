@@ -103,7 +103,7 @@ the README install and the two docking variants.
 | Self-hosted > Docking with token | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
 | CDN host | `cdn-host.html` (test CDN) / `cdn-host-prod.html` (prod-like CDN), copied init | Cloudforce sky |
 | GTM | `gtm.html` (docking script in `<head>`) / `gtm-docking-in-gtm.html` (docking script inside the GTM tag) | AlpacalpyseForce sunset |
-| Components | A sub-menu that opens on click: **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks) and **Form fields** (`form-fields.html`, every field request state by display mode and theme) | Llamalytics cream |
+| Components | A sub-menu that opens on click: **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Form fields** (`form-fields.html`, every field request state by display mode and theme) and **Messages** (`messages.html`, the chat timeline in eight conversations) | Llamalytics cream |
 
 - **Environment: Local | QA** (in the page sub-menu) switches environment. On Hosted it sets
   `?env=` and keeps your other query parameters. Every generated page has a QA twin, `<page>.qa.html`, using team 642's token and a
@@ -379,6 +379,44 @@ removes it again (even on failure), and runs
 [scripts/build-form-fields.mjs](scripts/build-form-fields.mjs). The stylesheet comes from
 `panda cssgen`, for the same reason as the Multimodal page. The test stubs `src/validation` with
 just enough rules to reach each email error.
+
+## Messages page
+
+[site/messages.html](site/messages.html) (`http://localhost:4600/messages.html`) shows the PiperX
+chat timeline as markup only, with no Piper running. Each state is a different conversation in the
+whole messenger (`Main`, text mode), so the timeline keeps its real spacing, header and composer.
+
+- **Conversations:** a short exchange; rich text (paragraphs, bold, bulleted and numbered lists,
+  an internal and an external link); a table; long and unbroken text (a long visitor message, a
+  bare URL and a word with no spaces); a sales rep joining (the header switches to the rep and
+  the timeline shows the joined line); reps offline (the composer gives way to the offline
+  notice); and Piper thinking, both in its first second (dot only) and after it, when
+  `ThinkingAnimation` shows its label. Agent text is HTML, as the server sends it after rendering
+  the markdown.
+- **Layouts:** Sidebar and Mobile. Mobile comes from the app's `isMobile` signal at capture time,
+  not the frame width.
+- **Themes:** the new-team default (outline), Solid, and none, set on the host as on the Form
+  fields page.
+- **Frame:** [site/messages/frame.html](site/messages/frame.html) uses the Multimodal frame's
+  host: an open shadow root on `#qualified-multimodal-host` with production's inline style. It
+  takes `?state=`, `?layout=` and `?theme=`, and inserts the markup once the stylesheet has
+  loaded. The avatars are the local team portraits.
+- Agent messages are marked read, so `RichText` shows them whole instead of fading them in. The
+  joined line's "Today, &lt;time&gt;" is text from the capture day.
+
+### Refresh it from fireball
+
+```sh
+npm run messages:refresh                      # ~/_Server/qualified/fireball-master
+FIREBALL=~/_Server/qualified/fireball-qai-1234 npm run messages:refresh   # a branch
+npm run messages:build                        # rebuild from the committed capture only
+```
+
+Like `form-fields:refresh`, it defaults to the `fireball-master` worktree and only runs Jest and
+`panda cssgen` there. It copies
+[scripts/messages/zz_messages_static_dump.test.tsx](scripts/messages/zz_messages_static_dump.test.tsx)
+into fireball's `multimodal_v2/components/app/`, runs it, removes it again (even on failure), and
+runs [scripts/build-messages.mjs](scripts/build-messages.mjs).
 
 ## Team portraits
 

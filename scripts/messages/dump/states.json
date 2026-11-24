@@ -1,0 +1,93 @@
+{
+  "layouts": [
+    {
+      "id": "sidebar",
+      "label": "Sidebar",
+      "mobile": false
+    },
+    {
+      "id": "mobile",
+      "label": "Mobile",
+      "mobile": true
+    }
+  ],
+  "states": [
+    {
+      "id": "short",
+      "label": "Short exchange"
+    },
+    {
+      "id": "rich-text",
+      "label": "Rich text: paragraphs, bold, links, lists"
+    },
+    {
+      "id": "table",
+      "label": "Table"
+    },
+    {
+      "id": "long",
+      "label": "Long and unbroken text"
+    },
+    {
+      "id": "rep-joined",
+      "label": "A sales rep joins"
+    },
+    {
+      "id": "reps-offline",
+      "label": "Reps offline"
+    },
+    {
+      "id": "thinking",
+      "label": "Piper thinking (first second)"
+    },
+    {
+      "id": "thinking-label",
+      "label": "Piper thinking, label showing"
+    }
+  ],
+  "themes": [
+    {
+      "id": "default",
+      "label": "New-team default (outline)",
+      "vars": {
+        "--q-primary-color": "#437D88",
+        "--q-lighter-primary-color": "#b4cbcf",
+        "--q-text-color": "#ffffff",
+        "--q-button-background-color": "transparent",
+        "--q-button-hover-background-color": "#437D8810",
+        "--q-button-background-layer": "#ffffff",
+        "--q-button-hover-background-layer": "#ffffff",
+        "--q-button-text-color": "#437D88",
+        "--q-button-hover-text-color": "#437D88",
+        "--q-button-border-color": "#437D88",
+        "--q-button-hover-border-color": "#437D88",
+        "--q-button-border-radius": "4px",
+        "--q-control-border-radius": "4px"
+      }
+    },
+    {
+      "id": "solid",
+      "label": "Solid buttons",
+      "vars": {
+        "--q-primary-color": "#437D88",
+        "--q-lighter-primary-color": "#b4cbcf",
+        "--q-text-color": "#ffffff",
+        "--q-button-background-color": "#437D88",
+        "--q-button-hover-background-color": "#396a74",
+        "--q-button-background-layer": "#437D88",
+        "--q-button-hover-background-layer": "#396a74",
+        "--q-button-text-color": "#ffffff",
+        "--q-button-hover-text-color": "#ffffff",
+        "--q-button-border-color": "#437D88",
+        "--q-button-hover-border-color": "#396a74",
+        "--q-button-border-radius": "4px",
+        "--q-control-border-radius": "4px"
+      }
+    },
+    {
+      "id": "none",
+      "label": "No theme (fallbacks)",
+      "vars": {}
+    }
+  ]
+}
