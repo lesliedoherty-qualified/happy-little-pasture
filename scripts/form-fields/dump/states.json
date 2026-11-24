@@ -1,0 +1,180 @@
+{
+  "modes": [
+    {
+      "id": "sidebar",
+      "label": "Sidebar (same as docked)"
+    },
+    {
+      "id": "collapsed-right",
+      "label": "Collapsed right"
+    }
+  ],
+  "fields": [
+    {
+      "id": "name-empty",
+      "label": "Name, empty",
+      "fieldType": "name"
+    },
+    {
+      "id": "name-full-name-error",
+      "label": "Name, full name required",
+      "fieldType": "name"
+    },
+    {
+      "id": "email-empty",
+      "label": "Email, empty",
+      "fieldType": "email"
+    },
+    {
+      "id": "email-filled",
+      "label": "Email, valid",
+      "fieldType": "email"
+    },
+    {
+      "id": "email-invalid",
+      "label": "Email, invalid",
+      "fieldType": "email"
+    },
+    {
+      "id": "email-personal",
+      "label": "Email, business domain required",
+      "fieldType": "email"
+    },
+    {
+      "id": "email-submit-error",
+      "label": "Email, submit failed",
+      "fieldType": "email"
+    },
+    {
+      "id": "company-filled",
+      "label": "Company, filled",
+      "fieldType": "company"
+    },
+    {
+      "id": "phone-invalid",
+      "label": "Phone, invalid",
+      "fieldType": "phone"
+    },
+    {
+      "id": "decimal-filled",
+      "label": "Number, filled",
+      "fieldType": "decimal"
+    },
+    {
+      "id": "string-placeholder",
+      "label": "Short answer, custom placeholder",
+      "fieldType": "string"
+    },
+    {
+      "id": "text-filled",
+      "label": "Long answer, filled",
+      "fieldType": "text"
+    },
+    {
+      "id": "picklist-empty",
+      "label": "Picklist, nothing picked",
+      "fieldType": "picklist"
+    },
+    {
+      "id": "picklist-stacked",
+      "label": "Picklist, stacked",
+      "fieldType": "picklist"
+    },
+    {
+      "id": "picklist-stacked-expanded",
+      "label": "Picklist, stacked full width",
+      "fieldType": "picklist"
+    },
+    {
+      "id": "multi-picklist-empty",
+      "label": "Multi-picklist, nothing picked",
+      "fieldType": "multi_picklist"
+    },
+    {
+      "id": "multi-picklist-picked",
+      "label": "Multi-picklist, two picked",
+      "fieldType": "multi_picklist"
+    },
+    {
+      "id": "boolean-unchecked",
+      "label": "Checkbox, unchecked",
+      "fieldType": "boolean"
+    },
+    {
+      "id": "boolean-checked",
+      "label": "Checkbox, checked",
+      "fieldType": "boolean"
+    }
+  ],
+  "anchored": [
+    "sidebar--multi-picklist-empty",
+    "sidebar--multi-picklist-picked",
+    "sidebar--picklist-empty",
+    "sidebar--picklist-stacked",
+    "sidebar--picklist-stacked-expanded"
+  ],
+  "themes": [
+    {
+      "id": "default",
+      "label": "New-team default (outline)",
+      "vars": {
+        "--q-primary-color": "#437D88",
+        "--q-lighter-primary-color": "#b4cbcf",
+        "--q-text-color": "#ffffff",
+        "--q-button-background-color": "transparent",
+        "--q-button-hover-background-color": "#437D8810",
+        "--q-button-background-layer": "#ffffff",
+        "--q-button-hover-background-layer": "#ffffff",
+        "--q-button-text-color": "#437D88",
+        "--q-button-hover-text-color": "#437D88",
+        "--q-button-border-color": "#437D88",
+        "--q-button-hover-border-color": "#437D88",
+        "--q-button-border-radius": "4px",
+        "--q-control-border-radius": "4px"
+      }
+    },
+    {
+      "id": "solid",
+      "label": "Solid buttons",
+      "vars": {
+        "--q-primary-color": "#437D88",
+        "--q-lighter-primary-color": "#b4cbcf",
+        "--q-text-color": "#ffffff",
+        "--q-button-background-color": "#437D88",
+        "--q-button-hover-background-color": "#396a74",
+        "--q-button-background-layer": "#437D88",
+        "--q-button-hover-background-layer": "#396a74",
+        "--q-button-text-color": "#ffffff",
+        "--q-button-hover-text-color": "#ffffff",
+        "--q-button-border-color": "#437D88",
+        "--q-button-hover-border-color": "#396a74",
+        "--q-button-border-radius": "4px",
+        "--q-control-border-radius": "4px"
+      }
+    },
+    {
+      "id": "shade",
+      "label": "Shade buttons",
+      "vars": {
+        "--q-primary-color": "#437D88",
+        "--q-lighter-primary-color": "#b4cbcf",
+        "--q-text-color": "#ffffff",
+        "--q-button-background-color": "#437D8820",
+        "--q-button-hover-background-color": "#437D8840",
+        "--q-button-background-layer": "#ffffff",
+        "--q-button-hover-background-layer": "#ffffff",
+        "--q-button-text-color": "#437D88",
+        "--q-button-hover-text-color": "#437D88",
+        "--q-button-border-color": "transparent",
+        "--q-button-hover-border-color": "transparent",
+        "--q-button-border-radius": "4px",
+        "--q-control-border-radius": "4px"
+      }
+    },
+    {
+      "id": "none",
+      "label": "No theme (fallbacks)",
+      "vars": {}
+    }
+  ]
+}

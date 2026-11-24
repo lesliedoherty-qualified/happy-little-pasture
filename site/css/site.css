@@ -170,7 +170,8 @@ h3 {
 /* The logo and menu fit the docked page width (1040px); the tight gaps and padding are what make
    room for both the Components and Offers buttons. If a narrower page ever squeezes them, the page
    links scroll sideways rather than wrapping or moving. The two buttons sit after this scroller,
-   so they never scroll out of view. */
+   so they never scroll out of view. The Self-hosted sub-menu sits inside it, in page order; its
+   list is a top-layer popover, so the scroller can't clip it. */
 .site-nav__links {
   display: flex;
   gap: 2px;

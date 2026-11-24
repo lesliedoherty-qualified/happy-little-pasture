@@ -13,6 +13,8 @@
     "booker:refresh": "bash scripts/refresh-booker.sh",
     "multimodal:build": "node scripts/build-multimodal.mjs",
     "multimodal:refresh": "bash scripts/refresh-multimodal.sh",
+    "form-fields:build": "node scripts/build-form-fields.mjs",
+    "form-fields:refresh": "bash scripts/refresh-form-fields.sh",
     "self-hosted": "bash scripts/self-hosted/sync.sh"
   },
   "engines": {

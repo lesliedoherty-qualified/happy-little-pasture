@@ -92,15 +92,18 @@ cover every install path explicitly: **Hosted** (Qualified serves everything), *
 here, not production) and **GTM** (the hosted snippet runs from a Google Tag Manager tag; a mock
 GTM here).
 
+The **Self-hosted** button opens a sub-menu (like Components) with the three self-hosted pages:
+the README install and the two docking variants.
+
 | Menu | Page | Look |
 | --- | --- | --- |
 | Hosted | `index.html`: hosted install from `config.js` (`?install=` variants in the footer harness) | Llamalytics cream |
-| Self-hosted | `self-hosted.html`: self-hosted head + the README's copied init | Sparkleforce pink |
-| Docking no token | `self-hosted-no-init.html`: self-hosted head, no inline init | Rainbowforce rainbow |
-| Docking with token | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
+| Self-hosted (sub-menu) > Self-hosted | `self-hosted.html`: self-hosted head + the README's copied init | Sparkleforce pink |
+| Self-hosted > Docking no token | `self-hosted-no-init.html`: self-hosted head, no inline init | Rainbowforce rainbow |
+| Self-hosted > Docking with token | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
 | CDN host | `cdn-host.html` (test CDN) / `cdn-host-prod.html` (prod-like CDN), copied init | Cloudforce sky |
 | GTM | `gtm.html` (docking script in `<head>`) / `gtm-docking-in-gtm.html` (docking script inside the GTM tag) | AlpacalpyseForce sunset |
-| Components | A sub-menu that opens on click: **Meeting booker** (`components.html`, the booker before and after QAI-6749) and **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks) | Llamalytics cream |
+| Components | A sub-menu that opens on click: **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks) and **Form fields** (`form-fields.html`, every field request state by display mode and theme) | Llamalytics cream |
 
 - **Environment: Local | QA** (in the page sub-menu) switches environment. On Hosted it sets
   `?env=` and keeps your other query parameters. Every generated page has a QA twin, `<page>.qa.html`, using team 642's token and a
@@ -328,6 +331,54 @@ The stylesheet doesn't come from the test: Jest's Panda transformer rewrites it 
 (`:host` to `html`, `@layer` to `@media all`, `:where()` unwrapped), which breaks it in a
 shadow root. The script runs `panda cssgen` in the same checkout instead, writing into the dump.
 `frame.html` records the fireball commit, with `+uncommitted` when `multimodal_v2` had edits.
+
+## Form fields page
+
+[site/form-fields.html](site/form-fields.html) (`http://localhost:4600/form-fields.html`) shows the
+PiperX field request (`FieldRequest`), the field the messenger shows when the agent asks for a
+value, as markup only, with no Piper running.
+
+- **Field states:** name (empty, full name required), email (empty, valid, invalid, business
+  domain required, submit failed), company, phone (invalid), number, short answer with the
+  admin's placeholder, long answer, picklist (default, stacked, stacked full width),
+  multi-picklist (nothing picked, two picked) and checkbox (unchecked, checked). A single
+  picklist has no picked state: a chip click submits at once.
+- **Display modes:** Sidebar (labelled "same as docked") and Collapsed right. Docked isn't
+  captured: its field styles match Sidebar's, except that Sidebar adds `marginInline: $xl` to
+  the field request container. In Sidebar and Docked, picklists are anchored in the chat timeline under the agent's question (`input.isAnchored`), so those
+  captures render `FieldRequestRenderer`, are labelled "(in the timeline)", and get the
+  timeline's 24px inset. Collapsed right shows the question above the field.
+- **Themes:** Piper colours the fields with the team's theme, set as `--q-*` properties on the
+  host. The dump runs fireball's own `applyThemeCssVars` for the new-team default
+  (`Team::Themes`: `#437D88`, outline rectangle buttons), Solid and Shade, and the frame sets
+  those on each host. **No theme** shows the stylesheet's fallbacks, which production renders
+  until a theme arrives.
+- **Frame:** [site/form-fields/frame.html](site/form-fields/frame.html) shows every state for one
+  mode and theme, each in its own open shadow root with the widget's stylesheet. It takes
+  `?mode=`, `?theme=` and `?field=` (one state id or several, comma-separated). It inserts the
+  markup once the stylesheet has loaded, as in production; inserted first, the multi-picklist's
+  `transition: all` animates from browser defaults.
+- The dump changes the capture in two ways: `value`, `checked` and textarea contents are copied
+  from properties into the markup (Preact sets them as properties, which `innerHTML` drops), and
+  the build drops `autofocus`. The message is marked read so the timeline doesn't type the
+  question out.
+
+### Refresh it from fireball
+
+```sh
+npm run form-fields:refresh                      # ~/_Server/qualified/fireball-master
+FIREBALL=~/_Server/qualified/fireball-qai-1234 npm run form-fields:refresh   # a branch
+npm run form-fields:build                        # rebuild from the committed capture only
+```
+
+`form-fields:refresh` defaults to the `fireball-master` worktree, so the page shows master. Only
+Jest and `panda cssgen` run there: no stack and no database. It copies
+[scripts/form-fields/zz_form_fields_static_dump.test.tsx](scripts/form-fields/zz_form_fields_static_dump.test.tsx)
+into fireball's `multimodal_v2/components/field_request/`, runs it with `mise run test:js`,
+removes it again (even on failure), and runs
+[scripts/build-form-fields.mjs](scripts/build-form-fields.mjs). The stylesheet comes from
+`panda cssgen`, for the same reason as the Multimodal page. The test stubs `src/validation` with
+just enough rules to reach each email error.
 
 ## Team portraits
 

@@ -8,8 +8,9 @@
 // - Generated pages: links are static, one file per environment; copied-init toggles are marked here.
 // - Booker lab: no Piper, so the switch is disabled.
 // - Off localhost (GitHub Pages): the self-hosted pages don't exist, so their links are disabled.
-// - Components sub-menu (every page): shows and hides the static list, a manual popover, and
-//   sets the button's aria-expanded. The list opens in the top layer, so opening it moves
+// - Self-hosted and Components sub-menus (every page): show and hide the static list, a manual
+//   popover, and set the button's aria-expanded. Self-hosted holds Self-hosted, Docking no token
+//   and Docking with token. The list opens in the top layer, so opening it moves
 //   nothing and a docked Piper can't cover it.
 (function () {
   "use strict";
@@ -25,7 +26,9 @@
     ["Sidebar", [["sidebar-button", "Button"], ["sidebar-form", "Form"]]],
   ];
   (function addOffersMenu() {
-    var components = document.querySelector("[data-nav-menu]");
+    // After Components specifically: the Self-hosted menu, earlier in the nav, is a menu too.
+    var toggle = document.querySelector('[data-nav-menu] [data-nav="components"]');
+    var components = toggle && toggle.closest("[data-nav-menu]");
     if (!components || document.getElementById("offers-menu")) return;
     var params = new URLSearchParams(window.location.search);
     var current = params.get("offer");
@@ -78,7 +81,7 @@
     components.insertAdjacentElement("afterend", menu);
   })();
 
-  // Components and Offers sub-menus: disclosures. Click toggles one; Escape, a click outside,
+  // Self-hosted, Components and Offers sub-menus: disclosures. Click toggles one; Escape, a click outside,
   // focus leaving it or a resize closes it. The button is marked current when one of its items is.
   document.querySelectorAll("[data-nav-menu]").forEach(function (menu) {
     var button = menu.querySelector("button[aria-controls]");

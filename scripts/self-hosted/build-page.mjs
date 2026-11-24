@@ -344,9 +344,11 @@ for (const [pattern, what] of [
   [/<html lang="en" data-page="hosted">/, "<html> tag"],
   [/<p class="eyebrow">[^<]*<\/p>\s*<h1>[^<]*<\/h1>/, "hero eyebrow and H1"],
   [/ data-nav="hosted" aria-current="page"/, "Hosted menu link"],
-  // Page links sit in a scroller; the Components sub-menu (Meeting booker, Multimodal) sits after it,
-  // copied as-is. nav.js opens it.
-  [/<div class="site-nav__links">\n(?:            <a [^\n]*\n)+          <\/div>\n/, "menu links"],
+  // Page links sit in a scroller, with the Self-hosted sub-menu (Self-hosted, Docking no token,
+  // Docking with token) among them; its links are rewritten like the others below. The
+  // Components sub-menu sits after the scroller, copied as-is. nav.js opens both.
+  [/<div class="site-nav__links">\n(?:            <a [^\n]*\n|            <div class="site-nav__menu" data-nav-menu>\n[\s\S]*?id="self-hosted-menu"[\s\S]*?            <\/div>\n)+          <\/div>\n/, "menu links"],
+  [/data-nav="self-hosted" [^\n]*\n[^\n]*data-nav="self-hosted-no-init" [^\n]*\n[^\n]*data-nav="self-hosted-token-head" /, "Self-hosted sub-menu"],
   [/<div class="site-nav__menu" data-nav-menu>[\s\S]*?href="components\.html"[\s\S]*?href="multimodal\.html"[\s\S]*?<\/ul>/, "Components sub-menu"],
 ]) {
   if (!pattern.test(base)) fail(`index.html's ${what} changed; update build-page.mjs.`);
