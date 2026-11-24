@@ -82,6 +82,49 @@
   }
   status.widgetSrc = baseUrl + "/qualified.js?token=" + encodeURIComponent(token);
 
+  // Test harness only, not part of the install (status.html leaves it out): with the token head,
+  // record whether qualified-head.js applied the team's saved settings itself. The QAI-6672 token
+  // head (piper_x_pinned_messenger_settings) ends by calling docking.init with them; a server
+  // without it ignores the token and calls nothing. Nothing public reports that, and the script's
+  // text can't be read cross-origin, so this watches for the head setting qualified.docking and
+  // notes the first init call, with document.currentScript saying whether the head made it.
+  //
+  // window.qualified is made exactly as the snippet and the head's registerQualifiedObject make it
+  // (both keep an existing one), so creating it a step early changes nothing. The API passes through
+  // unchanged apart from init, which records its first call and then calls the real init.
+  status.headInit = null;
+  if (install === "head-token") {
+    window.QualifiedObject = "qualified";
+    window.qualified =
+      window.qualified ||
+      function () {
+        (window.qualified.q = window.qualified.q || []).push(arguments);
+      };
+    var dockingApi;
+    Object.defineProperty(window.qualified, "docking", {
+      configurable: true,
+      enumerable: true,
+      get: function () {
+        return dockingApi;
+      },
+      set: function (api) {
+        dockingApi = api;
+        if (!api || typeof api.init !== "function") return;
+        var init = api.init;
+        api.init = function (config) {
+          if (!status.headInit) {
+            var script = document.currentScript;
+            status.headInit = {
+              fromHead: !!(script && script.src && script.src.indexOf("/qualified-head.js") !== -1),
+              config: config || {},
+            };
+          }
+          return init.apply(this, arguments);
+        };
+      },
+    });
+  }
+
   function attr(value) {
     return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
   }

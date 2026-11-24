@@ -69,6 +69,32 @@
     fact("Widget", status.widgetSrc)
   );
 
+  // With the token head: did qualified-head.js apply the team's saved settings? (piper-loader.js
+  // records the head's own docking.init call.) By the time this footer script runs, the blocking
+  // head in <head> has run.
+  if (status.install === "head-token" && !status.error && !status.disabled) {
+    panel.push(fact("Saved settings", savedSettingsSummary(status.headInit)));
+  }
+
+  function savedSettingsSummary(headInit) {
+    if (!headInit || !headInit.fromHead) {
+      return (
+        "none: the server ignored the token. Its qualified-head.js doesn't have the token head " +
+        "(QAI-6672) yet, or piper_x_pinned_messenger_settings is off for this team."
+      );
+    }
+    var config = headInit.config;
+    var parts = ["applied by qualified-head.js"];
+    if (config.pinning) parts.push("pinning " + config.pinning);
+    if (config.showSkeleton !== undefined) parts.push("skeleton " + (config.showSkeleton ? "on" : "off"));
+    if (config.dockUnderHeader !== undefined) parts.push("under header " + (config.dockUnderHeader ? "on" : "off"));
+    if (config.layout) {
+      var experiences = (config.layout.experiences || []).length;
+      parts.push(experiences + " layout rule" + (experiences === 1 ? "" : "s"));
+    }
+    return parts.join(", ");
+  }
+
   var reset = el("button", { type: "button", class: "harness__button", text: "Reset visitor and reload" });
   reset.addEventListener("click", function () {
     // Piper remembers open/closed and docked state per visitor. Clearing
