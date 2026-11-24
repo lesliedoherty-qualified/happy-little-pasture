@@ -103,7 +103,7 @@ the README install and the two docking variants.
 | Self-hosted > Docking with token | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
 | CDN host | `cdn-host.html` (test CDN) / `cdn-host-prod.html` (prod-like CDN), copied init | Cloudforce sky |
 | GTM | `gtm.html` (docking script in `<head>`) / `gtm-docking-in-gtm.html` (docking script inside the GTM tag) | AlpacalpyseForce sunset |
-| Components | A sub-menu that opens on click: **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Messages** (`messages.html`, the chat timeline in eight conversations), **Cards** (`cards.html`, shared offer and shared content cards) and **Presented content** (`presented.html`, deck, video and slide cards) | Llamalytics cream |
+| Components | A sub-menu that opens on click: **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Messages** (`messages.html`, the chat timeline in eight conversations), **Cards** (`cards.html`, shared offer and shared content cards), **Presented content** (`presented.html`, deck, video and slide cards) and **Calendar** (`calendar.html`, the booker's timeline entries) | Llamalytics cream |
 
 - **Environment: Local | QA** (in the page sub-menu) switches environment. On Hosted it sets
   `?env=` and keeps your other query parameters. Every generated page has a QA twin, `<page>.qa.html`, using team 642's token and a
@@ -442,8 +442,8 @@ npm run cards:refresh                      # ~/_Server/qualified/fireball-master
 npm run cards:build                        # rebuild from the committed capture only
 ```
 
-[scripts/build-messages.mjs](scripts/build-messages.mjs) builds all three timeline pages: Messages
-with no argument, Cards with `cards`, and Presented content with `presented`.
+[scripts/build-messages.mjs](scripts/build-messages.mjs) builds all four timeline pages: Messages
+with no argument, or `cards`, `presented` or `calendar`.
 
 ## Presented content page
 
@@ -468,6 +468,21 @@ built like the Messages and Cards pages, with the same layouts and themes.
 ```sh
 npm run presented:refresh                      # ~/_Server/qualified/fireball-master
 npm run presented:build                        # rebuild from the committed capture only
+```
+
+## Calendar page
+
+[site/calendar.html](site/calendar.html) (`http://localhost:4600/calendar.html`) shows the meeting
+booker's entries in the chat timeline, built like the other timeline pages: the "Continue
+booking" card (`CalendarEventOfferRenderer` and `MeetingBookerEntry`), the cancelled offer (a rep
+joined a scripted conversation), and the booked meeting (`CalendarEventPickRenderer` and
+`MeetingDetailsCard`) with and without a named rep, and for a visitor in Tokyo. A fresh offer opens
+the booker in the overlay instead, which the Meeting booker page (`components.html`) covers;
+booked and superseded offers render nothing, so they aren't captured.
+
+```sh
+npm run calendar:refresh                      # ~/_Server/qualified/fireball-master
+npm run calendar:build                        # rebuild from the committed capture only
 ```
 
 ## Team portraits

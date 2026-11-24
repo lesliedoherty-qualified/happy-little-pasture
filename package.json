@@ -21,6 +21,8 @@
     "cards:refresh": "bash scripts/refresh-cards.sh",
     "presented:build": "node scripts/build-messages.mjs presented",
     "presented:refresh": "bash scripts/refresh-presented.sh",
+    "calendar:build": "node scripts/build-messages.mjs calendar",
+    "calendar:refresh": "bash scripts/refresh-calendar.sh",
     "self-hosted": "bash scripts/self-hosted/sync.sh"
   },
   "engines": {

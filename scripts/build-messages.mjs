@@ -1,5 +1,5 @@
 // Builds site/<page>/frame.html + panda.css + states.js from scripts/<page>/dump/, for the
-// timeline pages: Messages (the default), Cards and Presented content.
+// timeline pages: Messages (the default), Cards, Presented content and Calendar.
 //
 // The dump is the real PiperX messenger (Main) as fireball renders it, one conversation per state
 // (see scripts/<page>/zz_<page>_static_dump.test.tsx), so the markup carries the app's own hashed
@@ -12,6 +12,7 @@
 //   npm run messages:build     # rebuild Messages from the committed dump
 //   npm run cards:build        # the same for Cards (node scripts/build-messages.mjs cards)
 //   npm run presented:build    # the same for Presented content
+//   npm run calendar:build     # the same for Calendar
 //   npm run messages:refresh   # re-capture from fireball first, then build (cards:refresh too)
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -20,6 +21,7 @@ const PAGES = {
   messages: { title: "PiperX messages (static)", global: "PASTURE_MESSAGES", what: "Messages" },
   cards: { title: "PiperX cards (static)", global: "PASTURE_CARDS", what: "Cards" },
   presented: { title: "PiperX presented content (static)", global: "PASTURE_PRESENTED", what: "Presented content" },
+  calendar: { title: "PiperX calendar entries (static)", global: "PASTURE_CALENDAR", what: "Calendar" },
 };
 const page = process.argv[2] || "messages";
 if (!PAGES[page]) throw new Error(`Unknown page "${page}"; expected one of ${Object.keys(PAGES).join(", ")}.`);
