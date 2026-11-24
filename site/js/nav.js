@@ -63,7 +63,11 @@
     list.className = "site-nav__dropdown";
     list.id = "offers-menu";
     list.setAttribute("popover", "manual");
-    list.appendChild(item(null, "None"));
+    // "None" is marked when no offer is applied, but that isn't a choice the button should show
+    // as current; data-menu-none keeps it out of the check below.
+    var none = item(null, "None");
+    none.firstChild.setAttribute("data-menu-none", "");
+    list.appendChild(none);
     OFFERS.forEach(function (group) {
       var heading = document.createElement("li");
       heading.className = "site-nav__dropdown-heading";
@@ -81,12 +85,13 @@
     components.insertAdjacentElement("afterend", menu);
   })();
 
-  // Self-hosted, Components and Offers sub-menus: disclosures. Click toggles one; Escape, a click outside,
-  // focus leaving it or a resize closes it. The button is marked current when one of its items is.
+  // Self-hosted, Components and Offers sub-menus: disclosures. Click toggles one; Escape, a click
+  // outside, focus leaving it or a resize closes it. The button is marked current when one of its
+  // items is (Offers' "None" doesn't count).
   document.querySelectorAll("[data-nav-menu]").forEach(function (menu) {
     var button = menu.querySelector("button[aria-controls]");
     var list = document.getElementById(button.getAttribute("aria-controls"));
-    if (list.querySelector('[aria-current="page"]')) button.setAttribute("aria-current", "true");
+    if (list.querySelector('[aria-current="page"]:not([data-menu-none])')) button.setAttribute("aria-current", "true");
 
     function isOpen() {
       return button.getAttribute("aria-expanded") === "true";

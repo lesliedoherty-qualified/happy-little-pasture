@@ -163,18 +163,18 @@ h3 {
 .site-nav {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
   min-width: 0;
 }
 
-/* The logo and menu fit the docked page width (1040px); the tight gaps and padding are what make
-   room for both the Components and Offers buttons. If a narrower page ever squeezes them, the page
-   links scroll sideways rather than wrapping or moving. The two buttons sit after this scroller,
+/* The logo and menu fit the docked page width (1040px): with Self-hosted condensed into a
+   sub-menu, there is room for the full gaps and padding. If a narrower page ever squeezes them,
+   the page links scroll sideways rather than wrapping or moving. The two buttons sit after this scroller,
    so they never scroll out of view. The Self-hosted sub-menu sits inside it, in page order; its
    list is a top-layer popover, so the scroller can't clip it. */
 .site-nav__links {
   display: flex;
-  gap: 2px;
+  gap: 6px;
   min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
@@ -188,11 +188,11 @@ h3 {
    so marking it can't move anything. */
 .site-nav a,
 .site-nav__toggle {
-  padding: 6px 6px;
+  padding: 6px 8px;
   border: 2px solid transparent;
   border-radius: 999px;
   color: var(--ink-soft);
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 700;
   white-space: nowrap;
   text-decoration: none;
@@ -260,6 +260,8 @@ h3 {
 
 .site-nav__dropdown a {
   display: block;
+  /* Lines up with the group headings (.site-nav__dropdown-heading). */
+  padding-inline: 12px;
   border-radius: 10px;
 }
 
