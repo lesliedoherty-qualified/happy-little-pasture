@@ -15,14 +15,25 @@
 //                server.js from cdn-test/ (CSS, JS and woff2 fonts only).
 //   "prod-cdn"   this site's cdn/<env>/ folder (CSS, JS and woff2 fonts only), the endpoint
 //                GitHub Pages publishes.
-// init: keep the README's inline docking/sentinel init. head: "package" or "token" (qualified-head.js?token=).
+// init: how the page sets the docking options.
+//   true      the README's inline qualified.docking.init({...}) / sentinel.init() block, verbatim.
+//   "params"  the same options as docking_* (and sentinel_autoInit) query parameters on the head
+//             script, built from that block, as some customers install it. No inline block.
+//   false     no init at all.
+// head: "package" or "token" (qualified-head.js?token=).
+//
+// The Self-hosted menu has the four self-hosted head installs, in this order:
+//   1. self-hosted-no-init     qualified-head.js, no token, no init
+//   2. self-hosted-token-head  qualified-head.js?token=, no init
+//   3. self-hosted-params      qualified-head.js?docking_autoInit=1&docking_..., no inline init
+//   4. self-hosted             qualified-head.js, no token, + inline qualified.docking.init({...})
 // kind: "gtm" pages don't use the package: the page has the Settings card's GTM install
 //   (qualified-head.js?token= in <head>, before the container) and a mock GTM container whose Custom HTML
 //   tag holds the standard Qualified snippet. gtmHead "gtm" also moves qualified-head.js into that tag,
 //   the placement the Settings card warns against.
 // twin: pages with the same nav and a twin are linked from the page's sub-menu, under
 //   `heading` (CDN: Test | Prod, Docking script loaded by: HTML head | GTM).
-// Pages with a copied init (init: true) also get sub-menu toggles for that init, applied from the
+// Pages with an inline copied init (init: true) also get sub-menu toggles for that init, applied from the
 //   URL by site/js/init-overrides.js (see INIT_TOGGLES).
 export const PAGES = {
   "self-hosted": {
@@ -31,10 +42,10 @@ export const PAGES = {
     assets: "package",
     init: true,
     head: "package",
-    title: "Sparkleforce | self-hosted, copied init",
-    eyebrow: "Self-hosted head + the README's copied init",
+    title: "Sparkleforce | 4. self-hosted head, no token + docking.init()",
+    eyebrow: "4. Self-hosted head, no token + docking.init()",
     h1: "Sparkleforce: sparkly little pipelines, self-hosted.",
-    panel: "Self-hosted package",
+    panel: "4. Self-hosted head, no token + inline docking.init()",
   },
   "self-hosted-no-init": {
     nav: "self-hosted-no-init",
@@ -42,10 +53,10 @@ export const PAGES = {
     assets: "package",
     init: false,
     head: "package",
-    title: "Rainbowforce | docking no token (self-hosted head, no init)",
-    eyebrow: "Docking no token: self-hosted head, no inline init",
+    title: "Rainbowforce | 1. self-hosted head, no token, no init",
+    eyebrow: "1. Self-hosted head, no token, no init",
     h1: "Rainbowforce: every color of the funnel, no init required.",
-    panel: "Docking no token: self-hosted head, no inline init",
+    panel: "1. Self-hosted head: no token, no init",
   },
   "self-hosted-token-head": {
     nav: "self-hosted-token-head",
@@ -53,10 +64,21 @@ export const PAGES = {
     assets: "package",
     init: false,
     head: "token",
-    title: "Glitterforce | docking with token (qualified-head.js?token= head)",
-    eyebrow: "Docking with token: Qualified qualified-head.js?token= head + self-hosted widget",
+    title: "Glitterforce | 2. qualified-head.js?token=, no init",
+    eyebrow: "2. qualified-head.js?token=, no init",
     h1: "Glitterforce: live settings, glittering from the server.",
-    panel: "Docking with token: qualified-head.js?token= head, self-hosted widget",
+    panel: "2. Head with token: qualified-head.js?token=, self-hosted widget, no init",
+  },
+  "self-hosted-params": {
+    nav: "self-hosted-params",
+    publish: true,
+    assets: "package",
+    init: "params",
+    head: "package",
+    title: "Starforce | 3. self-hosted head with docking_* params",
+    eyebrow: "3. Self-hosted head + docking_* params",
+    h1: "Starforce: every little setting, written in the stars (and the URL).",
+    panel: "3. Self-hosted head with docking_* params, no inline init",
   },
   "cdn-host": {
     nav: "cdn-host",
@@ -115,6 +137,7 @@ export const PUBLISHED_LANDING = {
   "self-hosted": "self-hosted.qa.html",
   "self-hosted-no-init": "self-hosted-no-init.qa.html",
   "self-hosted-token-head": "self-hosted-token-head.qa.html",
+  "self-hosted-params": "self-hosted-params.qa.html",
   "cdn-host": "cdn-host-prod.qa.html",
 };
 

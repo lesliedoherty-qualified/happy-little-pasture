@@ -62,9 +62,10 @@
             <div class="site-nav__menu" data-nav-menu>
               <button type="button" class="site-nav__toggle" data-nav="self-hosted-menu" aria-expanded="false" aria-controls="self-hosted-menu">Self-hosted</button>
               <ul class="site-nav__dropdown" id="self-hosted-menu" popover="manual">
-                <li><a href="self-hosted.qa.html" data-nav="self-hosted" data-local-only data-published="self-hosted.qa.html">Self-hosted</a></li>
-                <li><a href="self-hosted-no-init.qa.html" data-nav="self-hosted-no-init" data-local-only data-published="self-hosted-no-init.qa.html">Docking no token</a></li>
-                <li><a href="self-hosted-token-head.qa.html" data-nav="self-hosted-token-head" data-local-only data-published="self-hosted-token-head.qa.html">Docking with token</a></li>
+                <li><a href="self-hosted-no-init.qa.html" data-nav="self-hosted-no-init" data-local-only data-published="self-hosted-no-init.qa.html">1. Head, no init</a></li>
+                <li><a href="self-hosted-token-head.qa.html" data-nav="self-hosted-token-head" data-local-only data-published="self-hosted-token-head.qa.html">2. Head with token</a></li>
+                <li><a href="self-hosted-params.qa.html" data-nav="self-hosted-params" data-local-only data-published="self-hosted-params.qa.html">3. Head with params</a></li>
+                <li><a href="self-hosted.qa.html" data-nav="self-hosted" data-local-only data-published="self-hosted.qa.html">4. Head, no token + docking.init()</a></li>
               </ul>
             </div>
             <a href="cdn-host.qa.html" data-nav="cdn-host" data-local-only aria-current="page" data-published="cdn-host-prod.qa.html">CDN host</a>
@@ -109,7 +110,6 @@
             <a href="?skeleton=true" title="showSkeleton: true in this page's docking.init (?skeleton=true)" data-init-param="skeleton" data-init-value="true">true</a>
             <a href="?skeleton=false" title="showSkeleton: false in this page's docking.init (?skeleton=false)" data-init-param="skeleton" data-init-value="false">false</a>
           </div>
-          <div class="sub-nav__group"><a href="?" data-init-reset title="Run the copied init exactly as downloaded">Use the copied init</a></div>
           <div class="sub-nav__group" role="group" aria-label="Environment">
             <span class="sub-nav__heading">Environment:</span>
             <a href="cdn-host-prod.html" title="Local fireball, team 1 (QAI-6672 worktree)" data-local-only data-keep-query>Local</a>
@@ -373,7 +373,7 @@
           <div class="harness__row"><span class="harness__label">Assets from</span><span class="harness__value"><code>cdn/qa/</code></span></div>
           <div class="harness__row"><span class="harness__label">Head</span><span class="harness__value"><code>qualified-head-7caab759.js</code></span></div>
           <div class="harness__row"><span class="harness__label">Widget talks to</span><span class="harness__value"><code>https://app.qualified-dev.com</code>, <code>wss://ws6.qualified-dev.com/cable</code></span></div>
-          <div class="harness__row"><span class="harness__label">Inline init</span><span class="harness__value">copied snapshot: <code>{&quot;pinning&quot;:&quot;immediate&quot;,&quot;showSkeleton&quot;:true,&quot;dockUnderHeader&quot;:true,&quot;skipCrossOriginStylesheets&quot;:false}</code></span></div>
+          <div class="harness__row"><span class="harness__label">Inline init</span><span class="harness__value">copied snapshot: <code>{&quot;pinning&quot;:&quot;immediate&quot;,&quot;showSkeleton&quot;:true,&quot;dockUnderHeader&quot;:true,&quot;skipCrossOriginStylesheets&quot;:false,&quot;defaultDocked&quot;:true,&quot;stateCookieName&quot;:&quot;__q_state_oZmyapJibDbNgGvo&quot;}</code></span></div>
           <div class="harness__row"><span class="harness__label">README</span><span class="harness__value">Saved messenger setup (flag on)</span></div>
           <div class="harness__row"><span class="harness__label">Exported / built</span><span class="harness__value">2026-11-19T23:44:43Z / 2026-11-19T23:44:09.914Z</span></div>
           <p class="harness__note">Reset between rows with a fresh incognito window: Piper remembers dock choices. <a href="qualified-qa/README.md">Package README</a></p>

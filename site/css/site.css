@@ -556,6 +556,26 @@ html[data-page="self-hosted-token-head"] {
   --hero-bottom: #c98bfb;
 }
 
+html[data-page="self-hosted-params"] {
+  /* Starforce: the self-hosted head with the init as docking_* params. Brand refresh primaries
+     (navy, deep blue, blue) with the brand yellow as the pop; the yellow is darkened for small
+     text on white. */
+  --cream: #fffbea;
+  --paper: #fffdf5;
+  --sand: var(--brand-sky-light);
+  --orange: #8a6400;
+  --purple: var(--brand-blue-deep);
+  --lavender: var(--brand-ice);
+  --blush: #fff0b3;
+  --header-bg: rgba(255, 251, 234, 0.94);
+  --hero-a: rgba(144, 208, 254, 0.7);
+  --hero-b: rgba(252, 192, 6, 0.55);
+  /* Starforce hero: navy to deep blue to blue. */
+  --hero-top: var(--brand-navy);
+  --hero-mid: var(--brand-blue-deep);
+  --hero-bottom: var(--brand-blue);
+}
+
 /* Hero --------------------------------------------------------------------- */
 
 /* The hero band, in the brand refresh's style: the theme's vibrant gradient (--hero-top, -mid,

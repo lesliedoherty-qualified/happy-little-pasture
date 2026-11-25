@@ -9,8 +9,8 @@
 // - Booker lab: no Piper, so the switch is disabled.
 // - Off localhost (GitHub Pages): the self-hosted pages don't exist, so their links are disabled.
 // - Self-hosted and Components sub-menus (every page): show and hide the static list, a manual
-//   popover, and set the button's aria-expanded. Self-hosted holds Self-hosted, Docking no token
-//   and Docking with token. The list opens in the top layer, so opening it moves
+//   popover, and set the button's aria-expanded. Self-hosted holds the four self-hosted head
+//   installs (no init, with token, with params, with docking.init()). The list opens in the top layer, so opening it moves
 //   nothing and a docked Piper can't cover it.
 (function () {
   "use strict";
@@ -197,13 +197,6 @@
       var applied = init && init.applied ? init.applied[init.options[param]] : undefined;
       if (String(applied) === value) link.setAttribute("aria-current", "true");
     });
-    var reset = document.querySelector("[data-init-reset]");
-    if (reset) {
-      var cleared = new URLSearchParams(current);
-      Object.keys((init && init.options) || {}).forEach(function (param) { cleared.delete(param); });
-      reset.setAttribute("href", "?" + cleared.toString());
-      if (init && init.overrides && !Object.keys(init.overrides).length) reset.setAttribute("aria-current", "true");
-    }
     return;
   }
 

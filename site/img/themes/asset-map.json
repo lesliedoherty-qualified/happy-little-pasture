@@ -375,5 +375,81 @@
         "original": "6.png"
       }
     }
+  },
+  "starforce": {
+    "data_page": [
+      "self-hosted-params"
+    ],
+    "reused": "No art of its own: Cloudforce logo, hero and odd portraits; Glitterforce feature art and even portraits.",
+    "palette": {
+      "bg": "#fffbea",
+      "paper": "#fffdf5",
+      "accent": "#032ac0",
+      "soft": "#eaf5fe",
+      "gold": "#fff0b3"
+    },
+    "assets": {
+      "feature-cloud.svg": {
+        "path": "glitterforce/glitterforce-feature-cloud.svg",
+        "width": 240,
+        "height": 240
+      },
+      "feature-roadmap.svg": {
+        "path": "glitterforce/glitterforce-feature-roadmap.svg",
+        "width": 240,
+        "height": 240
+      },
+      "feature-synergy.svg": {
+        "path": "glitterforce/glitterforce-feature-synergy.svg",
+        "width": 240,
+        "height": 240
+      },
+      "hero.svg": {
+        "path": "cloudforce/cloudforce-hero.svg",
+        "width": 520,
+        "height": 360
+      },
+      "logo.svg": {
+        "path": "cloudforce/cloudforce-logo.svg",
+        "width": 96,
+        "height": 96
+      },
+      "1.png": {
+        "path": "cloudforce/team/cloudforce-team-01.png",
+        "width": 480,
+        "height": 480,
+        "original": "1.png"
+      },
+      "2.png": {
+        "path": "glitterforce/team/glitterforce-team-02.png",
+        "width": 480,
+        "height": 480,
+        "original": "2.png"
+      },
+      "3.png": {
+        "path": "cloudforce/team/cloudforce-team-03.png",
+        "width": 480,
+        "height": 480,
+        "original": "3.png"
+      },
+      "4.png": {
+        "path": "glitterforce/team/glitterforce-team-04.png",
+        "width": 480,
+        "height": 480,
+        "original": "4.png"
+      },
+      "5.png": {
+        "path": "cloudforce/team/cloudforce-team-05.png",
+        "width": 480,
+        "height": 480,
+        "original": "5.png"
+      },
+      "6.png": {
+        "path": "glitterforce/team/glitterforce-team-06.png",
+        "width": 480,
+        "height": 480,
+        "original": "6.png"
+      }
+    }
   }
 }

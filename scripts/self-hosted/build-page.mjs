@@ -209,11 +209,37 @@ const assetBase = (page, env) =>
 const inlineInit = /\n[ ]*<script type="text\/javascript">\n(?:(?!<\/script>)[\s\S])*?qualified\.sentinel\.init\(\);\n[ ]*<\/script>\n/;
 const packageHead = /[ ]*<script src="[^"]*qualified-head-[^"]+\.js" type="text\/javascript"><\/script>\n/;
 
+// The options in the README's inline qualified.docking.init({...}), for the params page.
+const dockingInitCall = /qualified\.docking\.init\((\{[^\n]*\})\);/;
+function readmeInitOptions(html) {
+  const found = html.match(dockingInitCall);
+  if (!found) fail("Couldn't find qualified.docking.init({...}) in the README's install block.");
+  return JSON.parse(found[1]);
+}
+
+// The same options as the head script's query parameters: docking_autoInit=1 runs docking.init
+// with the docking_<option> values, and sentinel_autoInit=1 stands in for sentinel.init().
+// The head reads them from its own <script src> (autoInitFromScriptTag in fireball's widget API).
+function initParams(options) {
+  const params = new URLSearchParams({ docking_autoInit: "1" });
+  for (const [key, value] of Object.entries(options)) params.set(`docking_${key}`, String(value));
+  params.set("sentinel_autoInit", "1");
+  return params.toString();
+}
+
+// The README init for one environment: its stateCookieName carries that environment's token.
+const envInitOptions = (env) => readmeInitOptions(install.replaceAll(info.token, environments[env].token));
+
 function installFor(page, env) {
   const { baseUrl, token } = environments[env];
   // The token appears in qualified('initialize', ...) and in the init's stateCookieName.
   let html = install.replaceAll(PLACEHOLDER_HOST, assetBase(page, env)).replaceAll(info.token, token);
-  if (page.init) {
+  if (page.init === "params") {
+    if (!packageHead.test(html)) fail("Couldn't find the README's head script tag.");
+    const params = initParams(readmeInitOptions(html));
+    html = html.replace(packageHead, (tag) => tag.replace(/(qualified-head-[^"]+\.js)"/, (_m, file) => `${file}?${params}"`));
+  }
+  if (page.init === true) {
     // Test harness, not customer code: lets the sub-menu override the copied init from the URL.
     if (!packageHead.test(html)) fail("Couldn't find the README's head script tag.");
     html = html.replace(
@@ -225,11 +251,15 @@ function installFor(page, env) {
         '<script src="js/init-overrides.js"></script>\n',
     );
   }
-  if (!page.init) {
+  if (page.init !== true) {
     if (!inlineInit.test(html)) fail("Couldn't find the README's inline init block.");
     html = html.replace(
       inlineInit,
-      page.head === "token" ? "\n" : "\n<!-- No inline docking/sentinel init: Settings reach the page only through runtime configuration. -->\n",
+      page.init === "params"
+        ? "\n<!-- No inline init: the head script's docking_* and sentinel_autoInit parameters carry the README's docking.init options. -->\n"
+        : page.head === "token"
+          ? "\n"
+          : "\n<!-- No inline docking/sentinel init: Settings reach the page only through runtime configuration. -->\n",
     );
   }
   if (page.head === "token") {
@@ -344,11 +374,11 @@ for (const [pattern, what] of [
   [/<html lang="en" data-page="hosted">/, "<html> tag"],
   [/<p class="eyebrow">[^<]*<\/p>\s*<h1>[^<]*<\/h1>/, "hero eyebrow and H1"],
   [/ data-nav="hosted" aria-current="page"/, "Hosted menu link"],
-  // Page links sit in a scroller, with the Self-hosted sub-menu (Self-hosted, Docking no token,
-  // Docking with token) among them; its links are rewritten like the others below. The
+  // Page links sit in a scroller, with the Self-hosted sub-menu (the four self-hosted head
+  // installs, see pages.mjs) among them; its links are rewritten like the others below. The
   // Components sub-menu sits after the scroller, copied as-is. nav.js opens both.
   [/<div class="site-nav__links">\n(?:            <a [^\n]*\n|            <div class="site-nav__menu" data-nav-menu>\n[\s\S]*?id="self-hosted-menu"[\s\S]*?            <\/div>\n)+          <\/div>\n/, "menu links"],
-  [/data-nav="self-hosted" [^\n]*\n[^\n]*data-nav="self-hosted-no-init" [^\n]*\n[^\n]*data-nav="self-hosted-token-head" /, "Self-hosted sub-menu"],
+  [/data-nav="self-hosted-no-init" [^\n]*\n[^\n]*data-nav="self-hosted-token-head" [^\n]*\n[^\n]*data-nav="self-hosted-params" [^\n]*\n[^\n]*data-nav="self-hosted" /, "Self-hosted sub-menu"],
   [/<div class="site-nav__menu" data-nav-menu>[\s\S]*?href="components\.html"[\s\S]*?href="multimodal\.html"[\s\S]*?<\/ul>/, "Components sub-menu"],
 ]) {
   if (!pattern.test(base)) fail(`index.html's ${what} changed; update build-page.mjs.`);
@@ -427,7 +457,7 @@ function buildPage(id, env) {
       ),
     );
   }
-  if (page.init) {
+  if (page.init === true) {
     for (const toggle of INIT_TOGGLES) {
       groups.push(
         subNavGroup(
@@ -441,9 +471,6 @@ function buildPage(id, env) {
         ),
       );
     }
-    groups.push(
-      '          <div class="sub-nav__group"><a href="?" data-init-reset title="Run the copied init exactly as downloaded">Use the copied init</a></div>',
-    );
   }
   // index.html's sub-menu already holds the shared Visitor state option; this page's own options
   // go in front of it.
@@ -473,9 +500,21 @@ function buildPage(id, env) {
       row("Environment", `${escape(environment.label)}`),
       row("Token", `<code>${escape(environment.token)}</code>`),
       row("Assets from", `<code>${escape(assets)}</code>`),
-      row("Head", page.head === "token" ? `<code>${escape(environment.baseUrl)}/qualified-head.js?token=</code>` : `<code>${escape(info.head)}</code>`),
+      row(
+        "Head",
+        page.head === "token"
+          ? `<code>${escape(environment.baseUrl)}/qualified-head.js?token=</code>`
+          : `<code>${escape(info.head)}${page.init === "params" ? "?" + escape(initParams(envInitOptions(env))) : ""}</code>`,
+      ),
       row("Widget talks to", `<code>${escape(bakedEnv[env].host)}</code>, <code>${escape(bakedEnv[env].wsHost)}</code>`),
-      row("Inline init", page.init ? `copied snapshot: <code>${escape(settings)}</code>` : "none"),
+      row(
+        "Inline init",
+        page.init === true
+          ? `copied snapshot: <code>${escape(JSON.stringify(envInitOptions(env)))}</code>`
+          : page.init === "params"
+            ? "none: the same options are the head script's docking_* parameters (above)"
+            : "none",
+      ),
       row("README", flagOn ? "Saved messenger setup (flag on)" : "Legacy, no saved setup (flag off)"),
       row("Exported / built", `${escape(info.exportedAt)} / ${escape(info.build?.builtAt)}`),
       ]),

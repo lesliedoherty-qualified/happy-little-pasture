@@ -70,11 +70,12 @@ it:
   hosts baked in. The `.unminified` debug copies aren't committed.
 - The QA pages that work from github.io (`publish: true` in
   [scripts/self-hosted/pages.mjs](scripts/self-hosted/pages.mjs)): `self-hosted.qa.html`,
-  `self-hosted-no-init.qa.html`, `self-hosted-token-head.qa.html` and `cdn-host-prod.qa.html`.
+  `self-hosted-no-init.qa.html`, `self-hosted-token-head.qa.html`, `self-hosted-params.qa.html` and
+  `cdn-host-prod.qa.html`.
 - `site/cdn/qa/` for the Prod CDN page.
 
 To update what Pages serves: `npm run self-hosted -- --export`, then commit `site/qualified-qa/`,
-the four `.qa.html` pages and `site/cdn/qa/`, and push. Re-exports change the head, widget and CSS
+the five `.qa.html` pages and `site/cdn/qa/`, and push. Re-exports change the head, widget and CSS
 filenames, so commit the deletions too.
 
 Local pages, the test CDN page and the GTM pages need localhost, so they stay git-ignored. On
@@ -92,8 +93,19 @@ cover every install path explicitly: **Hosted** (Qualified serves everything), *
 here, not production) and **GTM** (the hosted snippet runs from a Google Tag Manager tag; a mock
 GTM here).
 
-The **Self-hosted** button opens a sub-menu (like Components) with the three self-hosted pages:
-the README install and the two docking variants.
+The **Self-hosted** button opens a sub-menu (like Components) with the four ways a self-hosted
+site loads the head script, one page each:
+
+| # | Menu item | Page | In `<head>` |
+| --- | --- | --- | --- |
+| 1 | Head, no init | `self-hosted-no-init.html` | the package's `qualified-head-*.js`, no token, no init |
+| 2 | Head with token | `self-hosted-token-head.html` | Qualified's `qualified-head.js?token=`, no init |
+| 3 | Head with params | `self-hosted-params.html` | `qualified-head-*.js?docking_autoInit=1&docking_<option>=...&sentinel_autoInit=1`, no inline init |
+| 4 | Head, no token + docking.init() | `self-hosted.html` | `qualified-head-*.js` (no token) + the README's inline `qualified.docking.init({...})` and `sentinel.init()` |
+
+Pages 3 and 4 carry the same options: the build reads the README's `docking.init({...})` and
+writes each option as a `docking_<option>` parameter on page 3's head script, as some customers
+install it. The head reads them from its own `<script src>`.
 
 ### Brand
 
@@ -119,15 +131,17 @@ palettes, and the llama illustrations keep the character sheet's warm colours.
 
 Each page's hero band is its theme's vibrant gradient (`--hero-top`, `--hero-mid`, `--hero-bottom` in
 `site/css/site.css`) with the grainy clouds in `site/img/hero-clouds.svg` over it, in the brand refresh's
-style: pink for Sparkleforce, teal for Rainbowforce, purple for Glitterforce, steel blue for Cloudforce,
+style: pink for Sparkleforce, teal for Rainbowforce, purple for Glitterforce, navy to brand blue for
+Starforce, steel blue for Cloudforce,
 green for AlpacalpyseForce, and the brand blue for Hosted and the component pages.
 
 | Menu | Page | Look |
 | --- | --- | --- |
 | Hosted | `index.html`: hosted install from `config.js` (`?install=` variants in the footer harness) | Brand blue |
-| Self-hosted (sub-menu) > Self-hosted | `self-hosted.html`: self-hosted head + the README's copied init | Sparkleforce pink |
-| Self-hosted > Docking no token | `self-hosted-no-init.html`: self-hosted head, no inline init | Rainbowforce rainbow |
-| Self-hosted > Docking with token | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
+| Self-hosted (sub-menu) > 1. Head, no init | `self-hosted-no-init.html`: self-hosted head, no token, no init | Rainbowforce rainbow |
+| Self-hosted > 2. Head with token | `self-hosted-token-head.html`: `qualified-head.js?token=` head + self-hosted widget | Glitterforce violet |
+| Self-hosted > 3. Head with params | `self-hosted-params.html`: self-hosted head with the init as `docking_*` params | Starforce: brand navy, deep blue and yellow; reuses Cloudforce and Glitterforce art |
+| Self-hosted > 4. Head, no token + docking.init() | `self-hosted.html`: self-hosted head + the README's inline init | Sparkleforce pink |
 | CDN host | `cdn-host.html` (test CDN) / `cdn-host-prod.html` (prod-like CDN), copied init | Cloudforce sky |
 | GTM | `gtm.html` (docking script in `<head>`) / `gtm-docking-in-gtm.html` (docking script inside the GTM tag) | AlpacalpyseForce sunset |
 | Components | A sub-menu that opens on click: **All components** (`library.html`, a card per component page with a live preview), then the pages in alphabetical order: **Calendar** (`calendar.html`, the booker's timeline entries), **Cards** (`cards.html`, shared offer and shared content cards), **Cold start questions** (`cold-start.html`, the suggestions above the composer), **Composer** (`composer.html`, where the visitor types), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Messages** (`messages.html`, the chat timeline in eight conversations), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Post-call survey** (`survey.html`, the rating pill and feedback form), **Presented content** (`presented.html`, deck, video and slide cards) and **Preview bubble** (`preview.html`, the pounce beside the collapsed messenger) | Brand blue |
@@ -146,13 +160,14 @@ green for AlpacalpyseForce, and the brand blue for Hosted and the component page
   visitor, without a fresh incognito window. `window.__PASTURE_STATE_RESET__` lists what it cleared.
 - **Page sub-menu**: each generated page has a bar at the top of `<main>` with its own options.
   Variant pages link to their twin there (CDN: Test | Prod, Docking script loaded by: HTML head |
-  GTM). Pages with a copied init (Self-hosted, both CDN pages) also get **Pin beneath header:
+  GTM). Pages with an inline copied init (4. Head, no token + docking.init(), both CDN pages) also get **Pin beneath header:
   true | false** and **Loading skeleton: true | false**. Those set `?underNav=` and `?skeleton=`,
   which [site/js/init-overrides.js](site/js/init-overrides.js) merges into the copied
   `docking.init({...})` before first paint. It's a test-harness script loaded right after the
-  head script, so the README's install block stays verbatim. **Use the copied init** clears them.
-  Docking no token has no init to change, and Docking with token's init comes from Qualified's `docking.js`
-  response, so neither has toggles.
+  head script, so the README's install block stays verbatim. To run the init as downloaded, open
+  the page from the menu again (no query). Pages 1 and 2 have no init to change. Page 3's options are
+  in the head script's URL, read while it runs, before any later script could change them, so it has
+  no toggles either.
 - **CDN: Test / Prod** (CDN host sub-menu) switches where the package comes from:
   - **Test CDN**: a mock CDN on its own origin, `http://localhost:4601/<local|qa>/`, which
     `npm start` also runs (set `CDN_PORT` to move it, `CDN_PORT=0` to turn it off). It serves
@@ -194,7 +209,7 @@ green for AlpacalpyseForce, and the brand blue for Hosted and the component page
   [site/js/nav.js](site/js/nav.js) only sets attributes on the Hosted page, so it never moves the
   layout.
 - On QA, team 642 currently shows no messenger on this site with a plain install (Hosted,
-  Docking no token, Docking with token). Pages with the copied init still show it docked, because that init starts
+  1. Head, no init, 2. Head with token). Pages with the copied init, inline or as params, still show it docked, because that init starts
   docked by default. QA runs master, so its `docking.js?token=` doesn't embed saved settings yet.
 
 ## Piper data inspector
@@ -300,13 +315,15 @@ FIREBALL=~/_Server/qualified/<worktree> npm run self-hosted -- --export
 - The export bundles fireball's widget-stable build. After widget code changes, rebuild it in
   `fireball-qai-6672/services` with `mise run build:js:stable`, then export.
 - The footer panel shows which settings, export time and widget build the page was built from.
-- It also builds two variants from the same export:
+- It also builds the other self-hosted pages from the same export (see the table under Test-page menu):
   - `self-hosted-no-init.html`: the local head script without the inline `docking.init` /
     `sentinel.init` block. Settings arrive only with the runtime configuration, so docking
     happens after first paint.
   - `self-hosted-token-head.html`: the self-hosted widget with the head from
     `docking.js?token=` on fireball (set `QUALIFIED_HOST` for another host). The server embeds the
     current saved settings, so there's no copied init to keep in sync.
+  - `self-hosted-params.html`: the local head script with the README init's options as
+    `docking_*` query parameters (plus `sentinel_autoInit=1`) instead of the inline block.
 - Running `mise run build:js:stable` in fireball removes the dev server's build manifests.
   Restart that worktree's `dev:rsbuild` afterwards, or hosted `docking.js` returns 500.
 - The widget still talks to local fireball (34214) for its configuration and WebSockets. Only

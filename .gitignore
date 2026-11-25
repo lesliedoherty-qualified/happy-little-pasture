@@ -9,6 +9,7 @@ cdn-test/
 site/self-hosted.html
 site/self-hosted-no-init.html
 site/self-hosted-token-head.html
+site/self-hosted-params.html
 site/cdn-host.html
 site/cdn-host-prod.html
 site/gtm.html
