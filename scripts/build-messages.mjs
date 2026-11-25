@@ -1,6 +1,6 @@
 // Builds site/<page>/frame.html + panda.css + states.js from scripts/<page>/dump/, for the
-// messenger pages: Messages (the default), Cards, Presented content, Calendar, Composer and
-// Cold start questions.
+// messenger pages: Messages (the default), Cards, Presented content, Calendar, Composer, Cold
+// start questions and Post-call survey.
 //
 // The dump is the real PiperX messenger (Main) as fireball renders it, one conversation per state
 // (see scripts/<page>/zz_<page>_static_dump.test.tsx), so the markup carries the app's own hashed
@@ -16,6 +16,7 @@
 //   npm run calendar:build     # the same for Calendar
 //   npm run composer:build     # the same for Composer
 //   npm run cold-start:build   # the same for Cold start questions
+//   npm run survey:build       # the same for Post-call survey
 //   npm run messages:refresh   # re-capture from fireball first, then build (cards:refresh too)
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -27,6 +28,7 @@ const PAGES = {
   calendar: { title: "PiperX calendar entries (static)", global: "PASTURE_CALENDAR", what: "Calendar" },
   composer: { title: "PiperX composer (static)", global: "PASTURE_COMPOSER", what: "Composer" },
   "cold-start": { title: "PiperX cold start questions (static)", global: "PASTURE_COLD_START", what: "Cold start questions" },
+  survey: { title: "PiperX post-call survey (static)", global: "PASTURE_SURVEY", what: "Post-call survey" },
 };
 const page = process.argv[2] || "messages";
 if (!PAGES[page]) throw new Error(`Unknown page "${page}"; expected one of ${Object.keys(PAGES).join(", ")}.`);

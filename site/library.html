@@ -207,6 +207,7 @@
               <li><a href="components.html" data-nav="booker">Meeting booker</a></li>
               <li><a href="messages.html" data-nav="messages">Messages</a></li>
               <li><a href="multimodal.html" data-nav="multimodal">Multimodal</a></li>
+              <li><a href="survey.html" data-nav="survey">Post-call survey</a></li>
               <li><a href="presented.html" data-nav="presented">Presented content</a></li>
             </ul>
           </div>
@@ -251,6 +252,7 @@
           check: '<path d="M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 9h16M9 14l2 2 4-4"/>',
           keyboard: '<path d="M3 7h18v10H3zM7 10h.01M11 10h.01M15 10h.01M7 14h10"/>',
           bulb: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5.6 1 .6 1.7V16h6v-.5c0-.7 0-1.2.6-1.7A6 6 0 0 0 12 3z"/>',
+          thumbs: '<path d="M7 11v9H4v-9zM7 11l4-7a2 2 0 0 1 2 2v4h5.5a2 2 0 0 1 2 2.3l-1.2 6A2 2 0 0 1 17.3 20H7"/>',
         };
         const PAGES = [
           {
@@ -324,6 +326,14 @@
             preview: "cold-start/frame.html?state=fresh",
             icon: "bulb",
             accent: "var(--accent-yellow)",
+          },
+          {
+            title: "Post-call survey",
+            text: "How was the call? The rating pill and the feedback form.",
+            href: "survey.html",
+            preview: "survey/frame.html?state=feedback-typed",
+            icon: "thumbs",
+            accent: "var(--accent-teal)",
           },
         ];
         const svg = (paths, color) =>

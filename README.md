@@ -130,7 +130,7 @@ green for AlpacalpyseForce, and the brand blue for Hosted and the component page
 | Self-hosted > Docking with token | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
 | CDN host | `cdn-host.html` (test CDN) / `cdn-host-prod.html` (prod-like CDN), copied init | Cloudforce sky |
 | GTM | `gtm.html` (docking script in `<head>`) / `gtm-docking-in-gtm.html` (docking script inside the GTM tag) | AlpacalpyseForce sunset |
-| Components | A sub-menu that opens on click: **All components** (`library.html`, a card per component page with a live preview), then the pages in alphabetical order: **Calendar** (`calendar.html`, the booker's timeline entries), **Cards** (`cards.html`, shared offer and shared content cards), **Cold start questions** (`cold-start.html`, the suggestions above the composer), **Composer** (`composer.html`, where the visitor types), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Messages** (`messages.html`, the chat timeline in eight conversations), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks) and **Presented content** (`presented.html`, deck, video and slide cards) | Brand blue |
+| Components | A sub-menu that opens on click: **All components** (`library.html`, a card per component page with a live preview), then the pages in alphabetical order: **Calendar** (`calendar.html`, the booker's timeline entries), **Cards** (`cards.html`, shared offer and shared content cards), **Cold start questions** (`cold-start.html`, the suggestions above the composer), **Composer** (`composer.html`, where the visitor types), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Messages** (`messages.html`, the chat timeline in eight conversations), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Post-call survey** (`survey.html`, the rating pill and feedback form) and **Presented content** (`presented.html`, deck, video and slide cards) | Brand blue |
 
 - **Environment: Local | QA** (in the page sub-menu) switches environment. On Hosted it sets
   `?env=` and keeps your other query parameters. Every generated page has a QA twin, `<page>.qa.html`, using team 642's token and a
@@ -483,7 +483,7 @@ npm run cards:build                        # rebuild from the committed capture 
 ```
 
 [scripts/build-messages.mjs](scripts/build-messages.mjs) builds the messenger pages: Messages
-with no argument, or `cards`, `presented`, `calendar`, `composer` or `cold-start`. Every messenger
+with no argument, or `cards`, `presented`, `calendar`, `composer`, `cold-start` or `survey`. Every messenger
 frame pins its timeline to the newest message after inserting the capture, as `AutoScroll` does,
 since scroll position isn't in the captured markup.
 
@@ -569,6 +569,30 @@ whole messenger, in Sidebar and Mobile, with three themes.
 ```sh
 npm run cold-start:refresh                      # ~/_Server/qualified/fireball-master
 npm run cold-start:build                        # rebuild from the committed capture only
+```
+
+## Post-call survey page
+
+[site/survey.html](site/survey.html) (`http://localhost:4600/survey.html`) shows `PostCallSurvey`,
+what the voice stage shows once a call ends: the "How was the call?" pill (thumbs up, thumbs down,
+close) and, after a thumbs down, the "What went wrong?" form. In the whole messenger in voice
+mode, Sidebar and Mobile, with three themes.
+
+- **States:** the pill; thumbs up picked; thumbs down picked; the form empty, typed, with Submit
+  picked and with Dismiss picked. A pick holds for 300ms before it acts (`post_call_survey_store`),
+  so the picked states are that moment.
+- **Setup:** the survey's store is loaded with `postCallSurveyStore.load()` and shown, as the end
+  of a call does (`AiConversationStore`); a store assigned by hand is replaced by a load already
+  under way. The voice stage (`MultiModalComponent`) renders nothing until the agent's preview
+  video is known, so the dump sets `UIStore`'s private `previewVideoSrc` as its initial state
+  would.
+- **Not shown:** video mode, where the survey overlays the bottom of the agent's video tile. A
+  capture's `<video>` has no frames, so the tile collapses and the pill lands on the header; it
+  needs a stand-in for the video.
+
+```sh
+npm run survey:refresh                      # ~/_Server/qualified/fireball-master
+npm run survey:build                        # rebuild from the committed capture only
 ```
 
 ## Team portraits

@@ -27,6 +27,8 @@
     "composer:refresh": "bash scripts/refresh-composer.sh",
     "cold-start:build": "node scripts/build-messages.mjs cold-start",
     "cold-start:refresh": "bash scripts/refresh-cold-start.sh",
+    "survey:build": "node scripts/build-messages.mjs survey",
+    "survey:refresh": "bash scripts/refresh-survey.sh",
     "self-hosted": "bash scripts/self-hosted/sync.sh"
   },
   "engines": {

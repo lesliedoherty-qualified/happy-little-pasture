@@ -1,0 +1,90 @@
+{
+  "layouts": [
+    {
+      "id": "sidebar",
+      "label": "Sidebar",
+      "mobile": false
+    },
+    {
+      "id": "mobile",
+      "label": "Mobile",
+      "mobile": true
+    }
+  ],
+  "states": [
+    {
+      "id": "rating",
+      "label": "Rating: How was the call?"
+    },
+    {
+      "id": "rating-up",
+      "label": "Rating: thumbs up picked"
+    },
+    {
+      "id": "rating-down",
+      "label": "Rating: thumbs down picked"
+    },
+    {
+      "id": "feedback",
+      "label": "Feedback: What went wrong?"
+    },
+    {
+      "id": "feedback-typed",
+      "label": "Feedback: typed"
+    },
+    {
+      "id": "feedback-submit",
+      "label": "Feedback: Submit picked"
+    },
+    {
+      "id": "feedback-dismiss",
+      "label": "Feedback: Dismiss picked"
+    }
+  ],
+  "themes": [
+    {
+      "id": "default",
+      "label": "New-team default (outline)",
+      "vars": {
+        "--q-primary-color": "#437D88",
+        "--q-lighter-primary-color": "#b4cbcf",
+        "--q-text-color": "#ffffff",
+        "--q-button-background-color": "transparent",
+        "--q-button-hover-background-color": "#437D8810",
+        "--q-button-background-layer": "#ffffff",
+        "--q-button-hover-background-layer": "#ffffff",
+        "--q-button-text-color": "#437D88",
+        "--q-button-hover-text-color": "#437D88",
+        "--q-button-border-color": "#437D88",
+        "--q-button-hover-border-color": "#437D88",
+        "--q-button-border-radius": "4px",
+        "--q-control-border-radius": "4px"
+      }
+    },
+    {
+      "id": "solid",
+      "label": "Solid buttons",
+      "vars": {
+        "--q-primary-color": "#437D88",
+        "--q-lighter-primary-color": "#b4cbcf",
+        "--q-text-color": "#ffffff",
+        "--q-button-background-color": "#437D88",
+        "--q-button-hover-background-color": "#396a74",
+        "--q-button-background-layer": "#437D88",
+        "--q-button-hover-background-layer": "#396a74",
+        "--q-button-text-color": "#ffffff",
+        "--q-button-hover-text-color": "#ffffff",
+        "--q-button-border-color": "#437D88",
+        "--q-button-hover-border-color": "#396a74",
+        "--q-button-border-radius": "4px",
+        "--q-control-border-radius": "4px"
+      }
+    },
+    {
+      "id": "none",
+      "label": "No theme (fallbacks)",
+      "vars": {}
+    }
+  ],
+  "placeholderFallback": "textarea[data-pasture-placeholder-fallback]"
+}
