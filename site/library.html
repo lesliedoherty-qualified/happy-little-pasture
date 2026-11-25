@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en" data-page="library">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Component library | Llamalytics</title>
+    <link rel="icon" href="img/logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/site.css" />
+    <style>
+      /* Brand-refresh palette (Brand Guidelines 2026, "Standard core usage"): about 80% primary
+         blues, as gradients or solids; the accents only as a pop of colour, here the icons. */
+      .library {
+        --navy: #0b1d5c;
+        --blue-deep: #0d2aa6;
+        --blue: #2f63f0;
+        --sky: #4fb0f9;
+        --sky-light: #a4cdfa;
+        --ice: #eaf3fe;
+        --accent-purple: #c17ff7;
+        --accent-pink: #ee5f8d;
+        --accent-yellow: #f2c142;
+        --accent-teal: #66dfc9;
+        background: var(--ice);
+        color: var(--navy);
+      }
+
+      .library__hero {
+        padding: 64px 0 72px;
+        background: linear-gradient(160deg, var(--navy) 0%, var(--blue-deep) 38%, var(--blue) 70%, var(--sky) 100%);
+        color: #fff;
+      }
+      .library__hero h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2.2rem, 4vw, 3.2rem);
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+      }
+      .library__hero h1 span {
+        display: block;
+        color: var(--sky-light);
+      }
+      .library__hero p {
+        max-width: 62ch;
+        margin: 0;
+        font-size: 1.05rem;
+        color: rgba(255, 255, 255, 0.86);
+      }
+
+      .library__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 24px;
+        margin: 0;
+        padding: 40px 0 72px;
+        list-style: none;
+      }
+
+      /* A card: the page's preview on top, then the blue body with the title, the line about it,
+         the link and the icon. The whole card is the link's hit area. */
+      .library-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        border-radius: 20px;
+        background: linear-gradient(165deg, var(--blue-deep) 0%, var(--blue) 100%);
+        color: #fff;
+        overflow: hidden;
+        transition: transform 0.15s ease;
+      }
+      .library-card:hover {
+        transform: translateY(-2px);
+      }
+      .library-card:nth-child(4n + 2) {
+        background: linear-gradient(165deg, var(--navy) 0%, var(--blue-deep) 100%);
+      }
+      .library-card:nth-child(4n + 3) {
+        background: linear-gradient(165deg, var(--blue) 0%, #3f8df6 100%);
+      }
+
+      /* The preview: a real 375px messenger frame, scaled down to the card's width. It's a picture
+         of the page, so it takes no pointer events and isn't in the tab order or the a11y tree. */
+      .library-card__preview {
+        position: relative;
+        margin: 10px 10px 0;
+        aspect-ratio: 375 / 440;
+        border-radius: 14px;
+        background: #fff;
+        overflow: hidden;
+      }
+      .library-card__preview iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 375px;
+        height: 440px;
+        border: 0;
+        transform-origin: 0 0;
+        transform: scale(var(--preview-scale, 0.66));
+        pointer-events: none;
+      }
+
+      .library-card__body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding: 18px 20px 20px;
+      }
+      .library-card__title {
+        margin: 0 0 6px;
+        font-size: 1.4rem;
+        line-height: 1.15;
+        letter-spacing: -0.01em;
+      }
+      .library-card__text {
+        margin: 0 0 18px;
+        font-size: 0.92rem;
+        line-height: 1.45;
+        color: rgba(255, 255, 255, 0.86);
+      }
+      .library-card__footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: auto;
+      }
+      .library-card__link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #fff;
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+      .library-card__link::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+      }
+      .library-card__link:focus-visible {
+        outline: none;
+      }
+      .library-card:has(.library-card__link:focus-visible) {
+        outline: 3px solid var(--sky);
+        outline-offset: 3px;
+      }
+      .library-card__link svg {
+        width: 14px;
+        height: 14px;
+      }
+      .library-card__icon {
+        display: grid;
+        place-items: center;
+        flex: none;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: #fff;
+      }
+      .library-card__icon svg {
+        width: 26px;
+        height: 26px;
+      }
+
+      .library__note {
+        margin: 0;
+        padding-bottom: 56px;
+        max-width: 80ch;
+        font-size: 0.9rem;
+        color: #3b4d7a;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="./">
+          <img src="img/logo.svg" width="40" height="40" alt="" />
+          <span>Llamalytics</span>
+        </a>
+        <nav class="site-nav" aria-label="Test pages">
+          <div class="site-nav__links">
+            <a href="./" data-nav="hosted">Hosted</a>
+            <div class="site-nav__menu" data-nav-menu>
+              <button type="button" class="site-nav__toggle" data-nav="self-hosted-menu" aria-expanded="false" aria-controls="self-hosted-menu">Self-hosted</button>
+              <ul class="site-nav__dropdown" id="self-hosted-menu" popover="manual">
+                <li><a href="self-hosted.html" data-nav="self-hosted" data-local-only data-published="self-hosted.qa.html">Self-hosted</a></li>
+                <li><a href="self-hosted-no-init.html" data-nav="self-hosted-no-init" data-local-only data-published="self-hosted-no-init.qa.html">Docking no token</a></li>
+                <li><a href="self-hosted-token-head.html" data-nav="self-hosted-token-head" data-local-only data-published="self-hosted-token-head.qa.html">Docking with token</a></li>
+              </ul>
+            </div>
+            <a href="cdn-host.html" data-nav="cdn-host" data-local-only data-published="cdn-host-prod.qa.html">CDN host</a>
+            <a href="gtm.html" data-nav="gtm" data-local-only>GTM</a>
+          </div>
+          <div class="site-nav__menu" data-nav-menu>
+            <button type="button" class="site-nav__toggle" data-nav="components" aria-expanded="false" aria-controls="components-menu" aria-current="true">Components</button>
+            <ul class="site-nav__dropdown" id="components-menu" popover="manual">
+              <li><a href="library.html" data-nav="library" aria-current="page">All components</a></li>
+              <li><a href="components.html" data-nav="booker">Meeting booker</a></li>
+              <li><a href="multimodal.html" data-nav="multimodal">Multimodal</a></li>
+              <li><a href="form-fields.html" data-nav="form-fields">Form fields</a></li>
+              <li><a href="messages.html" data-nav="messages">Messages</a></li>
+              <li><a href="cards.html" data-nav="cards">Cards</a></li>
+              <li><a href="presented.html" data-nav="presented">Presented content</a></li>
+              <li><a href="calendar.html" data-nav="calendar">Calendar</a></li>
+              <li><a href="composer.html" data-nav="composer">Composer</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="library">
+      <section class="library__hero">
+        <div class="wrap">
+          <h1>Component library <span>Every PiperX piece, one page each</span></h1>
+          <p>
+            Static captures of the real PiperX messenger components, styled by the messenger&rsquo;s
+            own Panda CSS and shown in a shadow root as on a customer&rsquo;s page. Each card is a
+            live preview of one state; open a page for every state, layout, theme and width.
+          </p>
+        </div>
+      </section>
+
+      <div class="wrap">
+        <ul class="library__grid" id="library"></ul>
+        <p class="library__note">
+          Previews are each page&rsquo;s own frame at 375px, scaled to fit. They&rsquo;re captured
+          from fireball master; each page says which commit, and its README section says how to
+          refresh it.
+        </p>
+      </div>
+    </main>
+
+    <script>
+      (() => {
+        // One entry per component page, in the Components menu's order. preview: the page's frame
+        // with the state that shows it best.
+        const ICONS = {
+          calendar:
+            '<path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/>',
+          window: '<path d="M4 5h16v14H4zM4 9h16M8 7h.01M11 7h.01"/>',
+          form: '<path d="M5 5h14v4H5zM5 13h14v4H5zM8 7h5M8 15h3"/>',
+          chat: '<path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-8l-4 3v-3H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM8 9h8M8 12h5"/>',
+          card: '<path d="M4 6h16v12H4zM10 6v12M13 10h4M13 13h3"/>',
+          slides: '<path d="M4 5h16v11H4zM12 16v3M8 19h8M10.5 8.5l3.5 2-3.5 2z"/>',
+          check: '<path d="M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 9h16M9 14l2 2 4-4"/>',
+          keyboard: '<path d="M3 7h18v10H3zM7 10h.01M11 10h.01M15 10h.01M7 14h10"/>',
+        };
+        const PAGES = [
+          {
+            title: "Meeting booker",
+            text: "The full-screen booker, before and after the QAI-6749 mobile fix.",
+            href: "components.html",
+            preview: "booker/frame.html?version=after",
+            icon: "calendar",
+            accent: "var(--accent-purple)",
+          },
+          {
+            title: "Multimodal",
+            text: "The whole messenger, for the QAI-6788 header CSS hooks.",
+            href: "multimodal.html",
+            preview: "multimodal/frame.html?state=sidebar",
+            icon: "window",
+            accent: "var(--blue)",
+          },
+          {
+            title: "Form fields",
+            text: "Every field Piper can ask for, from email to picklists.",
+            href: "form-fields.html",
+            preview: "form-fields/frame.html?mode=sidebar&theme=solid&field=email-filled,email-invalid,picklist-empty,multi-picklist-picked",
+            icon: "form",
+            accent: "var(--accent-teal)",
+          },
+          {
+            title: "Messages",
+            text: "Chat bubbles, rich text, a rep joining and Piper thinking.",
+            href: "messages.html",
+            preview: "messages/frame.html?state=rich-text",
+            icon: "chat",
+            accent: "var(--accent-pink)",
+          },
+          {
+            title: "Cards",
+            text: "Shared offers and pages, as cards in the timeline.",
+            href: "cards.html",
+            preview: "cards/frame.html?state=offer",
+            icon: "card",
+            accent: "var(--accent-yellow)",
+          },
+          {
+            title: "Presented content",
+            text: "Deck, video and slide cards, from new to watched.",
+            href: "presented.html",
+            preview: "presented/frame.html?state=deck",
+            icon: "slides",
+            accent: "var(--accent-purple)",
+          },
+          {
+            title: "Calendar",
+            text: "Continue booking, a cancelled offer and the booked meeting.",
+            href: "calendar.html",
+            preview: "calendar/frame.html?state=pick",
+            icon: "check",
+            accent: "var(--accent-teal)",
+          },
+          {
+            title: "Composer",
+            text: "Where the visitor types: placeholders, errors, CTAs and voice.",
+            href: "composer.html",
+            preview: "composer/frame.html?state=ctas",
+            icon: "keyboard",
+            accent: "var(--accent-pink)",
+          },
+        ];
+        const svg = (paths, color) =>
+          `<svg viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+        const OPENS = svg('<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>', "currentColor");
+        const escape = (text) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+
+        const grid = document.getElementById("library");
+        grid.innerHTML = PAGES.map(
+          (page) => `
+            <li class="library-card">
+              <div class="library-card__preview">
+                <iframe src="${escape(page.preview)}" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe>
+              </div>
+              <div class="library-card__body">
+                <h2 class="library-card__title">${escape(page.title)}</h2>
+                <p class="library-card__text">${escape(page.text)}</p>
+                <div class="library-card__footer">
+                  <a class="library-card__link" href="${escape(page.href)}">View page ${OPENS}</a>
+                  <span class="library-card__icon">${svg(ICONS[page.icon], page.accent)}</span>
+                </div>
+              </div>
+            </li>`,
+        ).join("");
+
+        // Scale each 375px frame to its card's width.
+        const resize = new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            entry.target.style.setProperty("--preview-scale", String(entry.contentRect.width / 375));
+          }
+        });
+        grid.querySelectorAll(".library-card__preview").forEach((preview) => resize.observe(preview));
+      })();
+    </script>
+    <script src="js/nav.js" defer></script>
+  </body>
+</html>

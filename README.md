@@ -103,7 +103,7 @@ the README install and the two docking variants.
 | Self-hosted > Docking with token | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
 | CDN host | `cdn-host.html` (test CDN) / `cdn-host-prod.html` (prod-like CDN), copied init | Cloudforce sky |
 | GTM | `gtm.html` (docking script in `<head>`) / `gtm-docking-in-gtm.html` (docking script inside the GTM tag) | AlpacalpyseForce sunset |
-| Components | A sub-menu that opens on click: **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Messages** (`messages.html`, the chat timeline in eight conversations), **Cards** (`cards.html`, shared offer and shared content cards), **Presented content** (`presented.html`, deck, video and slide cards), **Calendar** (`calendar.html`, the booker's timeline entries) and **Composer** (`composer.html`, where the visitor types) | Llamalytics cream |
+| Components | A sub-menu that opens on click: **All components** (`library.html`, a card per component page with a live preview), **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Messages** (`messages.html`, the chat timeline in eight conversations), **Cards** (`cards.html`, shared offer and shared content cards), **Presented content** (`presented.html`, deck, video and slide cards), **Calendar** (`calendar.html`, the booker's timeline entries) and **Composer** (`composer.html`, where the visitor types) | Llamalytics cream |
 
 - **Environment: Local | QA** (in the page sub-menu) switches environment. On Hosted it sets
   `?env=` and keeps your other query parameters. Every generated page has a QA twin, `<page>.qa.html`, using team 642's token and a
@@ -379,6 +379,18 @@ removes it again (even on failure), and runs
 [scripts/build-form-fields.mjs](scripts/build-form-fields.mjs). The stylesheet comes from
 `panda cssgen`, for the same reason as the Multimodal page. The test stubs `src/validation` with
 just enough rules to reach each email error.
+
+## Component library page
+
+[site/library.html](site/library.html) (`http://localhost:4600/library.html`, **All components** at the
+top of the Components menu) lists every component page as a card, in the brand refresh's style:
+the primary blue gradients for the hero and the cards, the accent colours only in the icons. Each
+card has a live preview of one state: the page's own frame at 375 by 440px, scaled to the card's
+width, with no pointer events and out of the tab order. The card's "View page" link covers the
+whole card.
+
+The cards come from `PAGES` in the page's script (title, line, page, preview frame URL, icon,
+accent). **Add a card there for each new component page.**
 
 ## Messages page
 
