@@ -209,6 +209,7 @@
               <li><a href="multimodal.html" data-nav="multimodal">Multimodal</a></li>
               <li><a href="survey.html" data-nav="survey">Post-call survey</a></li>
               <li><a href="presented.html" data-nav="presented">Presented content</a></li>
+              <li><a href="preview.html" data-nav="preview">Preview bubble</a></li>
             </ul>
           </div>
         </nav>
@@ -253,6 +254,7 @@
           keyboard: '<path d="M3 7h18v10H3zM7 10h.01M11 10h.01M15 10h.01M7 14h10"/>',
           bulb: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5.6 1 .6 1.7V16h6v-.5c0-.7 0-1.2.6-1.7A6 6 0 0 0 12 3z"/>',
           thumbs: '<path d="M7 11v9H4v-9zM7 11l4-7a2 2 0 0 1 2 2v4h5.5a2 2 0 0 1 2 2.3l-1.2 6A2 2 0 0 1 17.3 20H7"/>',
+          bubble: '<path d="M6 4h12a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-5l-5 4v-4H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z"/>',
         };
         const PAGES = [
           {
@@ -334,6 +336,14 @@
             preview: "survey/frame.html?state=feedback-typed",
             icon: "thumbs",
             accent: "var(--accent-teal)",
+          },
+          {
+            title: "Preview bubble",
+            text: "The pounce beside the collapsed messenger or launcher.",
+            href: "preview.html",
+            preview: "preview/frame.html?state=text-long&layout=closed&still=1",
+            icon: "bubble",
+            accent: "var(--accent-purple)",
           },
         ];
         const svg = (paths, color) =>

@@ -1,0 +1,99 @@
+{
+  "layouts": [
+    {
+      "id": "collapsed-right",
+      "label": "Collapsed right"
+    },
+    {
+      "id": "collapsed-center",
+      "label": "Collapsed center"
+    },
+    {
+      "id": "closed",
+      "label": "Closed (launcher)"
+    }
+  ],
+  "states": [
+    {
+      "id": "text",
+      "label": "Pounce: a short message"
+    },
+    {
+      "id": "text-long",
+      "label": "Pounce: a long message"
+    },
+    {
+      "id": "offer",
+      "label": "Pounce: a shared offer"
+    },
+    {
+      "id": "offer-long",
+      "label": "Pounce: an offer with a long headline"
+    },
+    {
+      "id": "field-request",
+      "label": "Pounce: a field request's question"
+    },
+    {
+      "id": "typing",
+      "label": "Piper typing"
+    },
+    {
+      "id": "rep-follow-up",
+      "label": "A rep's unread follow-up"
+    },
+    {
+      "id": "voice",
+      "label": "Voice mode: the orb"
+    }
+  ],
+  "themes": [
+    {
+      "id": "default",
+      "label": "New-team default (outline)",
+      "vars": {
+        "--q-primary-color": "#437D88",
+        "--q-lighter-primary-color": "#b4cbcf",
+        "--q-text-color": "#ffffff",
+        "--q-button-background-color": "transparent",
+        "--q-button-hover-background-color": "#437D8810",
+        "--q-button-background-layer": "#ffffff",
+        "--q-button-hover-background-layer": "#ffffff",
+        "--q-button-text-color": "#437D88",
+        "--q-button-hover-text-color": "#437D88",
+        "--q-button-border-color": "#437D88",
+        "--q-button-hover-border-color": "#437D88",
+        "--q-button-border-radius": "4px",
+        "--q-control-border-radius": "4px"
+      }
+    },
+    {
+      "id": "solid",
+      "label": "Solid buttons",
+      "vars": {
+        "--q-primary-color": "#437D88",
+        "--q-lighter-primary-color": "#b4cbcf",
+        "--q-text-color": "#ffffff",
+        "--q-button-background-color": "#437D88",
+        "--q-button-hover-background-color": "#396a74",
+        "--q-button-background-layer": "#437D88",
+        "--q-button-hover-background-layer": "#396a74",
+        "--q-button-text-color": "#ffffff",
+        "--q-button-hover-text-color": "#ffffff",
+        "--q-button-border-color": "#437D88",
+        "--q-button-hover-border-color": "#396a74",
+        "--q-button-border-radius": "4px",
+        "--q-control-border-radius": "4px"
+      }
+    },
+    {
+      "id": "none",
+      "label": "No theme (fallbacks)",
+      "vars": {}
+    }
+  ],
+  "assets": {
+    "https://example.com/offer-hero.png": "../img/hero.svg"
+  },
+  "placeholderFallback": "textarea[data-pasture-placeholder-fallback]"
+}

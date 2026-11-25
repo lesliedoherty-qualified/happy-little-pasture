@@ -29,6 +29,8 @@
     "cold-start:refresh": "bash scripts/refresh-cold-start.sh",
     "survey:build": "node scripts/build-messages.mjs survey",
     "survey:refresh": "bash scripts/refresh-survey.sh",
+    "preview:build": "node scripts/build-messages.mjs preview",
+    "preview:refresh": "bash scripts/refresh-preview.sh",
     "self-hosted": "bash scripts/self-hosted/sync.sh"
   },
   "engines": {

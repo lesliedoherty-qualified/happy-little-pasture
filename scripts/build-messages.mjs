@@ -1,6 +1,6 @@
 // Builds site/<page>/frame.html + panda.css + states.js from scripts/<page>/dump/, for the
 // messenger pages: Messages (the default), Cards, Presented content, Calendar, Composer, Cold
-// start questions and Post-call survey.
+// start questions, Post-call survey and Preview bubble.
 //
 // The dump is the real PiperX messenger (Main) as fireball renders it, one conversation per state
 // (see scripts/<page>/zz_<page>_static_dump.test.tsx), so the markup carries the app's own hashed
@@ -17,6 +17,7 @@
 //   npm run composer:build     # the same for Composer
 //   npm run cold-start:build   # the same for Cold start questions
 //   npm run survey:build       # the same for Post-call survey
+//   npm run preview:build      # the same for Preview bubble
 //   npm run messages:refresh   # re-capture from fireball first, then build (cards:refresh too)
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -29,10 +30,12 @@ const PAGES = {
   composer: { title: "PiperX composer (static)", global: "PASTURE_COMPOSER", what: "Composer" },
   "cold-start": { title: "PiperX cold start questions (static)", global: "PASTURE_COLD_START", what: "Cold start questions" },
   survey: { title: "PiperX post-call survey (static)", global: "PASTURE_SURVEY", what: "Post-call survey" },
+  // marker: what a capture must contain to count as not empty (default MessageEntry.Container).
+  preview: { title: "PiperX preview bubble (static)", global: "PASTURE_PREVIEW", what: "Preview bubble", marker: "TimelinePreview.PreviewContent" },
 };
 const page = process.argv[2] || "messages";
 if (!PAGES[page]) throw new Error(`Unknown page "${page}"; expected one of ${Object.keys(PAGES).join(", ")}.`);
-const { title, global, what } = PAGES[page];
+const { title, global, what, marker = "MessageEntry.Container" } = PAGES[page];
 
 const repo = fileURLToPath(new URL("..", import.meta.url));
 const dump = `${repo}scripts/${page}/dump`;
@@ -56,7 +59,7 @@ const LOCAL = [
 ];
 const markup = (layout, state) => {
   const html = read(`${layout}--${state}.html`);
-  if (!html.includes("MessageEntry.Container")) throw new Error(`${layout}--${state}.html has no messages; the capture is empty.`);
+  if (!html.includes(marker)) throw new Error(`${layout}--${state}.html has no ${marker}; the capture is empty.`);
   return LOCAL.reduce((text, [from, to]) => text.split(from).join(to), html);
 };
 
@@ -163,6 +166,14 @@ ${templates}
         // Insert the markup once the stylesheet has loaded, as in production, where the widget's
         // CSS is in place before the messenger renders; inserted first, transitions animate from
         // browser defaults.
+        // ?still=1: no animations or transitions in the messenger, so a screenshot shows each
+        // element at rest rather than part-way through its entrance (bubble pops, fades). For
+        // measuring and screenshots only; the pages show the real motion.
+        if (params.get("still") === "1") {
+          const still = document.createElement("style");
+          still.textContent = "*, *::before, *::after { animation: none !important; transition: none !important; }";
+          root.append(still);
+        }
         const insert = () => {
           gate.append(document.getElementById("state-" + layout + "--" + state).content.cloneNode(true));
           root.append(gate);

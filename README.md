@@ -130,7 +130,7 @@ green for AlpacalpyseForce, and the brand blue for Hosted and the component page
 | Self-hosted > Docking with token | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
 | CDN host | `cdn-host.html` (test CDN) / `cdn-host-prod.html` (prod-like CDN), copied init | Cloudforce sky |
 | GTM | `gtm.html` (docking script in `<head>`) / `gtm-docking-in-gtm.html` (docking script inside the GTM tag) | AlpacalpyseForce sunset |
-| Components | A sub-menu that opens on click: **All components** (`library.html`, a card per component page with a live preview), then the pages in alphabetical order: **Calendar** (`calendar.html`, the booker's timeline entries), **Cards** (`cards.html`, shared offer and shared content cards), **Cold start questions** (`cold-start.html`, the suggestions above the composer), **Composer** (`composer.html`, where the visitor types), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Messages** (`messages.html`, the chat timeline in eight conversations), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Post-call survey** (`survey.html`, the rating pill and feedback form) and **Presented content** (`presented.html`, deck, video and slide cards) | Brand blue |
+| Components | A sub-menu that opens on click: **All components** (`library.html`, a card per component page with a live preview), then the pages in alphabetical order: **Calendar** (`calendar.html`, the booker's timeline entries), **Cards** (`cards.html`, shared offer and shared content cards), **Cold start questions** (`cold-start.html`, the suggestions above the composer), **Composer** (`composer.html`, where the visitor types), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Messages** (`messages.html`, the chat timeline in eight conversations), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Post-call survey** (`survey.html`, the rating pill and feedback form), **Presented content** (`presented.html`, deck, video and slide cards) and **Preview bubble** (`preview.html`, the pounce beside the collapsed messenger) | Brand blue |
 
 - **Environment: Local | QA** (in the page sub-menu) switches environment. On Hosted it sets
   `?env=` and keeps your other query parameters. Every generated page has a QA twin, `<page>.qa.html`, using team 642's token and a
@@ -491,7 +491,9 @@ npm run cards:build                        # rebuild from the committed capture 
 ```
 
 [scripts/build-messages.mjs](scripts/build-messages.mjs) builds the messenger pages: Messages
-with no argument, or `cards`, `presented`, `calendar`, `composer`, `cold-start` or `survey`. Every messenger
+with no argument, or `cards`, `presented`, `calendar`, `composer`, `cold-start`, `survey` or
+`preview`. Add `?still=1` to a messenger frame's URL to turn off its animations and transitions
+(for measuring and screenshots). Every messenger
 frame pins its timeline to the newest message after inserting the capture, as `AutoScroll` does,
 since scroll position isn't in the captured markup.
 
@@ -601,6 +603,28 @@ mode, Sidebar and Mobile, with three themes.
 ```sh
 npm run survey:refresh                      # ~/_Server/qualified/fireball-master
 npm run survey:build                        # rebuild from the committed capture only
+```
+
+## Preview bubble page
+
+[site/preview.html](site/preview.html) (`http://localhost:4600/preview.html`) shows
+`TimelinePreview` and `PreviewMessageRenderer`, the message Piper shows beside the collapsed
+messenger or the launcher, in the whole messenger collapsed right, collapsed center and closed.
+
+- **States:** the pounce (an unread `auto_respond` agent message from before the visitor engaged)
+  as a short and a long message, a shared offer, an offer with a long headline, and a field
+  request's question; Piper typing; a rep's unread follow-up (a text message with a `userId` and
+  `isAp: false`, after the pounce); and voice mode, where collapsed center shows the orb.
+- **QAI-6807 shows here too:** the offer headline is meant to stop at three lines with an ellipsis
+  (`lineClamp: 3`); the clamp doesn't apply, so the card's fixed height cuts it mid-line.
+- **Theme:** only the closed launcher and the collapsed-center voice orb use it, so the page's
+  `UNTHEMED` list is by `<layout>--<state>`. Measured with `?still=1`: the preview's entrance
+  animations otherwise make renders differ.
+- Frames are 560px tall: the preview and launcher sit at the bottom of the viewport.
+
+```sh
+npm run preview:refresh                      # ~/_Server/qualified/fireball-master
+npm run preview:build                        # rebuild from the committed capture only
 ```
 
 ## Team portraits

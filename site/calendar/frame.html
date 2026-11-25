@@ -103,6 +103,14 @@
         // Insert the markup once the stylesheet has loaded, as in production, where the widget's
         // CSS is in place before the messenger renders; inserted first, transitions animate from
         // browser defaults.
+        // ?still=1: no animations or transitions in the messenger, so a screenshot shows each
+        // element at rest rather than part-way through its entrance (bubble pops, fades). For
+        // measuring and screenshots only; the pages show the real motion.
+        if (params.get("still") === "1") {
+          const still = document.createElement("style");
+          still.textContent = "*, *::before, *::after { animation: none !important; transition: none !important; }";
+          root.append(still);
+        }
         const insert = () => {
           gate.append(document.getElementById("state-" + layout + "--" + state).content.cloneNode(true));
           root.append(gate);
