@@ -1,5 +1,6 @@
 // Builds site/<page>/frame.html + panda.css + states.js from scripts/<page>/dump/, for the
-// messenger pages: Messages (the default), Cards, Presented content, Calendar and Composer.
+// messenger pages: Messages (the default), Cards, Presented content, Calendar, Composer and
+// Cold start questions.
 //
 // The dump is the real PiperX messenger (Main) as fireball renders it, one conversation per state
 // (see scripts/<page>/zz_<page>_static_dump.test.tsx), so the markup carries the app's own hashed
@@ -14,6 +15,7 @@
 //   npm run presented:build    # the same for Presented content
 //   npm run calendar:build     # the same for Calendar
 //   npm run composer:build     # the same for Composer
+//   npm run cold-start:build   # the same for Cold start questions
 //   npm run messages:refresh   # re-capture from fireball first, then build (cards:refresh too)
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -24,6 +26,7 @@ const PAGES = {
   presented: { title: "PiperX presented content (static)", global: "PASTURE_PRESENTED", what: "Presented content" },
   calendar: { title: "PiperX calendar entries (static)", global: "PASTURE_CALENDAR", what: "Calendar" },
   composer: { title: "PiperX composer (static)", global: "PASTURE_COMPOSER", what: "Composer" },
+  "cold-start": { title: "PiperX cold start questions (static)", global: "PASTURE_COLD_START", what: "Cold start questions" },
 };
 const page = process.argv[2] || "messages";
 if (!PAGES[page]) throw new Error(`Unknown page "${page}"; expected one of ${Object.keys(PAGES).join(", ")}.`);
@@ -162,6 +165,16 @@ ${templates}
           gate.append(document.getElementById("state-" + layout + "--" + state).content.cloneNode(true));
           root.append(gate);
           if (CANVAS_STAND_IN) paintStandIns(root, CANVAS_STAND_IN);
+          // The timeline's AutoScroll keeps it pinned to the newest message; scroll position isn't
+          // in the captured markup, so a long conversation would open at its top. Pin it the same
+          // way once the layout is in (and again after the fonts, which change line heights).
+          const pinTimeline = () => {
+            for (const log of root.querySelectorAll('[data-component-name="Timeline.MessagesContainer"]')) {
+              log.scrollTop = log.scrollHeight;
+            }
+          };
+          requestAnimationFrame(pinTimeline);
+          document.fonts.ready.then(pinTimeline);
           // As TextArea does on each input: auto, then the content's height (its CSS caps it).
           if (AUTOSIZE)
             for (const box of root.querySelectorAll(AUTOSIZE)) {

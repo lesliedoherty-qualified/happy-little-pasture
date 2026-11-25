@@ -119,6 +119,16 @@
           gate.append(document.getElementById("state-" + layout + "--" + state).content.cloneNode(true));
           root.append(gate);
           if (CANVAS_STAND_IN) paintStandIns(root, CANVAS_STAND_IN);
+          // The timeline's AutoScroll keeps it pinned to the newest message; scroll position isn't
+          // in the captured markup, so a long conversation would open at its top. Pin it the same
+          // way once the layout is in (and again after the fonts, which change line heights).
+          const pinTimeline = () => {
+            for (const log of root.querySelectorAll('[data-component-name="Timeline.MessagesContainer"]')) {
+              log.scrollTop = log.scrollHeight;
+            }
+          };
+          requestAnimationFrame(pinTimeline);
+          document.fonts.ready.then(pinTimeline);
           // As TextArea does on each input: auto, then the content's height (its CSS caps it).
           if (AUTOSIZE)
             for (const box of root.querySelectorAll(AUTOSIZE)) {

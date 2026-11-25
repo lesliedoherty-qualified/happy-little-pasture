@@ -25,6 +25,8 @@
     "calendar:refresh": "bash scripts/refresh-calendar.sh",
     "composer:build": "node scripts/build-messages.mjs composer",
     "composer:refresh": "bash scripts/refresh-composer.sh",
+    "cold-start:build": "node scripts/build-messages.mjs cold-start",
+    "cold-start:refresh": "bash scripts/refresh-cold-start.sh",
     "self-hosted": "bash scripts/self-hosted/sync.sh"
   },
   "engines": {
