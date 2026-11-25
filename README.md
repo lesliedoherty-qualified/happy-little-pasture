@@ -95,6 +95,28 @@ GTM here).
 The **Self-hosted** button opens a sub-menu (like Components) with the three self-hosted pages:
 the README install and the two docking variants.
 
+### Brand
+
+The site's brand is the Salesforce brand refresh's palette (Brand Guidelines and Toolkits 2026,
+"Color: standard core usage"), sampled from the guide and saved as the `--brand-*` tokens at the
+top of `site/css/site.css`. Use about 80% primary blues, as gradients or solids, and 20% accents,
+as a pop of colour.
+
+| Primary blues | | Accents | |
+| --- | --- | --- | --- |
+| Navy | `#001E5B` | Purple | `#D17DFE` |
+| Deep blue | `#032AC0` | Pink | `#FF538A` |
+| Blue (the brand colour) | `#066AFE` | Yellow | `#FCC006` |
+| Sky | `#00B3FF` | Teal | `#06E1CB` |
+| Light sky | `#90D0FE` | | |
+| Ice | `#EAF5FE` | | |
+
+The default theme (Hosted, the component pages and the library) is built from them: blue for
+buttons, links and the current page, navy text on ice, and the hero gradient navy to blue to sky.
+Accents used as small text are darkened to read on white (the pink eyebrows are `#C4245E`). The
+Meeting booker's brand colour defaults to the brand blue. The themed test pages keep their own
+palettes, and the llama illustrations keep the character sheet's warm colours.
+
 Each page's hero band is its theme's vibrant gradient (`--hero-top`, `--hero-mid`, `--hero-bottom` in
 `site/css/site.css`) with the grainy clouds in `site/img/hero-clouds.svg` over it, in the brand refresh's
 style: pink for Sparkleforce, teal for Rainbowforce, purple for Glitterforce, steel blue for Cloudforce,
@@ -318,7 +340,8 @@ hooks" in fireball's `multimodal_v2/DEVELOPMENT.md`) without a running app.
   (for example `?toolbar-background=%231f5fa0`).
 - Like the booker frame, it loads Inter from Google Fonts. Nothing is interactive beyond focus
   and hover.
-- The 1280px frame is wider than the page, so scroll the frames row to see the floating card.
+- Frames default to 375 and 768px. Collapsed right floats its card in the frame's corner, so use a
+  wide frame (768) to see it clear of the edges.
 
 ### Refresh it from fireball
 

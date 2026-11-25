@@ -1,40 +1,60 @@
-/* Llamalytics. Palette taken from the team character sheet: warm cream paper,
-   brown ink, blush pink, burnt orange, purple, teal, periwinkle, lavender.
-   System fonts only and fixed image sizes, so nothing on the page shifts
-   after load and any layout movement you see comes from Piper. */
+/* Happy Little Pasture (Llamalytics). The default theme is the brand refresh's palette (Salesforce
+   Brand Guidelines and Toolkits 2026, "Color: standard core usage"): about 80% primary blues, as
+   gradients or solids, and the remaining 20% accent colours, as a pop of colour. The --brand-*
+   values were sampled from the guide. The themed test pages (Sparkleforce and so on) set their own
+   palettes below; the illustrations keep the team character sheet's warm colours.
+   System fonts only and fixed image sizes, so nothing on the page shifts after load and any layout
+   movement you see comes from Piper. */
 
 :root {
-  --cream: #fbf6ef;
-  --paper: #fffdf9;
-  --ink: #3f2d22;
-  --ink-soft: #6b5546;
-  --brown: #8a5a3c;
-  --sand: #e8c79a;
-  --blush: #f4d4cf;
-  --orange: #c96a3b;
-  --purple: #6a3f8e;
-  --teal: #1b9fc4;
-  --periwinkle: #a3b4e4;
-  --lavender: #ddd2f2;
+  /* Brand: primary blues, darkest to lightest. */
+  --brand-navy: #001e5b;
+  --brand-blue-deep: #032ac0;
+  --brand-blue: #066afe;
+  --brand-sky: #00b3ff;
+  --brand-sky-light: #90d0fe;
+  --brand-ice: #eaf5fe;
+  /* Brand: accents (the secondary palette). */
+  --brand-purple: #d17dfe;
+  --brand-pink: #ff538a;
+  --brand-yellow: #fcc006;
+  --brand-teal: #06e1cb;
+
+  /* The default theme, from the brand. --purple is the theme's primary colour (buttons, links,
+     the current page) and --orange its accent (eyebrows); the names predate the brand. */
+  --cream: var(--brand-ice);
+  --paper: #ffffff;
+  --ink: var(--brand-navy);
+  --ink-soft: #3d4f78;
+  /* The customer wordmarks: a muted blue, so the logo row reads as one quiet band. */
+  --brown: #5a6f9e;
+  --sand: #b9dcfb;
+  --blush: #ffe3ec;
+  /* Accents darkened enough to read as small text on white (4.5:1). */
+  --orange: #c4245e;
+  --purple: var(--brand-blue);
+  --teal: #0a8f86;
+  --periwinkle: var(--brand-sky-light);
+  --lavender: #d6ebfe;
   --charcoal: #4a4646;
   --radius: 22px;
   /* Flat: panels and cards are outlined with a hairline, not lifted with a drop shadow. --shadow
      is a 1px ring, so anything that uses it (the lab pages' control panels too) gets the
      hairline without a border that would change its size. */
-  --hairline: rgba(63, 45, 34, 0.14);
+  --hairline: rgba(0, 30, 91, 0.14);
   --shadow: 0 0 0 1px var(--hairline);
   --wrap: 1120px;
   --header-h: 72px;
   /* The header and page sub-menu: capped on wide screens, always left-aligned. */
   --nav-max: 1280px;
-  --header-bg: rgba(251, 246, 239, 0.94);
+  --header-bg: rgba(234, 245, 254, 0.94);
   --hero-a: rgba(221, 210, 242, 0.9);
   --hero-b: rgba(244, 212, 207, 0.8);
   /* The hero band: a three-stop gradient per theme (top, middle, bottom-right), more vibrant than
      the page; the root is the brand blue. Themes below set their own. */
-  --hero-top: #0b1d5c;
-  --hero-mid: #1d43d8;
-  --hero-bottom: #4fb0f9;
+  --hero-top: var(--brand-navy);
+  --hero-mid: var(--brand-blue);
+  --hero-bottom: var(--brand-sky);
   font-family: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
   color: var(--ink);
   background: var(--cream);
@@ -597,6 +617,13 @@ html[data-page="self-hosted-token-head"] {
 
 .hero .button:focus-visible {
   outline-color: #fff;
+}
+
+/* The component pages are wider than the marketing pages (1440px, not --wrap), so more preview
+   frames fit side by side in the frames row; their hero lines up with it. */
+.wrap.lab,
+.hero--lab .wrap {
+  max-width: 1440px;
 }
 
 /* The component pages' hero: just the title, the intro and where the capture came from. */

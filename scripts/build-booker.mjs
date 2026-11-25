@@ -65,7 +65,7 @@ const frame = `<!doctype html>
       /* Frame only: the page behind the lightbox, and the brand colour the widget
          host would normally set from the team's theme. */
       :root {
-        --q-primary-color: #6a3f8e;
+        --q-primary-color: #066afe;
       }
       html,
       body {

@@ -152,16 +152,15 @@
       <form class="lab__controls" id="controls">
         <fieldset class="lab__widths">
           <legend>Widths</legend>
-          <label><input type="checkbox" name="w" value="320" checked /> 320</label>
+          <label><input type="checkbox" name="w" value="320" /> 320</label>
           <label><input type="checkbox" name="w" value="360" /> 360</label>
           <label><input type="checkbox" name="w" value="375" checked /> 375</label>
-          <label><input type="checkbox" name="w" value="414" checked /> 414</label>
+          <label><input type="checkbox" name="w" value="414" /> 414</label>
           <label><input type="checkbox" name="w" value="768" checked /> 768</label>
-          <label><input type="checkbox" name="w" value="1280" /> 1280</label>
         </fieldset>
         <fieldset>
           <legend>Brand colour</legend>
-          <input type="color" name="primary" value="#6a3f8e" aria-label="Brand colour" />
+          <input type="color" name="primary" value="#066afe" aria-label="Brand colour" />
         </fieldset>
       </form>
 
@@ -207,7 +206,8 @@
           : "After QAI-6749: shipped compact mobile layout and fixed time-pill CSS.";
         const form = document.getElementById("controls");
         const frames = document.getElementById("frames");
-        const heightFor = (w) => (w < 768 ? 812 : 900);
+        // One height for every width, so frames side by side line up and Continue shows in each.
+        const heightFor = () => 900;
 
         function render() {
           const data = new FormData(form);

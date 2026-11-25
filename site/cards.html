@@ -166,8 +166,7 @@
           <label><input type="checkbox" name="w" value="320" /> 320</label>
           <label><input type="checkbox" name="w" value="375" checked /> 375</label>
           <label><input type="checkbox" name="w" value="414" /> 414</label>
-          <label><input type="checkbox" name="w" value="768" /> 768</label>
-          <label><input type="checkbox" name="w" value="1280" checked /> 1280</label>
+          <label><input type="checkbox" name="w" value="768" checked /> 768</label>
         </fieldset>
       </form>
 
@@ -234,7 +233,8 @@
         radios("layouts", "layout", data.layouts);
         radios("themes", "theme", data.themes);
 
-        const heightFor = (w) => (w < 768 ? 812 : 760);
+        // One height for every width, so frames side by side line up (their composers too).
+        const heightFor = () => 812;
 
         function render() {
           const values = new FormData(form);

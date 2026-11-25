@@ -7,19 +7,19 @@
     <link rel="icon" href="img/logo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="css/site.css" />
     <style>
-      /* Brand-refresh palette (Brand Guidelines 2026, "Standard core usage"): about 80% primary
-         blues, as gradients or solids; the accents only as a pop of colour, here the icons. */
+      /* The brand palette (the --brand-* tokens in css/site.css): primary blues for the hero and
+         the cards, the accents only as a pop of colour, here the icons. */
       .library {
-        --navy: #0b1d5c;
-        --blue-deep: #0d2aa6;
-        --blue: #2f63f0;
-        --sky: #4fb0f9;
-        --sky-light: #a4cdfa;
-        --ice: #eaf3fe;
-        --accent-purple: #c17ff7;
-        --accent-pink: #ee5f8d;
-        --accent-yellow: #f2c142;
-        --accent-teal: #66dfc9;
+        --navy: var(--brand-navy);
+        --blue-deep: var(--brand-blue-deep);
+        --blue: var(--brand-blue);
+        --sky: var(--brand-sky);
+        --sky-light: var(--brand-sky-light);
+        --ice: var(--brand-ice);
+        --accent-purple: var(--brand-purple);
+        --accent-pink: var(--brand-pink);
+        --accent-yellow: var(--brand-yellow);
+        --accent-teal: var(--brand-teal);
         background: var(--ice);
         color: var(--navy);
       }
@@ -77,7 +77,7 @@
         background: linear-gradient(165deg, var(--navy) 0%, var(--blue-deep) 100%);
       }
       .library-card:nth-child(4n + 3) {
-        background: linear-gradient(165deg, var(--blue) 0%, #3f8df6 100%);
+        background: linear-gradient(165deg, var(--blue) 0%, var(--sky) 100%);
       }
 
       /* The preview: a real 375px messenger frame, scaled down to the card's width. It's a picture
