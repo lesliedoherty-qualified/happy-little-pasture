@@ -199,14 +199,15 @@
             <button type="button" class="site-nav__toggle" data-nav="components" aria-expanded="false" aria-controls="components-menu" aria-current="true">Components</button>
             <ul class="site-nav__dropdown" id="components-menu" popover="manual">
               <li><a href="library.html" data-nav="library" aria-current="page">All components</a></li>
-              <li><a href="components.html" data-nav="booker">Meeting booker</a></li>
-              <li><a href="multimodal.html" data-nav="multimodal">Multimodal</a></li>
-              <li><a href="form-fields.html" data-nav="form-fields">Form fields</a></li>
-              <li><a href="messages.html" data-nav="messages">Messages</a></li>
-              <li><a href="cards.html" data-nav="cards">Cards</a></li>
-              <li><a href="presented.html" data-nav="presented">Presented content</a></li>
               <li><a href="calendar.html" data-nav="calendar">Calendar</a></li>
+              <li><a href="cards.html" data-nav="cards">Cards</a></li>
+              <li><a href="cold-start.html" data-nav="cold-start">Cold start questions</a></li>
               <li><a href="composer.html" data-nav="composer">Composer</a></li>
+              <li><a href="form-fields.html" data-nav="form-fields">Form fields</a></li>
+              <li><a href="components.html" data-nav="booker">Meeting booker</a></li>
+              <li><a href="messages.html" data-nav="messages">Messages</a></li>
+              <li><a href="multimodal.html" data-nav="multimodal">Multimodal</a></li>
+              <li><a href="presented.html" data-nav="presented">Presented content</a></li>
             </ul>
           </div>
         </nav>
@@ -237,8 +238,8 @@
 
     <script>
       (() => {
-        // One entry per component page, in the Components menu's order. preview: the page's frame
-        // with the state that shows it best.
+        // One entry per component page. preview: the page's frame with the state that shows it best.
+        // Shown in alphabetical order by title, like the Components menu, whatever the order here.
         const ICONS = {
           calendar:
             '<path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/>',
@@ -249,6 +250,7 @@
           slides: '<path d="M4 5h16v11H4zM12 16v3M8 19h8M10.5 8.5l3.5 2-3.5 2z"/>',
           check: '<path d="M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 9h16M9 14l2 2 4-4"/>',
           keyboard: '<path d="M3 7h18v10H3zM7 10h.01M11 10h.01M15 10h.01M7 14h10"/>',
+          bulb: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5.6 1 .6 1.7V16h6v-.5c0-.7 0-1.2.6-1.7A6 6 0 0 0 12 3z"/>',
         };
         const PAGES = [
           {
@@ -315,12 +317,21 @@
             icon: "keyboard",
             accent: "var(--accent-pink)",
           },
+          {
+            title: "Cold start questions",
+            text: "The suggestions above the composer, before and after a pick.",
+            href: "cold-start.html",
+            preview: "cold-start/frame.html?state=fresh",
+            icon: "bulb",
+            accent: "var(--accent-yellow)",
+          },
         ];
         const svg = (paths, color) =>
           `<svg viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
         const OPENS = svg('<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>', "currentColor");
         const escape = (text) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 
+        PAGES.sort((a, b) => a.title.localeCompare(b.title, "en"));
         const grid = document.getElementById("library");
         grid.innerHTML = PAGES.map(
           (page) => `

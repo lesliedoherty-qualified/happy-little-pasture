@@ -45,8 +45,9 @@
   --shadow: 0 0 0 1px var(--hairline);
   --wrap: 1120px;
   --header-h: 72px;
-  /* The header and page sub-menu: capped on wide screens, always left-aligned. */
-  --nav-max: 1280px;
+  /* The header and page sub-menu: capped on wide screens (the component pages' width), always
+     left-aligned. */
+  --nav-max: 1440px;
   --header-bg: rgba(234, 245, 254, 0.94);
   --hero-a: rgba(221, 210, 242, 0.9);
   --hero-b: rgba(244, 212, 207, 0.8);

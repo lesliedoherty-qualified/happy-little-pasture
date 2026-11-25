@@ -124,13 +124,13 @@ green for AlpacalpyseForce, and the brand blue for Hosted and the component page
 
 | Menu | Page | Look |
 | --- | --- | --- |
-| Hosted | `index.html`: hosted install from `config.js` (`?install=` variants in the footer harness) | Llamalytics cream |
+| Hosted | `index.html`: hosted install from `config.js` (`?install=` variants in the footer harness) | Brand blue |
 | Self-hosted (sub-menu) > Self-hosted | `self-hosted.html`: self-hosted head + the README's copied init | Sparkleforce pink |
 | Self-hosted > Docking no token | `self-hosted-no-init.html`: self-hosted head, no inline init | Rainbowforce rainbow |
 | Self-hosted > Docking with token | `self-hosted-token-head.html`: `docking.js?token=` head + self-hosted widget | Glitterforce violet |
 | CDN host | `cdn-host.html` (test CDN) / `cdn-host-prod.html` (prod-like CDN), copied init | Cloudforce sky |
 | GTM | `gtm.html` (docking script in `<head>`) / `gtm-docking-in-gtm.html` (docking script inside the GTM tag) | AlpacalpyseForce sunset |
-| Components | A sub-menu that opens on click: **All components** (`library.html`, a card per component page with a live preview), **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Messages** (`messages.html`, the chat timeline in eight conversations), **Cards** (`cards.html`, shared offer and shared content cards), **Presented content** (`presented.html`, deck, video and slide cards), **Calendar** (`calendar.html`, the booker's timeline entries) and **Composer** (`composer.html`, where the visitor types) | Llamalytics cream |
+| Components | A sub-menu that opens on click: **All components** (`library.html`, a card per component page with a live preview), then the pages in alphabetical order: **Calendar** (`calendar.html`, the booker's timeline entries), **Cards** (`cards.html`, shared offer and shared content cards), **Cold start questions** (`cold-start.html`, the suggestions above the composer), **Composer** (`composer.html`, where the visitor types), **Form fields** (`form-fields.html`, every field request state by display mode and theme), **Meeting booker** (`components.html`, the booker before and after QAI-6749), **Messages** (`messages.html`, the chat timeline in eight conversations), **Multimodal** (`multimodal.html`, the messenger markup for QAI-6788's header hooks) and **Presented content** (`presented.html`, deck, video and slide cards) | Brand blue |
 
 - **Environment: Local | QA** (in the page sub-menu) switches environment. On Hosted it sets
   `?env=` and keeps your other query parameters. Every generated page has a QA twin, `<page>.qa.html`, using team 642's token and a
@@ -483,7 +483,9 @@ npm run cards:build                        # rebuild from the committed capture 
 ```
 
 [scripts/build-messages.mjs](scripts/build-messages.mjs) builds the messenger pages: Messages
-with no argument, or `cards`, `presented`, `calendar` or `composer`.
+with no argument, or `cards`, `presented`, `calendar`, `composer` or `cold-start`. Every messenger
+frame pins its timeline to the newest message after inserting the capture, as `AutoScroll` does,
+since scroll position isn't in the captured markup.
 
 ## Presented content page
 
@@ -546,6 +548,27 @@ in Sidebar, Mobile and Collapsed right, with four themes (the other pages' three
 ```sh
 npm run composer:refresh                      # ~/_Server/qualified/fireball-master
 npm run composer:build                        # rebuild from the committed capture only
+```
+
+## Cold start questions page
+
+[site/cold-start.html](site/cold-start.html) (`http://localhost:4600/cold-start.html`) shows
+`ColdStartQuestions`, the "Ask me things like:" suggestions `ChatComposer` shows above the
+composer until the visitor has sent more than three messages (and not when collapsed), in the
+whole messenger, in Sidebar and Mobile, with three themes.
+
+- **States:** fresh (the first three), the admin's limit raised to five, long questions, after a
+  pick (the next unused question takes its place), three picked (the last two), and with strategy
+  CTA buttons.
+- **State setup:** the component keeps what's shown, used and dismissed in module-level signals
+  and in `localStorage` (`multimodal.cold_start_state.v1`). The dump calls the exported
+  `resetColdStartState()` and clears storage before each capture, and builds the "after a pick"
+  states by saving the state the component would have saved, which it reads on mount, as for a
+  returning visitor. The picks are in the timeline too.
+
+```sh
+npm run cold-start:refresh                      # ~/_Server/qualified/fireball-master
+npm run cold-start:build                        # rebuild from the committed capture only
 ```
 
 ## Team portraits
