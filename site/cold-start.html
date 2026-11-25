@@ -162,6 +162,7 @@
         <fieldset>
           <legend>Theme</legend>
           <div id="themes"></div>
+          <p class="lab__theme-note" id="theme-note" hidden>The theme doesn&rsquo;t change this state.</p>
         </fieldset>
         <fieldset class="lab__widths">
           <legend>Widths</legend>
@@ -236,16 +237,28 @@
         radios("states", "state", data.states);
         radios("layouts", "layout", data.layouts);
         radios("themes", "theme", data.themes);
+        // States the theme doesn't visibly change: measured by rendering each with and without it
+        // (tools/theme-diff.sh in the project folder). For those the Theme options are disabled.
+        const UNTHEMED = new Set(["fresh","limit-five","long","after-pick","two-left"]);
+        const themeField = document.getElementById("themes").closest("fieldset");
+        const syncTheme = () => {
+          const off = UNTHEMED.has(form.elements.state.value);
+          themeField.disabled = off;
+          document.getElementById("theme-note").hidden = !off;
+        };
+        // A disabled fieldset's radios aren't in the form data, so read the theme directly.
+        const chosenTheme = () => form.querySelector('[name="theme"]:checked').value;
 
         // One height for every width, so frames side by side line up (their composers too).
         const heightFor = () => 812;
 
         function render() {
+          syncTheme();
           const values = new FormData(form);
           const query = new URLSearchParams({
             state: values.get("state"),
             layout: values.get("layout"),
-            theme: values.get("theme"),
+            theme: chosenTheme(),
           });
           // Keep the page URL in step, so a comparison can be linked or reloaded.
           history.replaceState(null, "", `?${query}`);

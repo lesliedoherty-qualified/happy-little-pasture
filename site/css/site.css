@@ -620,6 +620,20 @@ html[data-page="self-hosted-token-head"] {
   outline-color: #fff;
 }
 
+/* Component pages: the Theme options are disabled for states the theme doesn't change, with a
+   note saying so (the page scripts' UNTHEMED lists). */
+.lab__controls fieldset:disabled label {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.lab__theme-note {
+  max-width: 24ch;
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
 /* The component pages are wider than the marketing pages (1440px, not --wrap), so more preview
    frames fit side by side in the frames row; their hero lines up with it. */
 .wrap.lab,

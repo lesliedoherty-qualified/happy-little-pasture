@@ -140,9 +140,9 @@
             Piper running. Each state is a different conversation, captured from fireball by rendering
             the whole messenger (<code>Main</code>) in text mode, so the timeline keeps its real
             spacing, header and composer. It sits in an open shadow root on
-            <code>#qualified-multimodal-host</code> with production&rsquo;s host style, and the Theme
-            options set the same <code>--q-*</code> properties on the host that
-            <code>applyThemeCssVars</code> does. Agent text is HTML, as the server sends it. Each frame
+            <code>#qualified-multimodal-host</code> with production&rsquo;s host style. There&rsquo;s no
+            Theme control: the team&rsquo;s theme doesn&rsquo;t change anything in these states (the
+            frame uses the new-team default). Agent text is HTML, as the server sends it. Each frame
             is its own viewport. Open one on its own to use DevTools on it.
           </p>
           <p class="lab__source" id="source"></p>
@@ -158,10 +158,6 @@
         <fieldset>
           <legend>Layout</legend>
           <div id="layouts"></div>
-        </fieldset>
-        <fieldset>
-          <legend>Theme</legend>
-          <div id="themes"></div>
         </fieldset>
         <fieldset class="lab__widths">
           <legend>Widths</legend>
@@ -242,7 +238,6 @@
         };
         radios("states", "state", data.states);
         radios("layouts", "layout", data.layouts);
-        radios("themes", "theme", data.themes);
 
         // One height for every width, so frames side by side line up (their composers too).
         const heightFor = () => 812;
@@ -252,7 +247,6 @@
           const query = new URLSearchParams({
             state: values.get("state"),
             layout: values.get("layout"),
-            theme: values.get("theme"),
           });
           // Keep the page URL in step, so a comparison can be linked or reloaded.
           history.replaceState(null, "", `?${query}`);

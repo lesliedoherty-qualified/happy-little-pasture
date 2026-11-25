@@ -408,6 +408,14 @@ removes it again (even on failure), and runs
 `panda cssgen`, for the same reason as the Multimodal page. The test stubs `src/validation` with
 just enough rules to reach each email error.
 
+## Theme control on the component pages
+
+The Theme options appear only where the team's theme changes something: each page's script lists the
+states it doesn't visibly change (`UNTHEMED`), and for those the options are disabled with a note.
+Messages has no Theme control (nothing in it uses the theme). The lists were measured by rendering
+every state with and without the theme and ruling out animation and sub-pixel text noise; recheck
+them with `tools/theme-diff.sh` in the project folder after a re-capture.
+
 ## Component library page
 
 [site/library.html](site/library.html) (`http://localhost:4600/library.html`, **All components** at the
