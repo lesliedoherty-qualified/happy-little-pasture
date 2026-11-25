@@ -9,6 +9,8 @@
 
     <!-- Test harness: ?q_state=false clears Qualified's visitor state before anything loads. -->
     <script src="js/reset-state.js"></script>
+    <!-- Test harness only: records what the browser receives for the data inspector, before Piper's scripts. Off unless the URL has ?inspect=1. -->
+    <script src="js/inspect-early.js"></script>
 
     <!-- Piper goes first, before other scripts, like the recommended install. -->
     <script src="config.js"></script>
@@ -324,5 +326,7 @@
 
     <script src="js/harness.js" defer></script>
     <script src="js/nav.js" defer></script>
+    <!-- Test harness only: the Piper data inspector, off unless the URL has ?inspect=1. -->
+    <script src="js/inspector.js" defer></script>
   </body>
 </html>

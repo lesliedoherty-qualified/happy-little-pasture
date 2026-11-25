@@ -197,6 +197,63 @@ green for AlpacalpyseForce, and the brand blue for Hosted and the component page
   Docking no token, Docking with token). Pages with the copied init still show it docked, because that init starts
   docked by default. QA runs master, so its `docking.js?token=` doesn't embed saved settings yet.
 
+## Piper data inspector
+
+Add `?inspect=1` to any page that installs Piper (Hosted and every generated page) to see what the
+page received from Qualified and where each piece came from, without opening devtools. Without it
+the page only gets a small "Inspect what Piper received" link at the bottom. The panel
+(`#inspector`, at the end of `<main>`) has two parts.
+
+### What the browser received
+
+Recorded from the start of the page load by [site/js/inspect-early.js](site/js/inspect-early.js),
+which is in each page's `<head>` right after `reset-state.js`, before Piper's scripts. Only
+requests that leave the site, and the site's self-hosted packages (`/qualified*`, `/cdn/`), are
+recorded. They're grouped by layer, each with its host:
+
+| Layer | What's recorded | How |
+| --- | --- | --- |
+| Script, Stylesheet or preload, Loaded by CSS, Image, Frame, Video | URL, time, size, duration | Resource Timing (`PerformanceObserver`); sizes are 0 cross-origin without `Timing-Allow-Origin` |
+| HTTP (fetch), HTTP (XHR) | method, URL, status, content type, the body | fetch reads `response.clone()`; XHR reads the response after `loadend` |
+| WebSocket | each ActionCable frame, named by its events and channel (`welcome`, `initOffers`, `botProcessEnded, initState`, ...); pings are counted, not listed | an extra `message` listener on the socket |
+| Cookies and storage | names and sizes only, never values | `document.cookie`, `localStorage`, `sessionStorage` |
+
+The wrappers are observe-only: the page and Piper get the original promise, request and socket,
+and recording errors are swallowed. Tested on Hosted (local) by comparing Piper with and without
+`?inspect=1`: same config (60 keys), same messenger markup, same frames. Without `?inspect=1`
+nothing is wrapped.
+
+### What Piper made of it
+
+[site/js/inspector.js](site/js/inspector.js) reads Piper's own objects once it has started:
+
+| Section | Source | How it's read |
+| --- | --- | --- |
+| Install | page HTML | the head and widget `<script>` URLs, and the docking options in the head's URL |
+| Saved settings the head applied | `qualified-head.js` | the head's own `docking.init` call, recorded by `piper-loader.js` (Hosted, `install=head-token`) |
+| Team config | `qualified.js` | `widget.config`: the config `qualified.js` passes to `initialize` inline (or fetches from `/configuration` when incomplete) |
+| Messenger state | messenger store | the PiperX store's signals after processing: conversations, messages, cold start questions, privacy, orb, modes |
+| Offers | WebSocket `initOffers` | `widget.channel.on("initOffers")`, or the recorded `initOffers` frame when that arrived first |
+| Messages from the server | WebSocket | `widget.channel.on("multimodal")` (and `"received"`) as Piper handles them |
+| Events | `handleEvents` | the public `qualified("handleEvents", fn)` command |
+
+`window.qualified.widget` is an internal (`Widget#exposeDebugging`), not a supported API, so the
+panel says "not available" if it's missing. It's only set once the widget has connected, so
+`initState` usually arrives before Piper's part can listen. The browser part has that frame.
+
+### Safety
+
+- Nothing leaves the page: no requests, no storage. **Copy as JSON** puts the redacted view on the
+  clipboard.
+- Data is shown as text (`textContent`), never parsed as HTML, so a payload can't run anything.
+- Redaction happens before anything is kept. Keys that name emails, phones, IPs, visitor, session
+  or conversation IDs, cookies, secrets and `*_token`s (ActionCable's `connection_token`) are
+  redacted. Emails, phone numbers and UUIDs in any string become `[email]`, `[phone]` and
+  `[id]`. URL query values are redacted unless known to be harmless (the public widget `token`,
+  `docking_*`, versions, locale, time zone), so the cable's `vu` and `wu` never show. Long
+  strings and arrays are cut short.
+- Piper doesn't run in an iframe, so the inspector only works on the page itself.
+
 ## Query parameters
 
 | Parameter | Values | What it does |
