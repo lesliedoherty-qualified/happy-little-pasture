@@ -95,6 +95,11 @@ GTM here).
 The **Self-hosted** button opens a sub-menu (like Components) with the three self-hosted pages:
 the README install and the two docking variants.
 
+Each page's hero band is its theme's vibrant gradient (`--hero-top`, `--hero-mid`, `--hero-bottom` in
+`site/css/site.css`) with the grainy clouds in `site/img/hero-clouds.svg` over it, in the brand refresh's
+style: pink for Sparkleforce, teal for Rainbowforce, purple for Glitterforce, steel blue for Cloudforce,
+green for AlpacalpyseForce, and the brand blue for Hosted and the component pages.
+
 | Menu | Page | Look |
 | --- | --- | --- |
 | Hosted | `index.html`: hosted install from `config.js` (`?install=` variants in the footer harness) | Llamalytics cream |

@@ -129,20 +129,24 @@
     </header>
 
     <main>
+      <section class="hero hero--lab">
+        <div class="wrap">
+          <h1>Cards</h1>
+          <p class="lab__intro">
+            The cards Piper puts in the chat timeline when it shares an offer
+            (<code>SharedOfferRenderer</code>: the offer&rsquo;s image, headline and short URL) or a page
+            (<code>ShareContentRenderer</code>: a preview image and the page title). Both are
+            <code>LinkPreviewCard</code> underneath. It's markup only, with no Piper running. Each state
+            is a different conversation, captured from fireball by rendering the whole messenger
+            (<code>Main</code>) in text mode, in an open shadow root on
+            <code>#qualified-multimodal-host</code> with production&rsquo;s host style. The headline is
+            the theme&rsquo;s primary colour, so the Theme options matter here. Hover a card to see its
+            lift. Each frame is its own viewport. Open one on its own to use DevTools on it.
+          </p>
+          <p class="lab__source" id="source"></p>
+        </div>
+      </section>
       <div class="wrap lab">
-      <h1>Cards</h1>
-      <p class="lab__intro">
-        The cards Piper puts in the chat timeline when it shares an offer
-        (<code>SharedOfferRenderer</code>: the offer&rsquo;s image, headline and short URL) or a page
-        (<code>ShareContentRenderer</code>: a preview image and the page title). Both are
-        <code>LinkPreviewCard</code> underneath. It's markup only, with no Piper running. Each state
-        is a different conversation, captured from fireball by rendering the whole messenger
-        (<code>Main</code>) in text mode, in an open shadow root on
-        <code>#qualified-multimodal-host</code> with production&rsquo;s host style. The headline is
-        the theme&rsquo;s primary colour, so the Theme options matter here. Hover a card to see its
-        lift. Each frame is its own viewport. Open one on its own to use DevTools on it.
-      </p>
-      <p class="lab__source" id="source"></p>
 
       <form class="lab__controls" id="controls">
         <fieldset>

@@ -129,20 +129,24 @@
     </header>
 
     <main>
+      <section class="hero hero--lab">
+        <div class="wrap">
+          <h1>Form fields</h1>
+          <p class="lab__intro">
+            The PiperX field request (<code>FieldRequest</code>): what the messenger shows when the
+            agent asks for a name, email, phone number, picklist and so on. It's markup only, with no
+            Piper and nothing behind the buttons. Each state is captured from fireball by rendering the
+            real component with its store in that state. Each one sits in its own open shadow root with
+            the widget's stylesheet, as on a customer's page. In sidebar and docked, picklists render in
+            the chat timeline under the agent's question, so those are captured there. Piper colors
+            the fields with the team's theme: the Theme options set the same <code>--q-*</code>
+            properties on each host that <code>applyThemeCssVars</code> does. Each frame is its own
+            viewport. Open one on its own to use DevTools on it.
+          </p>
+          <p class="lab__source" id="source"></p>
+        </div>
+      </section>
       <div class="wrap lab">
-      <h1>Form fields</h1>
-      <p class="lab__intro">
-        The PiperX field request (<code>FieldRequest</code>): what the messenger shows when the
-        agent asks for a name, email, phone number, picklist and so on. It's markup only, with no
-        Piper and nothing behind the buttons. Each state is captured from fireball by rendering the
-        real component with its store in that state. Each one sits in its own open shadow root with
-        the widget's stylesheet, as on a customer's page. In sidebar and docked, picklists render in
-        the chat timeline under the agent's question, so those are captured there. Piper colors
-        the fields with the team's theme: the Theme options set the same <code>--q-*</code>
-        properties on each host that <code>applyThemeCssVars</code> does. Each frame is its own
-        viewport. Open one on its own to use DevTools on it.
-      </p>
-      <p class="lab__source" id="source"></p>
 
       <form class="lab__controls" id="controls">
         <fieldset>

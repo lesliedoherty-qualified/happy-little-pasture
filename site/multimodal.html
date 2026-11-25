@@ -147,18 +147,22 @@
     </header>
 
     <main>
+      <section class="hero hero--lab">
+        <div class="wrap">
+          <h1>Multimodal</h1>
+          <p class="lab__intro">
+            The PiperX messenger (<code>Main</code>) in text mode, as markup only: no Piper, and
+            nothing behind the buttons. The markup is captured from fireball by rendering the real
+            component. It sits in an open shadow root on <code>#qualified-multimodal-host</code> with
+            production&rsquo;s host style, so <code>:host</code> rules, inherited custom properties and
+            <code>::part()</code> behave as on a customer&rsquo;s page. Use it to check the QAI-6788
+            header hooks: the values below are set on the host with <code>style.setProperty</code>.
+            Each frame is its own viewport. Open one on its own to use DevTools on it.
+          </p>
+          <p class="lab__source" id="source"></p>
+        </div>
+      </section>
       <div class="wrap lab">
-      <h1>Multimodal</h1>
-      <p class="lab__intro">
-        The PiperX messenger (<code>Main</code>) in text mode, as markup only: no Piper, and
-        nothing behind the buttons. The markup is captured from fireball by rendering the real
-        component. It sits in an open shadow root on <code>#qualified-multimodal-host</code> with
-        production&rsquo;s host style, so <code>:host</code> rules, inherited custom properties and
-        <code>::part()</code> behave as on a customer&rsquo;s page. Use it to check the QAI-6788
-        header hooks: the values below are set on the host with <code>style.setProperty</code>.
-        Each frame is its own viewport. Open one on its own to use DevTools on it.
-      </p>
-      <p class="lab__source" id="source"></p>
 
       <form class="lab__controls" id="controls">
         <fieldset>

@@ -26,7 +26,10 @@
 
       .library__hero {
         padding: 64px 0 72px;
-        background: linear-gradient(160deg, var(--navy) 0%, var(--blue-deep) 38%, var(--blue) 70%, var(--sky) 100%);
+        /* The same clouds as every other page's hero (css/site.css .hero). */
+        background:
+          url("img/hero-clouds.svg") center top / max(100%, 960px) auto no-repeat,
+          linear-gradient(160deg, var(--navy) 0%, var(--blue-deep) 38%, var(--blue) 70%, var(--sky) 100%);
         color: #fff;
       }
       .library__hero h1 {

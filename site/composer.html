@@ -129,21 +129,25 @@
     </header>
 
     <main>
+      <section class="hero hero--lab">
+        <div class="wrap">
+          <h1>Composer</h1>
+          <p class="lab__intro">
+            Where the visitor types: <code>ChatComposer</code> and <code>ChatInputForm</code> (the
+            <code>TextArea</code>, the send and voice buttons, the strategy CTA buttons and the character
+            count) and <code>ComposerErrorBanner</code>. It's markup only, with no Piper running and
+            nothing behind the buttons. Each state is captured from fireball by rendering the whole
+            messenger (<code>Main</code>) and typing into the real textarea where there&rsquo;s text, in
+            an open shadow root on <code>#qualified-multimodal-host</code> with production&rsquo;s host
+            style. The frame repeats two things the composer does with real layout: it sizes a typed
+            textarea to its content, and it measures the placeholder, switching to the shorter fallback
+            when the ideal one doesn&rsquo;t fit, as <code>useTextOverflow</code> does. Each frame is its
+            own viewport. Open one on its own to use DevTools on it.
+          </p>
+          <p class="lab__source" id="source"></p>
+        </div>
+      </section>
       <div class="wrap lab">
-      <h1>Composer</h1>
-      <p class="lab__intro">
-        Where the visitor types: <code>ChatComposer</code> and <code>ChatInputForm</code> (the
-        <code>TextArea</code>, the send and voice buttons, the strategy CTA buttons and the character
-        count) and <code>ComposerErrorBanner</code>. It's markup only, with no Piper running and
-        nothing behind the buttons. Each state is captured from fireball by rendering the whole
-        messenger (<code>Main</code>) and typing into the real textarea where there&rsquo;s text, in
-        an open shadow root on <code>#qualified-multimodal-host</code> with production&rsquo;s host
-        style. The frame repeats two things the composer does with real layout: it sizes a typed
-        textarea to its content, and it measures the placeholder, switching to the shorter fallback
-        when the ideal one doesn&rsquo;t fit, as <code>useTextOverflow</code> does. Each frame is its
-        own viewport. Open one on its own to use DevTools on it.
-      </p>
-      <p class="lab__source" id="source"></p>
 
       <form class="lab__controls" id="controls">
         <fieldset>

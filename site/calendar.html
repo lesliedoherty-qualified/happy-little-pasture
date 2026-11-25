@@ -129,21 +129,25 @@
     </header>
 
     <main>
+      <section class="hero hero--lab">
+        <div class="wrap">
+          <h1>Calendar</h1>
+          <p class="lab__intro">
+            The meeting booker&rsquo;s entries in the chat timeline: the &ldquo;Continue booking&rdquo;
+            card (<code>CalendarEventOfferRenderer</code> and <code>MeetingBookerEntry</code>), the
+            cancelled offer, and the booked meeting (<code>CalendarEventPickRenderer</code> and
+            <code>MeetingDetailsCard</code>). A fresh offer opens the booker in the overlay, so visitors
+            meet the Continue booking card only after closing a booker they hadn&rsquo;t finished. The
+            booker itself is on the <a href="components.html">Meeting booker</a> page. It's markup only,
+            with no Piper running. Each state is a different conversation, captured from fireball by
+            rendering the whole messenger (<code>Main</code>), in an open shadow root on
+            <code>#qualified-multimodal-host</code> with production&rsquo;s host style. Each frame is its
+            own viewport. Open one on its own to use DevTools on it.
+          </p>
+          <p class="lab__source" id="source"></p>
+        </div>
+      </section>
       <div class="wrap lab">
-      <h1>Calendar</h1>
-      <p class="lab__intro">
-        The meeting booker&rsquo;s entries in the chat timeline: the &ldquo;Continue booking&rdquo;
-        card (<code>CalendarEventOfferRenderer</code> and <code>MeetingBookerEntry</code>), the
-        cancelled offer, and the booked meeting (<code>CalendarEventPickRenderer</code> and
-        <code>MeetingDetailsCard</code>). A fresh offer opens the booker in the overlay, so visitors
-        meet the Continue booking card only after closing a booker they hadn&rsquo;t finished. The
-        booker itself is on the <a href="components.html">Meeting booker</a> page. It's markup only,
-        with no Piper running. Each state is a different conversation, captured from fireball by
-        rendering the whole messenger (<code>Main</code>), in an open shadow root on
-        <code>#qualified-multimodal-host</code> with production&rsquo;s host style. Each frame is its
-        own viewport. Open one on its own to use DevTools on it.
-      </p>
-      <p class="lab__source" id="source"></p>
 
       <form class="lab__controls" id="controls">
         <fieldset>

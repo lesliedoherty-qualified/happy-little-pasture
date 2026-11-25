@@ -30,6 +30,11 @@
   --header-bg: rgba(251, 246, 239, 0.94);
   --hero-a: rgba(221, 210, 242, 0.9);
   --hero-b: rgba(244, 212, 207, 0.8);
+  /* The hero band: a three-stop gradient per theme (top, middle, bottom-right), more vibrant than
+     the page; the root is the brand blue. Themes below set their own. */
+  --hero-top: #0b1d5c;
+  --hero-mid: #1d43d8;
+  --hero-bottom: #4fb0f9;
   font-family: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
   color: var(--ink);
   background: var(--cream);
@@ -429,6 +434,10 @@ html[data-page="self-hosted"] {
   --header-bg: rgba(255, 241, 248, 0.94);
   --hero-a: rgba(255, 182, 222, 0.95);
   --hero-b: rgba(255, 226, 140, 0.8);
+  /* Sparkleforce hero: pink. */
+  --hero-top: #b5174f;
+  --hero-mid: #d82a6b;
+  --hero-bottom: #f06b97;
 }
 
 html[data-page="self-hosted-no-init"] {
@@ -443,13 +452,10 @@ html[data-page="self-hosted-no-init"] {
   --header-bg: rgba(241, 251, 247, 0.94);
   --hero-a: rgba(116, 192, 252, 0.7);
   --hero-b: rgba(255, 169, 77, 0.6);
-}
-
-html[data-page="self-hosted-no-init"] .hero {
-  background:
-    linear-gradient(100deg, rgba(255, 107, 107, 0.22), rgba(255, 212, 59, 0.22), rgba(81, 207, 102, 0.22),
-      rgba(51, 154, 240, 0.22), rgba(204, 93, 232, 0.22)),
-    var(--cream);
+  /* Rainbowforce hero: teal. */
+  --hero-top: #2b7a73;
+  --hero-mid: #38a493;
+  --hero-bottom: #5fe0c8;
 }
 
 html[data-page="cdn-host"],
@@ -465,6 +471,10 @@ html[data-page="cdn-host-prod"] {
   --header-bg: rgba(238, 247, 253, 0.94);
   --hero-a: rgba(165, 216, 255, 0.9);
   --hero-b: rgba(255, 255, 255, 0.95);
+  /* Cloudforce hero: steel blue. */
+  --hero-top: #1f5c8f;
+  --hero-mid: #2f84c7;
+  --hero-bottom: #55b6f5;
 }
 
 html[data-page="cdn-host-prod"] {
@@ -473,6 +483,9 @@ html[data-page="cdn-host-prod"] {
   --sand: #7aa7d9;
   --header-bg: rgba(227, 238, 252, 0.94);
   --hero-a: rgba(116, 143, 252, 0.6);
+  --hero-top: #164a7a;
+  --hero-mid: #2569a8;
+  --hero-bottom: #3f9be0;
 }
 
 html[data-page="gtm"],
@@ -488,6 +501,10 @@ html[data-page="gtm-docking-in-gtm"] {
   --header-bg: rgba(255, 244, 234, 0.94);
   --hero-a: rgba(255, 170, 110, 0.75);
   --hero-b: rgba(255, 221, 128, 0.7);
+  /* AlpacalpyseForce hero: green. */
+  --hero-top: #2f7a3a;
+  --hero-mid: #46a04c;
+  --hero-bottom: #6cc56a;
 }
 
 html[data-page="gtm-docking-in-gtm"] {
@@ -495,6 +512,9 @@ html[data-page="gtm-docking-in-gtm"] {
   --orange: #c92a2a;
   --sand: #f08c8c;
   --hero-a: rgba(255, 135, 135, 0.6);
+  --hero-top: #23602d;
+  --hero-mid: #3b8a40;
+  --hero-bottom: #5fb35d;
 }
 
 html[data-page="self-hosted-token-head"] {
@@ -509,15 +529,94 @@ html[data-page="self-hosted-token-head"] {
   --header-bg: rgba(243, 241, 255, 0.94);
   --hero-a: rgba(176, 162, 255, 0.85);
   --hero-b: rgba(255, 224, 102, 0.7);
+  /* Glitterforce hero: purple. */
+  --hero-top: #7d12c4;
+  --hero-mid: #9b3ef0;
+  --hero-bottom: #c98bfb;
 }
 
 /* Hero --------------------------------------------------------------------- */
 
+/* The hero band, in the brand refresh's style: the theme's vibrant gradient (--hero-top, -mid,
+   -bottom), darkest at the top and lightest bottom right, with soft grainy clouds over it
+   (img/hero-clouds.svg, translucent white, so it suits every theme). Text and buttons are white
+   on it. */
 .hero {
-  padding: 72px 0 56px;
+  padding: 72px 0 64px;
+  color: #fff;
   background:
-    radial-gradient(circle at 85% 30%, var(--hero-a), transparent 45%),
-    radial-gradient(circle at 10% 80%, var(--hero-b), transparent 40%);
+    url("../img/hero-clouds.svg") center top / max(100%, 960px) auto no-repeat,
+    linear-gradient(168deg, var(--hero-top) 0%, var(--hero-mid) 58%, var(--hero-bottom) 100%);
+}
+
+.hero h1 {
+  color: #fff;
+}
+
+.hero .eyebrow {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.hero .lede,
+.hero .hero__fineprint {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.hero a:not(.button) {
+  color: #fff;
+}
+
+.hero code {
+  padding: 0.05em 0.35em;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+/* On the band, the primary button is a white pill in the theme's colour and the secondary a
+   see-through outline, as in the brand's hero CTAs. */
+.hero .button {
+  background: #fff;
+  color: var(--hero-top);
+}
+
+.hero .button:hover {
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.hero .button--ghost {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #fff;
+}
+
+.hero .button--ghost:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+.hero .button:focus-visible {
+  outline-color: #fff;
+}
+
+/* The component pages' hero: just the title, the intro and where the capture came from. */
+.hero--lab {
+  padding: 56px 0 48px;
+}
+
+.hero--lab h1 {
+  margin: 0 0 12px;
+}
+
+.hero--lab .lab__intro,
+.hero--lab .lab__source {
+  max-width: 72ch;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.hero--lab .lab__source {
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .hero__inner {

@@ -129,21 +129,25 @@
     </header>
 
     <main>
+      <section class="hero hero--lab">
+        <div class="wrap">
+          <h1>Presented content</h1>
+          <p class="lab__intro">
+            What Piper puts in the chat timeline when it presents something: a deck card
+            (<code>PresentDeckRenderer</code>), a video section card (<code>PresentVideoRenderer</code>)
+            and a slide thumbnail (<code>PresentContentRenderer</code>). It's markup only, with no Piper
+            running and nothing behind the buttons. Each state is a different conversation, captured from
+            fireball by rendering the whole messenger (<code>Main</code>), in an open shadow root on
+            <code>#qualified-multimodal-host</code> with production&rsquo;s host style. The deck&rsquo;s
+            reading states come from a real <code>DecksStore</code>: the capture opens the deck, steps
+            through it and closes it, as the deck tests do. The cards&rsquo; buttons are the theme&rsquo;s
+            buttons, so the Theme options matter here. Each frame is its own viewport. Open one on its
+            own to use DevTools on it.
+          </p>
+          <p class="lab__source" id="source"></p>
+        </div>
+      </section>
       <div class="wrap lab">
-      <h1>Presented content</h1>
-      <p class="lab__intro">
-        What Piper puts in the chat timeline when it presents something: a deck card
-        (<code>PresentDeckRenderer</code>), a video section card (<code>PresentVideoRenderer</code>)
-        and a slide thumbnail (<code>PresentContentRenderer</code>). It's markup only, with no Piper
-        running and nothing behind the buttons. Each state is a different conversation, captured from
-        fireball by rendering the whole messenger (<code>Main</code>), in an open shadow root on
-        <code>#qualified-multimodal-host</code> with production&rsquo;s host style. The deck&rsquo;s
-        reading states come from a real <code>DecksStore</code>: the capture opens the deck, steps
-        through it and closes it, as the deck tests do. The cards&rsquo; buttons are the theme&rsquo;s
-        buttons, so the Theme options matter here. Each frame is its own viewport. Open one on its
-        own to use DevTools on it.
-      </p>
-      <p class="lab__source" id="source"></p>
 
       <form class="lab__controls" id="controls">
         <fieldset>
