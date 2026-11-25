@@ -9,7 +9,7 @@ window.PASTURE_STYLESHEETS = {
   "prod": {
     "label": "Prod",
     "href": "prod-panda.css",
-    "source": "https://js.qualified.com/packs/js/widget/preview/preact_component_renderer-3c9b2d06.js, production build 2026-11-21T05:46:31.532Z"
+    "source": "https://js.qualified.com/packs/js/widget/preview/preact_component_renderer-e5503ac0.js, production build 2026-11-25T23:40:13.471Z"
   },
   "local": {
     "label": "Local fireball capture",

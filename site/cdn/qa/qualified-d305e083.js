@@ -3282,7 +3282,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     return;
   }
 
-  const q = bootstrap.start({"version":9,"host":"https://app.qualified-dev.com","cdnHost":"https://js.qualified-dev.com","wsHost":"wss://ws6.qualified-dev.com/cable","assetsHost":"https://assets.qualified-dev.com","frontendVersion":"2026-11-21-9107fc1975","meetingLinkHost":"https://schedule.qualified-dev.com","heartbeatPingDivisor":4,"staleThresholdSeconds":7});
+  const q = bootstrap.start({"version":9,"host":"https://app.qualified-dev.com","cdnHost":"https://js.qualified-dev.com","wsHost":"wss://ws6.qualified-dev.com/cable","assetsHost":"https://assets.qualified-dev.com","frontendVersion":"2026-11-25-b55b9a6598","meetingLinkHost":"https://schedule.qualified-dev.com","heartbeatPingDivisor":4,"staleThresholdSeconds":7});
 
   try {
     delete window.__qualifiedInit;
