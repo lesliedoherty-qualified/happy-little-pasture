@@ -224,19 +224,57 @@ the page only gets a small "Inspect what Piper received" link at the bottom. The
 Recorded from the start of the page load by [site/js/inspect-early.js](site/js/inspect-early.js),
 which is in each page's `<head>` right after `reset-state.js`, before Piper's scripts. Only
 requests that leave the site, and the site's self-hosted packages (`/qualified*`, `/cdn/`), are
-recorded. They're grouped by layer, each with its host:
+recorded. Each fetch, XHR and cable frame gets a role (`roleOf` in the shared block), and the panel
+lists only what decides what Piper shows:
 
-| Layer | What's recorded | How |
+| Group | What's in it | How |
 | --- | --- | --- |
-| Script, Stylesheet or preload, Loaded by CSS, Image, Frame, Video | URL, time, size, duration | Resource Timing (`PerformanceObserver`); sizes are 0 cross-origin without `Timing-Allow-Origin` |
-| HTTP (fetch), HTTP (XHR) | method, URL, status, content type, the body | fetch reads `response.clone()`; XHR reads the response after `loadend` |
-| WebSocket | each ActionCable frame, named by its events and channel (`welcome`, `initOffers`, `botProcessEnded, initState`, ...); pings are counted, not listed | an extra `message` listener on the socket |
+| Decision calls | fetch and XHR calls that decide what Piper shows (`configuration`, `cookie_consent_policy`, ...): method, URL, status, the response headers the page may read, what was sent and the body | fetch reads `response.clone()`; XHR reads the response after `loadend` |
+| WebSocket | the cable frames that decide what Piper shows: `welcome`, `confirm_subscription`, `reject_subscription`, `disconnect`, `widgetEvent`, `personalizeWebsite`, `initOffers`, `initState`, `stateUpdate`, each with its channel | an extra `message` listener on the socket |
+| Counted, not decisions | `visitor_events` reporting calls, conversation frames (messages, read receipts, responses) and pings: counts by name only | the same recorders |
 | Cookies and storage | names and sizes only, never values | `document.cookie`, `localStorage`, `sessionStorage` |
 
+Scripts, stylesheets, images and fonts aren't listed: they don't decide anything, and the browser
+can't read their headers anyway.
+
 The wrappers are observe-only: the page and Piper get the original promise, request and socket,
-and recording errors are swallowed. Tested on Hosted (local) by comparing Piper with and without
-`?inspect=1`: same config (60 keys), same messenger markup, same frames. Without `?inspect=1`
-nothing is wrapped.
+and recording errors are swallowed. Checked on Hosted (local): with `?inspect=1` the panel shows
+the three groups and no UUIDs, emails or connection tokens; without it there's no panel, `fetch`,
+`XMLHttpRequest` and `WebSocket` are the browser's own, and Piper docks the same way.
+
+### Every header: the local report
+
+A page can't read most of Qualified's response headers: its responses expose none to other origins
+(`access-control-expose-headers` is empty), and a `<script>` load exposes none at all. So the
+headers (`cache-control`, `etag`, `cf-cache-status`, `x-request-id`, `x-runtime`, `vary`, ...)
+come from a report that runs outside the page:
+
+```sh
+npm run inspect -- index.html                       # a page on the local server (localhost:4600)
+npm run inspect -- self-hosted-params.qa.html --wait=20
+npm run inspect -- https://lesliedoherty-qualified.github.io/happy-little-pasture/
+```
+
+[scripts/inspect.mjs](scripts/inspect.mjs) opens the page in headless Chrome with a fresh profile and
+records every request to Qualified through the DevTools Protocol: request and response headers,
+status, cache, timing, the bodies of the decision and reporting calls, and the cable handshake and
+frames. After `--wait` seconds (12 by default) it reads what Piper made of it from the page: the
+install, the head's saved settings, whether it's docked and the initialize config. The terminal
+summary has a `decided:` line for each decision (for example the saved settings the head applied,
+`initialize config inline: 60 keys, 51 feature flags on`, `cookie_consent_policy:
+{"requiresCookieConsent":false}`). The full report is written to
+`inspect-reports/<time>-<page>.html` and `.json`.
+
+- **Browser:** it uses `CHROME=` if set, then Playwright's headless shell
+  (`npx playwright install chromium-headless-shell`), then Chrome for Testing, and Google Chrome
+  last. A managed Google Chrome (Chrome Enterprise cloud policy, as on Salesforce Macs) shuts its
+  DevTools port about five seconds after it starts. The script says so and stops instead of hanging.
+- **QA pages:** QA turns a `HeadlessChrome` user agent away as a bot: the cable opens, gets a
+  `disconnect` frame and the widget never starts. On QA-backed pages (`.qa.html` and the published
+  site) the report shows only the head script, the `configuration` call and the refused cable. The
+  report doesn't disguise its user agent, so check Piper's own behaviour on QA in a normal browser.
+- **Redaction:** the same rules as the panel. The report loads the `BEGIN SHARED` / `END SHARED`
+  block of `inspect-early.js`, so the two can't drift apart. Cookies show names only.
 
 ### What Piper made of it
 
@@ -260,11 +298,14 @@ panel says "not available" if it's missing. It's only set once the widget has co
 
 - Nothing leaves the page: no requests, no storage. **Copy as JSON** puts the redacted view on the
   clipboard.
+- The local report only loads the page, like a visitor would, and writes to `inspect-reports/`, which
+  is git-ignored, so reports are never published. A QA page creates a QA visitor.
 - Data is shown as text (`textContent`), never parsed as HTML, so a payload can't run anything.
 - Redaction happens before anything is kept. Keys that name emails, phones, IPs, visitor, session
   or conversation IDs, cookies, secrets and `*_token`s (ActionCable's `connection_token`) are
   redacted. Emails, phone numbers and UUIDs in any string become `[email]`, `[phone]` and
-  `[id]`. URL query values are redacted unless known to be harmless (the public widget `token`,
+  `[id]` (the report keeps `x-request-id`, a per-request ID, so a request can be traced). Settings that
+  decide what Piper shows, such as `requiresCookieConsent` and `hostname`, aren't redacted. URL query values are redacted unless known to be harmless (the public widget `token`,
   `docking_*`, versions, locale, time zone), so the cable's `vu` and `wu` never show. Long
   strings and arrays are cut short.
 - Piper doesn't run in an iframe, so the inspector only works on the page itself.
