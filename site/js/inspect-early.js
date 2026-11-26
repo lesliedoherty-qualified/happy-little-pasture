@@ -1,28 +1,31 @@
 // Piper data inspector, early part (test harness only, not part of any install). Loaded in <head>
 // before Piper's scripts; does nothing unless the URL has ?inspect=1.
 //
-// With it, records what the browser receives, by layer, for js/inspector.js to show:
-// - every resource the page loads (scripts, stylesheets, fonts, images, fetches), from the
-//   browser's Resource Timing entries: URL, type, size where the server allows it;
-// - the bodies of fetch and XMLHttpRequest responses, read from a clone or after load;
+// With it, records the calls that decide what Piper shows, for js/inspector.js to list:
+// - fetch and XMLHttpRequest calls to Qualified: method, URL, status, the response headers the
+//   browser lets this page read, the request body and the response body;
 // - each frame received over WebSocket (ActionCable), through an extra message listener.
+//
+// Headers: Qualified's responses expose no extra headers to other origins, so a page can read only
+// content-type, cache-control and the other CORS-safelisted ones. For every header, including the
+// script loads', use the local report: npm run inspect -- <page> (scripts/inspect.mjs).
 //
 // Observe-only. fetch, XMLHttpRequest and WebSocket are wrapped so the recorder sees what comes
 // back, but the page and Piper get the original promise, request and socket, unchanged: a fetch
 // body is read from response.clone(), an XHR's after its load event, a socket's frames from a
-// listener added beside Piper's. Nothing is sent, stored or changed. What's kept is redacted first:
-// emails, phone numbers, IP addresses, identifiers, cookies and secrets never reach the recorder's
-// memory, and long values are cut short. Only requests that leave this site, and this site's
-// self-hosted Qualified packages (/qualified*, /cdn/), are recorded.
+// listener added beside Piper's. Nothing is sent, stored or changed. What's kept is redacted first,
+// and long values are cut short. Only requests that leave this site, and this site's self-hosted
+// Qualified packages (/qualified*, /cdn/), are recorded.
 (function () {
   "use strict";
 
   var params = new URLSearchParams(window.location.search);
   if (params.get("inspect") !== "1") return;
 
-  // --- Redaction (shared with inspector.js) --------------------------------------------------
+  // --- Shared rules (scripts/inspect.mjs runs this block too: keep it free of the DOM) --------
+  // BEGIN SHARED
 
-  var SECRET_KEY = /(email|phone|mobile|^ip$|ip_?address|uuid|visitor_?id|session_?id|conversation_?id|cookie|secret|password|passwd|authorization|auth_?token|_token$|api_?key|jwt|signature|credit|ssn)/i;
+  var SECRET_KEY = /(email|phone|mobile|^ip$|ip_?address|uuid|visitor_?id|session_?id|conversation_?id|^cookies?$|set_?cookie|secret|password|passwd|authorization|auth_?token|_token$|api_?key|jwt|signature|credit|ssn)/i;
   var EMAIL = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
   // Phone numbers as people write them (+1 415 555 0100, (415) 555-0100), not timestamps or IDs.
   var PHONE = /(?<![\w:-])(?:\+\d{1,3}[ .-]?)?\(?\d{3}\)?[ .-]\d{3}[ .-]\d{4}(?![\w:-])/g;
@@ -36,7 +39,7 @@
     return text.length > MAX_STRING ? text.slice(0, MAX_STRING) + "… (" + text.length + " chars)" : text;
   }
 
-  // A plain, redacted copy: functions and DOM nodes dropped, signals read, cycles cut.
+  // A plain, redacted copy: functions and DOM nodes dropped, cycles cut.
   function redact(value, depth, seen) {
     depth = depth || 0;
     seen = seen || new WeakSet();
@@ -89,6 +92,76 @@
     }
   }
 
+  // Query values can carry identifiers under short names (the cable's vu and wu are visitor and
+  // window UUIDs), so every value is redacted except known-harmless ones: the public widget token,
+  // the page's host name, docking options, versions, locale and time zone.
+  var SAFE_QUERY = /^(token|hostname|docking_\w+|wv|pv|bv|fv|bis|iml|ic|lc|bl|tz|v|version|locale|lang|env|install|mode|state|layout|theme)$/;
+
+  function shortUrl(url, base) {
+    try {
+      var parsed = new URL(url, base);
+      var query = [];
+      parsed.searchParams.forEach(function (value, key) {
+        query.push(key + "=" + (SAFE_QUERY.test(key) ? redactString(value) : "[redacted]"));
+      });
+      return parsed.origin + parsed.pathname + (query.length ? "?" + query.join("&") : "");
+    } catch (e) {
+      return String(url);
+    }
+  }
+
+  // Headers: cookies show their names only; authorization never shows. A request ID is kept as is
+  // (it's how a request is found in the server logs), everything else is redacted like any string.
+  function redactHeaders(headers) {
+    var out = {};
+    Object.keys(headers || {})
+      .sort()
+      .forEach(function (name) {
+        var lower = name.toLowerCase();
+        var value = String(headers[name]);
+        if (lower === "cookie") {
+          out[lower] = "[names only] " + value.split(/;\s*/).map(function (c) { return c.split("=")[0]; }).join(", ");
+        } else if (lower === "set-cookie") {
+          out[lower] = "[names only] " + value.split("\n").map(function (c) { return c.split("=")[0]; }).join(", ");
+        } else if (/authorization|token|secret|signature/.test(lower)) {
+          out[lower] = "[redacted]";
+        } else if (lower === "x-request-id") {
+          out[lower] = value;
+        } else {
+          out[lower] = redactString(value);
+        }
+      });
+    return out;
+  }
+
+  // The frames that decide what the messenger shows. The rest (messages, read receipts, replies to
+  // the visitor's own actions) is conversation traffic, counted but not listed.
+  var DECISION_EVENTS = /^(welcome|confirm_subscription|reject_subscription|disconnect|widgetEvent|personalizeWebsite|initOffers|initState|stateUpdate)$/;
+
+  // Which calls decide something, and which only report.
+  function roleOf(url, events) {
+    var path = "";
+    try {
+      path = new URL(url, "http://x/").pathname;
+    } catch (e) {
+      /* keep empty */
+    }
+    if (/\/cable$/.test(path)) {
+      return (events || []).some(function (name) {
+        return DECISION_EVENTS.test(name);
+      })
+        ? "decision"
+        : "conversation";
+    }
+    if (/\/visitor_events/.test(path) || /\/(metrics|beacon|telemetry|rum)\b/.test(path)) return "reporting";
+    if (/\/(qualified-head|docking)\.js$/.test(path)) return "head";
+    if (/\/qualified\.js$/.test(path)) return "widget";
+    if (/\.(js|mjs|css|woff2?|ttf|png|jpe?g|gif|svg|webp|mp4|webm|mp3)$/.test(path)) return "asset";
+    return "decision";
+  }
+
+  // END SHARED
+
   // --- Recorder ------------------------------------------------------------------------------
 
   var started = performance.now();
@@ -133,59 +206,43 @@
     });
   }
 
-  var SAFE_QUERY = /^(token|docking_\w+|wv|pv|bv|fv|bis|iml|ic|lc|bl|tz|v|version|locale|lang|env|install|mode|state|layout|theme)$/;
+  function here(url) {
+    return shortUrl(url, window.location.href);
+  }
 
-  function shortUrl(url) {
+  function requestBody(body) {
+    if (body == null) return undefined;
+    return typeof body === "string" ? parseBody(body) : "[" + (body.constructor && body.constructor.name) + " body]";
+  }
+
+  // The response headers this page may read (CORS-safelisted, plus any the server exposes).
+  function fetchHeaders(response) {
+    var out = {};
     try {
-      var parsed = new URL(url, window.location.href);
-      // Query values can carry identifiers under short names (the cable's vu and wu are visitor and
-      // window UUIDs), so every value is redacted except known-harmless ones: the public widget
-      // token, docking options, versions, locale and time zone.
-      var query = [];
-      parsed.searchParams.forEach(function (value, key) {
-        query.push(key + "=" + (SAFE_QUERY.test(key) ? redactString(value) : "[redacted]"));
+      response.headers.forEach(function (value, name) {
+        out[name] = value;
       });
-      return parsed.origin + parsed.pathname + (query.length ? "?" + query.join("&") : "");
     } catch (e) {
-      return String(url);
+      /* unreadable */
     }
+    return redactHeaders(out);
   }
 
-  // Resource Timing: every resource the page loaded, including <script> and <link> loads the
-  // wrappers below never see. Sizes are 0 for cross-origin responses without Timing-Allow-Origin.
-  var LAYER = {
-    script: "Script",
-    link: "Stylesheet or preload",
-    css: "Loaded by CSS (fonts, images)",
-    img: "Image",
-    fetch: "HTTP (fetch)",
-    xmlhttprequest: "HTTP (XHR)",
-    iframe: "Frame",
-    video: "Video",
-    audio: "Audio",
-    beacon: "Beacon",
-    other: "Other",
-  };
-  function onResource(entry) {
-    if (!recorded(entry.name)) return;
-    // fetch and XHR get their own entries, with bodies, from the wrappers.
-    if (entry.initiatorType === "fetch" || entry.initiatorType === "xmlhttprequest") return;
-    add({
-      layer: LAYER[entry.initiatorType] || entry.initiatorType,
-      kind: "resource",
-      url: shortUrl(entry.name),
-      t: (entry.startTime / 1000).toFixed(2) + "s",
-      size: entry.encodedBodySize || entry.transferSize || null,
-      durationMs: Math.round(entry.duration),
-      status: entry.responseStatus || null,
-    });
-  }
-  try {
-    new PerformanceObserver(function (list) {
-      list.getEntries().forEach(onResource);
-    }).observe({ type: "resource", buffered: true });
-  } catch (e) {
-    /* no Resource Timing: the HTTP and WebSocket layers still record */
+  function xhrHeaders(xhr) {
+    var out = {};
+    try {
+      xhr
+        .getAllResponseHeaders()
+        .trim()
+        .split(/[\r\n]+/)
+        .forEach(function (line) {
+          var at = line.indexOf(":");
+          if (at > 0) out[line.slice(0, at).trim()] = line.slice(at + 1).trim();
+        });
+    } catch (e) {
+      /* unreadable */
+    }
+    return redactHeaders(out);
   }
 
   // fetch: the page gets the original promise; the recorder reads a clone of the response.
@@ -196,11 +253,21 @@
       try {
         var url = typeof input === "string" ? input : input && input.url;
         var method = (init && init.method) || (input && input.method) || "GET";
+        var sent = requestBody(init && init.body);
         if (url && recorded(url)) {
           promise.then(
             function (response) {
               var type = response.headers.get("content-type") || "";
-              var entry = { layer: "HTTP (fetch)", kind: "http", method: method, url: shortUrl(url), status: response.status, contentType: type };
+              var entry = {
+                layer: "HTTP (fetch)",
+                kind: "http",
+                role: roleOf(url),
+                method: method,
+                url: here(url),
+                status: response.status,
+                headers: fetchHeaders(response),
+                sent: sent,
+              };
               if (/event-stream/.test(type)) return add(Object.assign(entry, { body: "[stream, not read]" }));
               response
                 .clone()
@@ -217,7 +284,7 @@
                 );
             },
             function (error) {
-              add({ layer: "HTTP (fetch)", kind: "http", method: method, url: shortUrl(url), status: "failed", body: redactString(String(error && error.message)) });
+              add({ layer: "HTTP (fetch)", kind: "http", role: roleOf(url), method: method, url: here(url), status: "failed", sent: sent, body: redactString(String(error && error.message)) });
             },
           );
         }
@@ -241,21 +308,28 @@
       }
       return nativeOpen.apply(this, arguments);
     };
-    XHR.send = function () {
+    XHR.send = function (body) {
       var request = this.__pastureRequest;
       var xhr = this;
       if (request && recorded(request.url)) {
+        var sent;
+        try {
+          sent = requestBody(body);
+        } catch (e) {
+          /* ignore */
+        }
         xhr.addEventListener("loadend", function () {
           try {
-            var type = xhr.getResponseHeader("content-type") || "";
             var readable = xhr.responseType === "" || xhr.responseType === "text";
             add({
               layer: "HTTP (XHR)",
               kind: "http",
+              role: roleOf(request.url),
               method: request.method,
-              url: shortUrl(request.url),
+              url: here(request.url),
               status: xhr.status,
-              contentType: type,
+              headers: xhrHeaders(xhr),
+              sent: sent,
               size: readable ? xhr.responseText.length : null,
               body: readable ? parseBody(xhr.responseText) : xhr.responseType === "json" ? redact(xhr.response) : "[" + xhr.responseType + " body]",
             });
@@ -276,7 +350,7 @@
       var socket = protocols === undefined ? new NativeSocket(url) : new NativeSocket(url, protocols);
       try {
         if (recorded(url)) {
-          add({ layer: "WebSocket", kind: "socket", event: "open requested", url: shortUrl(url) });
+          add({ layer: "WebSocket", kind: "socket", role: "decision", event: "open requested", url: here(url) });
           socket.addEventListener("message", function (message) {
             var data = message.data;
             if (typeof data === "string" && data.indexOf('"type":"ping"') !== -1) {
@@ -293,12 +367,21 @@
                 return item && typeof item.event === "string" ? item.event : null;
               })
               .filter(Boolean);
-            var event = names.length ? names.join(", ") : (body && body.type) || (message ? "message" : "frame");
+            if (!names.length) names = [(body && body.type) || (message ? "message" : "frame")];
             var channel = body && body.identifier && body.identifier.channel;
-            add({ layer: "WebSocket", kind: "frame", event: event, channel: channel || null, url: shortUrl(url), size: typeof data === "string" ? data.length : null, body: body });
+            add({
+              layer: "WebSocket",
+              kind: "frame",
+              role: roleOf(url, names),
+              event: names.join(", "),
+              channel: channel || null,
+              url: here(url),
+              size: typeof data === "string" ? data.length : null,
+              body: body,
+            });
           });
           socket.addEventListener("close", function (close) {
-            add({ layer: "WebSocket", kind: "socket", event: "closed (" + close.code + ")", url: shortUrl(url) });
+            add({ layer: "WebSocket", kind: "socket", role: "decision", event: "closed (" + close.code + ")", url: here(url) });
           });
         }
       } catch (e) {

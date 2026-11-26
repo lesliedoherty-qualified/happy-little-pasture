@@ -2,8 +2,10 @@
 //
 // Shows what this page received from Qualified and where each piece came from, without opening
 // devtools, in two parts:
-// - What the browser received, by layer (script, HTTP, WebSocket frame, ...): recorded from the
-//   start of the page load by js/inspect-early.js, which must be in <head> before Piper's scripts.
+// - What the browser received: the calls and WebSocket frames that decide what Piper shows, with
+//   the headers this page may read, recorded from the start of the page load by
+//   js/inspect-early.js (in <head> before Piper's scripts). Reporting calls and conversation
+//   traffic are counted, not listed. Full headers need the local report: npm run inspect.
 // - What Piper made of it: the install (the head script's URL), what qualified-head.js applied,
 //   the team config qualified.js was initialized with, what the messenger store holds after
 //   processing, the channel messages Piper handled, and the events the public handleEvents API
@@ -53,7 +55,7 @@
 
   // --- Redaction ----------------------------------------------------------------------------
 
-  var SECRET_KEY = /(email|phone|mobile|^ip$|ip_?address|uuid|visitor_?id|session_?id|conversation_?id|cookie|secret|password|passwd|authorization|auth_?token|_token$|api_?key|jwt|signature|credit|ssn)/i;
+  var SECRET_KEY = /(email|phone|mobile|^ip$|ip_?address|uuid|visitor_?id|session_?id|conversation_?id|^cookies?$|set_?cookie|secret|password|passwd|authorization|auth_?token|_token$|api_?key|jwt|signature|credit|ssn)/i;
   var EMAIL = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
   // Phone numbers as people write them (+1 415 555 0100, (415) 555-0100), not timestamps or IDs.
   var PHONE = /(?<![\w:-])(?:\+\d{1,3}[ .-]?)?\(?\d{3}\)?[ .-]\d{3}[ .-]\d{4}(?![\w:-])/g;
@@ -181,7 +183,7 @@
     s.body.appendChild(pre);
   }
 
-  // --- What the browser received, by layer (recorded by js/inspect-early.js) ----------------
+  // --- What the browser received (recorded by js/inspect-early.js) ------------------------
 
   var early = window.__pastureInspect;
   wrap.appendChild(el("h3", "inspector__group", "What the browser received"));
@@ -190,29 +192,15 @@
       "p",
       "inspector__note",
       early
-        ? "Every response from Qualified (and anything else off this site), by layer, recorded from the start of the page load: " +
-            "scripts and stylesheets as the browser loaded them, HTTP response bodies, and each WebSocket frame."
+        ? "The calls and WebSocket frames that decide what Piper shows, from the start of the page load, with the response headers this page is allowed to read. " +
+            "Qualified exposes no extra headers to other sites, so that's only content-type, cache-control and the like, and none for script loads. " +
+            "For every header: npm run inspect -- <this page> (a local report)."
         : "Not recorded on this page: js/inspect-early.js isn't in its <head>, before Piper's scripts.",
     ),
   );
   var layersBox = el("div", "inspector__layers");
   wrap.appendChild(layersBox);
   var openLayers = {};
-
-  var LAYER_ORDER = [
-    "Script",
-    "Stylesheet or preload",
-    "HTTP (fetch)",
-    "HTTP (XHR)",
-    "WebSocket",
-    "Loaded by CSS (fonts, images)",
-    "Image",
-    "Frame",
-    "Video",
-    "Audio",
-    "Beacon",
-    "Other",
-  ];
 
   // What Piper left in this site's cookies and storage: names and sizes only, never values.
   function storageNames() {
@@ -244,7 +232,7 @@
   function entryTitle(entry) {
     return [
       entry.t,
-      entry.method || entry.event || "",
+      entry.kind === "http" ? entry.method : entry.event || "",
       entry.status != null ? String(entry.status) : "",
       // A frame's URL is the socket's, the same on every frame; its channel says more.
       entry.kind === "frame" ? entry.channel || "" : entry.url,
@@ -282,40 +270,70 @@
     layersBox.appendChild(box);
   }
 
-  function renderBrowser() {
-    layersBox.replaceChildren();
-    if (!early) return;
-    var groups = {};
-    early.entries.forEach(function (entry) {
-      (groups[entry.layer] = groups[entry.layer] || []).push(entry);
+  function counted(list, key) {
+    var counts = {};
+    list.forEach(function (entry) {
+      var name = key(entry);
+      counts[name] = (counts[name] || 0) + 1;
     });
-    var names = Object.keys(groups).sort(function (a, b) {
-      var i = LAYER_ORDER.indexOf(a), j = LAYER_ORDER.indexOf(b);
-      return (i < 0 ? 99 : i) - (j < 0 ? 99 : j);
-    });
-    if (!names.length) layersBox.appendChild(el("p", "inspector__line", "Nothing from Qualified yet."));
-    names.forEach(function (name) {
-      var list = groups[name];
-      var hosts = list
+    return Object.keys(counts)
+      .map(function (name) {
+        return name + (counts[name] > 1 ? " ×" + counts[name] : "");
+      })
+      .join(", ");
+  }
+
+  function hostsOf(list) {
+    return (
+      list
         .map(function (e) {
           return e.host;
         })
         .filter(function (h, i, all) {
           return h && all.indexOf(h) === i;
-        });
-      var line = list.length + (list.length === 1 ? " item" : " items");
-      if (name === "WebSocket") line += " · " + early.pings() + " pings";
-      layerBox(
-        name,
-        hosts.join(", ") || "this site",
-        line,
-        list.map(function (entry) {
-          var detail = entry.body !== undefined ? entry.body : entry.kind === "resource" ? null : entry;
-          return { title: entryTitle(entry), detail: detail };
-        }),
-        openLayers[name],
-      );
+        })
+        .join(", ") || "this site"
+    );
+  }
+
+  function asItem(entry) {
+    var detail = entry.kind === "http" ? { headers: entry.headers, sent: entry.sent, body: entry.body } : entry.body !== undefined ? entry.body : null;
+    return { title: entryTitle(entry), detail: detail };
+  }
+
+  function renderBrowser() {
+    layersBox.replaceChildren();
+    if (!early) return;
+    var http = [], sockets = [], reporting = [], conversation = [];
+    early.entries.forEach(function (entry) {
+      if (entry.role === "reporting") reporting.push(entry);
+      else if (entry.role === "conversation") conversation.push(entry);
+      else if (entry.kind === "http") http.push(entry);
+      else if (entry.layer === "WebSocket") sockets.push(entry);
     });
+    if (!http.length && !sockets.length) layersBox.appendChild(el("p", "inspector__line", "Nothing from Qualified yet."));
+    if (http.length)
+      layerBox("Decision calls", hostsOf(http), http.length + (http.length === 1 ? " call" : " calls") + ": " + counted(http, function (e) {
+        return e.url.split("?")[0].split("/").pop();
+      }), http.map(asItem), openLayers["Decision calls"] !== false);
+    if (sockets.length)
+      layerBox("WebSocket", hostsOf(sockets), counted(sockets.filter(function (e) {
+        return e.kind === "frame";
+      }), function (e) {
+        return e.event;
+      }) || "socket events only", sockets.map(asItem), openLayers.WebSocket !== false);
+    var quiet = [];
+    if (reporting.length)
+      quiet.push({ title: "Reporting: " + reporting.length + " call(s) to " + counted(reporting, function (e) {
+        return e.url.split("?")[0].split("/").slice(-2).join("/") + " " + e.status;
+      }), detail: reporting.map(asItem) });
+    if (conversation.length || early.pings())
+      quiet.push({ title: "Conversation traffic: " + conversation.length + " frame(s)" + (conversation.length ? " (" + counted(conversation, function (e) {
+        return e.event;
+      }) + ")" : "") + ", " + early.pings() + " ping(s)", detail: conversation.map(asItem) });
+    if (quiet.length) layerBox("Counted, not decisions", hostsOf(reporting.concat(conversation)), quiet.map(function (q) {
+      return q.title.split(":")[0];
+    }).join(" · "), quiet, openLayers["Counted, not decisions"]);
     var storage = storageNames();
     layerBox(
       "Cookies and storage",

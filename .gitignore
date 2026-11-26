@@ -19,3 +19,6 @@ site/gtm.qa.html
 site/gtm-docking-in-gtm.qa.html
 # The QA package is committed like a customer's self-hosted deploy, minus the debug copies.
 site/qualified-qa/**/*.unminified.*
+
+# Local reports from npm run inspect: redacted, but never published.
+inspect-reports/
