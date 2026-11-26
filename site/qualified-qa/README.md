@@ -4,7 +4,7 @@
 > notes. It was assembled from what Qualified production runs today, for an urgent fix.
 > Replace it with the next reviewed release when Qualified sends one.
 
-Generated: 2026-11-19
+Generated: 2026-11-26
 Team token: BCGYZamYC46SGX4H
 
 This package contains everything you need to self-host the Qualified widget without
@@ -23,15 +23,15 @@ package once and give each org's page its own token.
 
 ```
 LOCAL-UNRELEASED-qai-6672.zip
-├── qualified-d305e083.js       ← Qualified widget JS bundle
-├── qualified-b85e236d.css      ← Widget CSS (fonts point to ./fonts/)
-├── qualified-head-7caab759.js  ← Head scripts bundle (docking, sentinel, etc.)
+├── qualified-6e882fe9.js       ← Qualified widget JS bundle
+├── qualified-938256af.css      ← Widget CSS (fonts point to ./fonts/)
+├── qualified-head-4517ae6b.js  ← Head scripts bundle (docking, sentinel, etc.)
 ├── daily/                                       ← Voice/calling runtime bundles (loaded by the widget)
 │   ├── audio-processor-bundle.js
 │   ├── call-machine-object-bundle.js
-├── qualified-d305e083.unminified.js  ← Unminified copy (debugging only, do not host)
-├── qualified-b85e236d.unminified.css  ← Unminified copy (debugging only, do not host)
-├── qualified-head-7caab759.unminified.js  ← Unminified copy (debugging only, do not host)
+├── qualified-6e882fe9.unminified.js  ← Unminified copy (debugging only, do not host)
+├── qualified-938256af.unminified.css  ← Unminified copy (debugging only, do not host)
+├── qualified-head-4517ae6b.unminified.js  ← Unminified copy (debugging only, do not host)
 ├── daily/call-machine-object-bundle.unminified.js  ← Unminified copy (debugging only, do not host)
 ├── daily/audio-processor-bundle.unminified.js  ← Unminified copy (debugging only, do not host)
 ├── fonts/                                       ← 38 Inter font files (woff + woff2)
@@ -70,9 +70,9 @@ Place all files in a single publicly accessible directory. Example:
 
 ```
 https://assets.your-company.com/qualified/
-  qualified-d305e083.js
-  qualified-b85e236d.css
-  qualified-head-7caab759.js
+  qualified-6e882fe9.js
+  qualified-938256af.css
+  qualified-head-4517ae6b.js
   daily/
     audio-processor-bundle.js
     call-machine-object-bundle.js
@@ -185,10 +185,12 @@ Add these tags to your HTML `<head>`. Keep the filenames exactly as shown from t
 
 ```html
 <!-- 1. Load head scripts FIRST in <head>, synchronously, before the widget queue -->
-<script src="https://assets.your-company.com/qualified/qualified-head-7caab759.js" type="text/javascript"></script>
+<script src="https://assets.your-company.com/qualified/qualified-head-4517ae6b.js" type="text/javascript"></script>
 <script type="text/javascript">
-  // Saved messenger setup: this early initialization is a snapshot of the download.
-  qualified.docking.init({"pinning":"immediate","showSkeleton":true,"dockUnderHeader":true,"skipCrossOriginStylesheets":false,"defaultDocked":true,"stateCookieName":"__q_state_BCGYZamYC46SGX4H"});
+  // Prevents CLS (Cumulative Layout Shift) with pinned messenger mode (master README options)
+  qualified.docking.init({"defaultDocked":true,"showSkeleton":true});
+
+  // Terminates pending async tasks between navigation interceptions
   qualified.sentinel.init();
 </script>
 
@@ -196,7 +198,7 @@ Add these tags to your HTML `<head>`. Keep the filenames exactly as shown from t
 <link rel="preload"
       as="style"
       data-q-stylesheet
-      href="https://assets.your-company.com/qualified/qualified-b85e236d.css">
+      href="https://assets.your-company.com/qualified/qualified-938256af.css">
 
 <!-- 3. Initialize the widget queue -->
 <script>
@@ -211,7 +213,7 @@ qualified('initialize', 'BCGYZamYC46SGX4H');
 </script>
 
 <!-- 4. Load the widget JS last -->
-<script async src="https://assets.your-company.com/qualified/qualified-d305e083.js"></script>
+<script async src="https://assets.your-company.com/qualified/qualified-6e882fe9.js"></script>
 ```
 
 **Important:** keep the `data-q-stylesheet` attribute on the stylesheet `<link>` tag exactly as shown above.
@@ -228,31 +230,21 @@ handlers that a strict CSP would reject.
 
 **Important:** keep the head scripts in your `<head>`. Loading them there prevents layout shifts and ensures docking and sentinel initialize before the widget.
 
-### Saved messenger setup
+### Messenger layout
 
-This README captures the team's saved messenger setup when the package was downloaded.
-Use a widget/head build that supports saved pinned messenger settings. Do not assume
-an older release or previously downloaded bundle supports pin-on-expansion or the scoped
-preference-cookie policy; upgrade to a compatible build and validate the installed result.
-Put the head bundle and its explicit initialization first, before the queue and main widget; do not add
-`async` or `defer` to the head script. Never pin omits docking initialization, immediate
-pinning reserves space early, and pin-on-expansion waits for the existing expansion action.
-The team-scoped preference cookie is passed to early docking; do not clear visitor choices.
+The Qualified head above loads from Qualified with your team token, not from this package. It
+applies the messenger layout set on each Theme in the app (Pinned or Floating, starting position,
+Pin beneath my header, the loading skeleton and skipping cross-origin stylesheets), so changes made
+in the app reach your site on the next page load. Do not add `async` or `defer` to it, and do not
+add a `qualified.docking.init(...)` call: the head ignores any later docking initialization.
 
-If messenger settings change, download updated instructions and update the copied head
-initialization. Redeploy assets as required by your selected package/release. Copied page
-code and previously downloaded files do not automatically synchronize with Settings. A later
-runtime configuration response cannot retroactively fix an incorrect first reservation.
-
-With Pin beneath my header enabled, use semantic header/banner, main and applicable
+With Pin beneath my header on a Theme, use semantic header/banner, main and applicable
 footer/contentinfo regions. The header must be outside main and near the top of the page.
-If these requirements are not met, disable that option in Settings and regenerate the
-instructions for standard docking. This download does not automatically scan your website
-or introduce new fallback behavior. Enable stylesheet skipping only for actual CORS issues.
+Skip cross-origin stylesheets only for actual CORS issues.
 
 **Important:** the `daily/` folder must sit beside the widget JS bundle.
 
-The widget resolves `daily/` relative to `qualified-d305e083.js` and hands that folder to
+The widget resolves `daily/` relative to `qualified-6e882fe9.js` and hands that folder to
 the calling runtime, which loads both files from it by exact name. You do not reference them
 directly in your page — just ensure the folder is served at the same base path as the widget JS
 file, with both files inside it.
@@ -263,7 +255,7 @@ it surfaces as a failure partway into a live call. Verify by placing a test call
 deploying, not just by loading the page.
 
 If you do not use pinned messenger mode, you can omit step 3 and skip hosting
-`qualified-head-7caab759.js`.
+`qualified-head-4517ae6b.js`.
 
 ---
 

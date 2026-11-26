@@ -1,17 +1,48 @@
 {
   "token": "BCGYZamYC46SGX4H",
-  "savedSettings": {
-    "pinning": "immediate",
-    "showSkeleton": true,
-    "dockUnderHeader": true,
-    "skipCrossOriginStylesheets": false
+  "earlyLayout": {
+    "themes": [],
+    "defaultTheme": {
+      "layout": "pinned",
+      "startsOpened": true,
+      "dockUnderHeader": false,
+      "showSkeleton": true,
+      "skipCrossOriginStylesheets": false
+    },
+    "experiences": [
+      {
+        "rule": {
+          "lhs": "param:float",
+          "op": "equals",
+          "rhs": "true"
+        },
+        "layout": "floating",
+        "startsOpened": false
+      },
+      {
+        "rule": {
+          "lhs": "param:seed_offer_form_never",
+          "op": "equals",
+          "rhs": "never"
+        },
+        "layout": null,
+        "startsOpened": null
+      },
+      {
+        "rule": {
+          "always": true
+        },
+        "layout": null,
+        "startsOpened": null
+      }
+    ]
   },
-  "exportedAt": "2026-11-19T23:44:43Z",
+  "exportedAt": "2026-11-26T00:06:39Z",
   "build": {
-    "builtAt": "2026-11-19T23:44:09.914Z",
+    "builtAt": "2026-11-25T19:42:48.385Z",
     "commitSha": null
   },
-  "js": "qualified-d305e083.js",
-  "css": "qualified-b85e236d.css",
-  "head": "qualified-head-7caab759.js"
+  "js": "qualified-6e882fe9.js",
+  "css": "qualified-938256af.css",
+  "head": "qualified-head-4517ae6b.js"
 }

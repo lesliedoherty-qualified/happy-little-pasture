@@ -3,13 +3,13 @@ window.PASTURE_STYLESHEETS = {
   "default": "selfhosted",
   "selfhosted": {
     "label": "Self-hosted package",
-    "href": "../qualified-qa/qualified-b85e236d.css",
-    "source": "site/qualified-qa/qualified-b85e236d.css, exported 2026-11-19T23:44:43Z (widget build 2026-11-19T23:44:09.914Z)"
+    "href": "../qualified-qa/qualified-938256af.css",
+    "source": "site/qualified-qa/qualified-938256af.css, exported 2026-11-26T00:06:39Z (widget build 2026-11-25T19:42:48.385Z)"
   },
   "prod": {
     "label": "Prod",
     "href": "prod-panda.css",
-    "source": "https://js.qualified.com/packs/js/widget/preview/preact_component_renderer-e5503ac0.js, production build 2026-11-25T23:40:13.471Z"
+    "source": "https://js.qualified.com/packs/js/widget/preview/preact_component_renderer-82a91b14.js, production build 2026-11-25T23:45:34.728Z"
   },
   "local": {
     "label": "Local fireball capture",
